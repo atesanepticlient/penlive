@@ -97,7 +97,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!accpectedCurrency.includes[currency]) {
+    if (!accpectedCurrency.includes(currency)) {
       return NextResponse.json(
         {
           code: 999,

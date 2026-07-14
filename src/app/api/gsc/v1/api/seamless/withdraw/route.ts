@@ -119,7 +119,7 @@ export const POST = async (req: NextRequest) => {
       );
     }
 
-    if (!accpectedCurrency.includes[currency]) {
+    if (!accpectedCurrency.includes(currency)) {
       return NextResponse.json(
         {
           data: [
