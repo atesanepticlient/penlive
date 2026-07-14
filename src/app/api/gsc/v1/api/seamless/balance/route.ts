@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { generateGSCPlatformSignature } from "@/lib/utils";
+import { accpectedCurrency, generateGSCPlatformSignature } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 import pMap from "p-map";
 
@@ -39,7 +39,6 @@ function toScaledBalance(rawBalance: number, currency: string): number {
   return Number((rawBalance / ratio).toFixed(4));
 }
 
-export const accpectedCurrency = ["BDT", "INR", "IND2"];
 
 export async function POST(req: NextRequest) {
   try {
