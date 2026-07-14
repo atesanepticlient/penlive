@@ -272,8 +272,8 @@ export const POST = async (req: NextRequest) => {
           await pMap(transactions, async (tx: any) => {
             const action = tx.action?.toUpperCase();
             const baseAmount = toBaseAmount(Number(tx.amount), ratio);
-
             if (action === "BET") {
+              console.log({amount : baseAmount})
               const result = await placeBet({
                 wagerCode: tx.wager_code,
                 id: tx.id,
@@ -283,6 +283,7 @@ export const POST = async (req: NextRequest) => {
                 category: itemGameType,
                 userId: user.id,
               });
+              console.log({result})
               return result;
             } else if (action === "TIP") {
               const result = await getTip({
@@ -328,6 +329,9 @@ export const POST = async (req: NextRequest) => {
             return null;
           })
         ).filter(Boolean);
+
+
+
         if (txExecutions.length == 0) {
           return {
             ...entry,
@@ -345,12 +349,11 @@ export const POST = async (req: NextRequest) => {
 
           while (i < txExecutions.length) {
             const result: any = txExecutions[i];
-
+          
             if (!result.success) {
               failedTx.push(result);
               break;
             }
-
             const trxResult = await result.execute(tx);
 
             if (trxResult && !trxResult.success) {

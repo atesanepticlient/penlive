@@ -50,13 +50,14 @@ export const rollback = async ({
   }
 
   const type = amount > 0 ? "Positive" : amount < 0 ? "Negative" : "Zero";
+  const absAmount = Math.abs(amount);
 
   if (type === "Negative") {
     const wallet = await db.wallet.findUnique({
       where: { userId },
     });
 
-    if (!wallet || Number(wallet.balance) < Math.abs(amount)) {
+    if (!wallet || Number(wallet.balance) < absAmount) {
       return errorResult(1001, "API member balance is insufficient");
     }
   }
@@ -67,13 +68,16 @@ export const rollback = async ({
       const updateBettingRecord: Prisma.BettingRecordUpdateInput = {};
 
       if (type === "Positive") {
-        updateWallet.balance = { increment: amount };
+        // DB wallet operation always uses the absolute value — the sign is
+        // only used to decide increment vs decrement, never passed through
+        // directly, so a mis-signed `amount` can't flip the direction.
+        updateWallet.balance = { increment: absAmount };
         updateBettingRecord.profit = amount - betAmount;
         updateBettingRecord.loss = 0;
       } else {
-        updateWallet.balance = { decrement: Math.abs(amount) };
+        updateWallet.balance = { decrement: absAmount };
         updateBettingRecord.profit = 0;
-        updateBettingRecord.loss = Math.abs(amount) - betAmount;
+        updateBettingRecord.loss = absAmount - betAmount;
       }
 
       await tx.wallet.update({
@@ -117,14 +121,15 @@ export const placeBet = async ({
     return errorResult(1003, "Duplicate API transactions");
   }
 
+  const absAmount = Math.abs(amount);
+
   const wallet = await db.wallet.findUnique({
     where: { userId },
   });
 
-  if (!wallet || Number(wallet.balance) < amount) {
+  if (!wallet || Number(wallet.balance) < absAmount) {
     return errorResult(1001, "API member balance is insufficient");
   }
-
   return successResult(async (tx) => {
     try {
       await tx.bettingRecord.create({
@@ -138,7 +143,7 @@ export const placeBet = async ({
           wagerCode,
           roundId,
           status: "RUNNING",
-          betAmount: amount,
+          betAmount: absAmount,
           category,
           name,
         },
@@ -147,7 +152,7 @@ export const placeBet = async ({
         where: { userId },
         data: {
           balance: {
-            decrement: amount,
+            decrement: absAmount,
           },
         },
       });
@@ -164,11 +169,13 @@ export const getTip = async ({
   userId: string;
   amount: number;
 }): Promise<ActionResult> => {
+  const absAmount = Math.abs(amount);
+
   const wallet = await db.wallet.findUnique({
     where: { userId },
   });
 
-  if (!wallet || Number(wallet.balance) < amount) {
+  if (!wallet || Number(wallet.balance) < absAmount) {
     return errorResult(1001, "API member balance is insufficient");
   }
 
@@ -178,7 +185,7 @@ export const getTip = async ({
         where: { userId },
         data: {
           balance: {
-            decrement: amount,
+            decrement: absAmount,
           },
         },
       });
@@ -208,13 +215,15 @@ export const cancelBet = async ({
     return errorResult(1006, "API bet does not exist");
   }
 
+  const absAmount = Math.abs(amount);
+
   return successResult(async (tx) => {
     try {
       await tx.wallet.update({
         where: { userId },
         data: {
           balance: {
-            increment: amount,
+            increment: absAmount,
           },
         },
       });
@@ -238,13 +247,14 @@ export const adjustment = async ({
   amount: number;
 }): Promise<ActionResult> => {
   const type = amount > 0 ? "Positive" : amount < 0 ? "Negative" : "Zero";
+  const absAmount = Math.abs(amount);
 
   if (type === "Negative") {
     const wallet = await db.wallet.findUnique({
       where: { userId },
     });
 
-    if (!wallet || Number(wallet.balance) < Math.abs(amount)) {
+    if (!wallet || Number(wallet.balance) < absAmount) {
       return errorResult(1001, "API member balance is insufficient");
     }
   }
@@ -254,9 +264,9 @@ export const adjustment = async ({
       const updateWallet: Prisma.WalletUpdateInput = {};
 
       if (type === "Positive") {
-        updateWallet.balance = { increment: amount };
+        updateWallet.balance = { increment: absAmount };
       } else {
-        updateWallet.balance = { decrement: Math.abs(amount) };
+        updateWallet.balance = { decrement: absAmount };
       }
 
       await tx.wallet.update({
@@ -276,13 +286,15 @@ export const freeBet = async ({
   userId: string;
   amount: number;
 }): Promise<ActionResult> => {
+  const absAmount = Math.abs(amount);
+
   return successResult(async (tx) => {
     try {
       await tx.wallet.update({
         where: { userId },
         data: {
           balance: {
-            increment: amount,
+            increment: absAmount,
           },
         },
       });
@@ -310,13 +322,15 @@ export const jackPot = async ({
   userId: string;
   amount: number;
 }): Promise<ActionResult> => {
+  const absAmount = Math.abs(amount);
+
   return successResult(async (tx) => {
     try {
       await tx.wallet.update({
         where: { userId },
         data: {
           balance: {
-            increment: amount,
+            increment: absAmount,
           },
         },
       });
@@ -344,13 +358,15 @@ export const bonus = async ({
   userId: string;
   amount: number;
 }): Promise<ActionResult> => {
+  const absAmount = Math.abs(amount);
+
   return successResult(async (tx) => {
     try {
       await tx.wallet.update({
         where: { userId },
         data: {
           balance: {
-            increment: amount,
+            increment: absAmount,
           },
         },
       });
@@ -378,13 +394,15 @@ export const promo = async ({
   userId: string;
   amount: number;
 }): Promise<ActionResult> => {
+  const absAmount = Math.abs(amount);
+
   return successResult(async (tx) => {
     try {
       await tx.wallet.update({
         where: { userId },
         data: {
           balance: {
-            increment: amount,
+            increment: absAmount,
           },
         },
       });
@@ -412,13 +430,15 @@ export const leaderboardReward = async ({
   userId: string;
   amount: number;
 }): Promise<ActionResult> => {
+  const absAmount = Math.abs(amount);
+
   return successResult(async (tx) => {
     try {
       await tx.wallet.update({
         where: { userId },
         data: {
           balance: {
-            increment: amount,
+            increment: absAmount,
           },
         },
       });
@@ -464,13 +484,15 @@ export const settled = async ({
     return errorResult(1006, "API bet does not exist");
   }
 
+  const absAmount = Math.abs(amount);
+
   return successResult(async (tx) => {
     try {
       await tx.wallet.update({
         where: { userId },
         data: {
           balance: {
-            increment: amount,
+            increment: absAmount,
           },
         },
       });
@@ -480,6 +502,8 @@ export const settled = async ({
         },
         data: {
           status: "SETTLED",
+          // Profit/loss reporting keeps the signed amount so a loss (0
+          // prize) still nets out correctly against betAmount.
           profit: amount - betAmount,
         },
       });
@@ -496,11 +520,13 @@ export const betPreserve = async ({
   userId: string;
   amount: number;
 }): Promise<ActionResult> => {
+  const absAmount = Math.abs(amount);
+
   const wallet = await db.wallet.findUnique({
     where: { userId },
   });
 
-  if (!wallet || Number(wallet.balance) < amount) {
+  if (!wallet || Number(wallet.balance) < absAmount) {
     return errorResult(1001, "API member balance is insufficient");
   }
 
@@ -510,7 +536,7 @@ export const betPreserve = async ({
         where: { userId },
         data: {
           balance: {
-            decrement: amount,
+            decrement: absAmount,
           },
         },
       });
@@ -527,13 +553,15 @@ export const betPreserveRefund = async ({
   userId: string;
   amount: number;
 }): Promise<ActionResult> => {
+  const absAmount = Math.abs(amount);
+
   return successResult(async (tx) => {
     try {
       await tx.wallet.update({
         where: { userId },
         data: {
           balance: {
-            increment: amount,
+            increment: absAmount,
           },
         },
       });
