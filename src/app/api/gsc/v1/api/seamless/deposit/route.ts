@@ -79,13 +79,21 @@ export const POST = async (req: NextRequest) => {
     // ── 3. Validate batch_requests structure ───────────────────────────────────
     // GSC+ example uses "Product_code" (capital P) in the request body,
     // so we accept both casings.
-    const isValidRequests = batch_requests.every((item: any) => {
-      const productCode = item.product_code ?? item.Product_code;
+    const isNumeric = (value: unknown): boolean => {
+      if (value === null || value === undefined || value === "") {
+        return false;
+      }
 
+      return Number.isFinite(Number(value));
+    };
+
+    const isValidRequests = batch_requests.every((item: any) => {
       if (
         typeof item.member_account !== "string" ||
-        typeof productCode !== "number" ||
+        item.member_account.trim() === "" ||
+        !isNumeric(item.product_code ?? item.Product_code) ||
         typeof item.game_type !== "string" ||
+        item.game_type.trim() === "" ||
         !Array.isArray(item.transactions) ||
         item.transactions.length === 0
       ) {
@@ -98,8 +106,19 @@ export const POST = async (req: NextRequest) => {
           tx.id.trim() !== "" &&
           typeof tx.action === "string" &&
           tx.action.trim() !== "" &&
-          typeof tx.amount === "number" &&
-          Number.isFinite(tx.amount)
+          isNumeric(tx.amount) &&
+          isNumeric(tx.bet_amount) &&
+          isNumeric(tx.prize_amount) &&
+          isNumeric(tx.tip_amount) &&
+          isNumeric(tx.valid_bet_amount) &&
+          (tx.settled_at === undefined || isNumeric(tx.settled_at)) &&
+          (tx.game_code === undefined || typeof tx.game_code === "string") &&
+          (tx.round_id === undefined || typeof tx.round_id === "string") &&
+          (tx.wager_code === undefined || typeof tx.wager_code === "string") &&
+          (tx.wager_status === undefined ||
+            typeof tx.wager_status === "string") &&
+          (tx.payload === undefined ||
+            (typeof tx.payload === "object" && tx.payload !== null))
         );
       });
     });
@@ -118,9 +137,7 @@ export const POST = async (req: NextRequest) => {
             },
           ],
         },
-        {
-          status: 200,
-        },
+        { status: 200 },
       );
     }
 
