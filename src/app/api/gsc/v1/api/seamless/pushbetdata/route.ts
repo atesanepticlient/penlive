@@ -83,8 +83,6 @@ export const POST = async (req: NextRequest) => {
       );
     }
 
-
-
     const MEMBER_OP_CODE = process.env.GSC_OPERATOR_CODE!;
     const SECRET_KEY = process.env.GSC_SECRET_KEY!;
 
@@ -123,6 +121,24 @@ export const POST = async (req: NextRequest) => {
         wager.wager_status.toUpperCase() || wager.status.toUpperCase();
       return status == "VOID ";
     });
+
+    const wagersMembersId = wagers.map((w) => w.member_account);
+
+    const usersFound = await db.user.findMany({
+      where: {
+        phone: { in: [...wagersMembersId] },
+      },
+    });
+
+    if (usersFound.length == 0) {
+      return NextResponse.json(
+        {
+          code: 1000,
+          message: "API member does not exist",
+        },
+        { status: 200 },
+      );
+    }
 
     await db.$transaction(async (tx) => {
       await Promise.all([
@@ -165,6 +181,7 @@ export const POST = async (req: NextRequest) => {
         ),
       ]);
     });
+
     return NextResponse.json({ code: 0, message: "" }, { status: 200 });
   } catch (error) {
     console.error("ERROR ON WITHDRAW API", error);
