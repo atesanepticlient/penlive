@@ -472,17 +472,17 @@ export const settled = async ({
   userId: string;
   betAmount: number;
 }): Promise<ActionResult> => {
-  // const existingBet = await db.bettingRecord.findFirst({
-  //   where: {
-  //     orderNo: id,
-  //     roundId,
-  //     status: "RUNNING",
-  //   },
-  // });
+  const existingBet = await db.bettingRecord.findFirst({
+    where: {
+      orderNo: id,
+      roundId,
+      status: "RUNNING",
+    },
+  });
 
-  // if (!existingBet) {
-  //   return errorResult(1006, "API bet does not exist");
-  // }
+  if (!existingBet) {
+    return errorResult(1006, "API bet does not exist");
+  }
 
   const absAmount = Math.abs(amount);
 
@@ -496,17 +496,17 @@ export const settled = async ({
           },
         },
       });
-      // await tx.bettingRecord.update({
-      //   where: {
-      //     id: existingBet.id,
-      //   },
-      //   data: {
-      //     status: "SETTLED",
-      //     // Profit/loss reporting keeps the signed amount so a loss (0
-      //     // prize) still nets out correctly against betAmount.
-      //     profit: amount - betAmount,
-      //   },
-      // });
+      await tx.bettingRecord.update({
+        where: {
+          id: existingBet.id,
+        },
+        data: {
+          status: "SETTLED",
+          // Profit/loss reporting keeps the signed amount so a loss (0
+          // prize) still nets out correctly against betAmount.
+          profit: amount - betAmount,
+        },
+      });
     } catch {
       return errorResult(999, "Internal Server Error");
     }
