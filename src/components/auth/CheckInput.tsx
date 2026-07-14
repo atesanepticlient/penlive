@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 
 import check from "@/../public/icons/check.svg";
-import uncheck from "@/../public/icons/uncheck.svg";
 import Image from "next/image";
 
 interface CheckInputProps {
@@ -35,11 +34,16 @@ const CheckInput = ({
       className="flex items-center gap-2 w-full"
     >
       <div className="w-[35px] ">
-        <Image
-          src={isChecked ? check : uncheck}
-          alt={"check"}
-          className="w-full h-auto select-none"
-        />
+        {isChecked && (
+          <Image
+            src={check}
+            alt={"check"}
+            className="w-full h-auto select-none"
+          />
+        )}
+        {!isChecked && (
+          <div className="w-full h-[35px] scale-75 rounded-full bg-[#fed24167] border border-[#D4AF37]"></div>
+        )}
       </div>
       <p className="text-white/80 text-xs text-start flex-1">{label}</p>
     </button>

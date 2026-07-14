@@ -11,6 +11,7 @@ const walletApiSlice = apiSlice.injectEndpoints({
         url: "/api/wallet",
         method: "GET",
       }),
+      providesTags: ["wallet"],
     }),
   }),
 });

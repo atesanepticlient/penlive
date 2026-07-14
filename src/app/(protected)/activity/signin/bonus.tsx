@@ -12,7 +12,6 @@ const SigninBonus = () => {
   const user: any = useCurrentUser();
 
   const { data, isLoading } = useFindSigninBonusRewardsDataQuery();
-  console.log({ data });
   const statictic = data?.statictic;
 
   const nextClaimAvailable = data?.nextClaimAvailable;
@@ -29,7 +28,11 @@ const SigninBonus = () => {
             totalSigninBonus={statictic?.totalSigninIncome || 0}
           />
           <SigninBonusPlan nextClaimAvailable={nextClaimAvailable} />
-          <BonusCards rewards={data.rewards} />
+          <BonusCards
+            rewards={data.rewards}
+            progress={data.progress}
+            nextLevel={nextClaimAvailable}
+          />
           <Rules />
         </>
       )}

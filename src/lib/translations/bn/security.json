@@ -1,0 +1,25 @@
+{
+  "page": {
+    "title": "নিরাপত্তা কেন্দ্র"
+  },
+  "password": {
+    "loginPassword": "লগইন পাসওয়ার্ড",
+    "withdrawPassword": "উত্তোলন পাসওয়ার্ড",
+    "changePassword": "পাসওয়ার্ড পরিবর্তন করুন",
+    "setPassword": "পাসওয়ার্ড সেট করুন",
+    "currentPassword": "বর্তমান পাসওয়ার্ড",
+    "newPassword": "নতুন পাসওয়ার্ড",
+    "confirmNewPassword": "নতুন পাসওয়ার্ড নিশ্চিত করুন"
+  },
+  "phone": {
+    "title": "ফোন নম্বর",
+    "change": "ফোন নম্বর পরিবর্তন করুন",
+    "verify": "ফোন নম্বর যাচাই করুন"
+  },
+  "twoFactor": {
+    "title": "দুই-ফ্যাক্টর প্রমাণীকরণ",
+    "enable": "2FA সক্ষম করুন",
+    "disable": "2FA অক্ষম করুন",
+    "status": "অবস্থা"
+  }
+}

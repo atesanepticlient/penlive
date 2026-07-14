@@ -10,11 +10,7 @@ interface NagadCardOwnerProps {
   cardNumber: string;
 }
 
-const NagadCard = ({
-  ownerName,
-  nagadNumber,
-  cardNumber,
-}: NagadCardOwnerProps) => {
+const NagadCard = ({ ownerName, nagadNumber }: NagadCardOwnerProps) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   const toggleFlip = () => {
@@ -39,7 +35,7 @@ const NagadCard = ({
           }
         }}
       >
-        <CardFront cardNumber={cardNumber} ownerName={ownerName} />
+        <CardFront cardNumber={nagadNumber} ownerName={ownerName} />
         <CardBack nagadNumber={nagadNumber} />
       </article>
     </section>

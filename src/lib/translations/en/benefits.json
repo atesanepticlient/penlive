@@ -1,0 +1,25 @@
+{
+  "page": {
+    "title": "VIP Benefits"
+  },
+  "level": {
+    "current": "Current Level",
+    "next": "Next Level",
+    "progress": "Progress to Next Level"
+  },
+  "benefits": {
+    "title": "Your Benefits",
+    "weeklyBonus": "Weekly Bonus",
+    "monthlyBonus": "Monthly Bonus",
+    "birthdayBonus": "Birthday Bonus",
+    "exclusiveOffers": "Exclusive Offers",
+    "personalManager": "Personal Account Manager",
+    "fasterWithdrawal": "Faster Withdrawals",
+    "higherLimits": "Higher Betting Limits"
+  },
+  "requirements": {
+    "title": "Level Requirements",
+    "turnover": "Required Turnover",
+    "currentTurnover": "Current Turnover"
+  }
+}

@@ -28,23 +28,41 @@ const SigninBonusPlan = ({ nextClaimAvailable }: SigninBonusPlanProps) => {
               <span className=" text-sm font-medium ">
                 Not Checked in today
               </span>
-              <SigninBonusModal prize={nextClaimAvailable.prize}>
+              <SigninBonusModal cash={nextClaimAvailable.cash}>
                 <FaQuestionCircle className="w-4 h-4" />
               </SigninBonusModal>
             </div>
           </div>
         </div>
 
-        <div className="bg-[#FBF4ED]  rounded-2xl my-8 p-4">
-          <span className="text-base text-gray-500 font-medium block">
-            Minimum Deposti{" "}
-          </span>
-          <span className="text-base text-gray-500 font-medium block">
-            Amount :
-          </span>
-          <span className="text-base text-[#8E0019] font-semibold block">
-            ৳ {nextClaimAvailable.deposit}
-          </span>
+        <div className="bg-[#FBF4ED]  rounded-2xl mt-8 mb-4 p-4 flex justify-between">
+          {nextClaimAvailable.deposit > 0 && (
+            <div>
+              <span className="text-base text-gray-500 font-medium block">
+                Minimum Deposti{" "}
+              </span>
+              <span className="text-base text-gray-500 font-medium block">
+                Amount :
+              </span>
+              <span className="text-base text-[#8E0019] font-semibold block">
+                ৳ {nextClaimAvailable.deposit}
+              </span>
+            </div>
+          )}
+
+          {nextClaimAvailable.betting > 0&& (
+            <div>
+              <span className="text-base text-gray-500 font-medium block">
+                Minimum Betting
+              </span>
+              <span className="text-base text-gray-500 font-medium block">
+                Amount :
+              </span>
+              <span className="text-base text-[#8E0019] font-semibold block">
+                ৳ {nextClaimAvailable.betting}
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -10,8 +10,6 @@ export const POST = async (req: NextRequest) => {
       TransferCode,
       ProductType,
       GameType,
-      Gpid,
-      ExtraInfos
     } = await req.json();
 
     // Validate required fields
@@ -56,7 +54,7 @@ export const POST = async (req: NextRequest) => {
     }
 
     // Perform the rollback by changing the bet status back to running
-    const updatedBet = await db.bet.update({
+    await db.bet.update({
       where: {
         id: bet.id,  // Using the unique `id` for update
       },

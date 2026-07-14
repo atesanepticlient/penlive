@@ -10,27 +10,85 @@ import {
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { MdOutlineSupportAgent, MdHistory } from "react-icons/md";
-import { CiWallet } from "react-icons/ci";
-import { formatBDT } from "@/lib/utils";
 import { CiGift } from "react-icons/ci";
+import { formatBDT } from "@/lib/utils";
 import { PulseLoader } from "react-spinners";
 import PageLoader from "@/components/loader/PageLoader";
-
 import toast from "react-hot-toast";
 import { INTERNAL_SERVER_ERROR } from "@/error";
 import SiteHeader from "@/components/SiteHeader";
 import PaymentMethod from "@/components/PaymentMethod";
 
-const App: React.FC = () => {
+const quickAmounts = [100, 400, 500, 800, 1000, 1500, 2000, 5000, 10000];
+
+const InfoIcon = () => (
+  <svg
+    className="w-4 h-4 flex-shrink-0 mt-0.5"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    strokeWidth={2}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+    />
+  </svg>
+);
+
+const ArrowIcon = () => (
+  <svg
+    className="w-5 h-5"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    strokeWidth={2.5}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M5 10l7-7m0 0l7 7m-7-7v18"
+    />
+  </svg>
+);
+
+function Card({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={` rounded-3xl overflow-hidden ${className}`}>
+      {children}
+    </div>
+  );
+}
+
+function SectionTitle({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 mb-3">
+      {children}
+    </p>
+  );
+}
+
+const DepositPage: React.FC = () => {
   const { data, isLoading } = useGetDepositPaymentDataQuery();
   const wallets = data?.wallets;
   const bonus = data?.bonus;
-
   const user: any = useGetCurrentUser();
 
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<any>();
   const [depositAmount, setDepositAmount] = useState<string>("");
-  const [walletNumber, setWalletNumber] = useState("");
+  const [walletNumber] = useState("");
+  const [selectedAmountBtn, setSelectedAmountBtn] = useState<number | null>(
+    null,
+  );
+  const [error, setError] = useState("");
+  const [pending, setPending] = useState(false);
   const [selectedBonus, setSelectedBonus] = useState<{
     id: string;
     label: string;
@@ -38,24 +96,7 @@ const App: React.FC = () => {
     disable: boolean;
   }>({ id: "none", label: "No Bonus", value: 0, disable: false });
 
-  const [selectedAmountButton, setSelectedAmountButton] = useState<
-    number | null
-  >();
-  const quickAmounts = [
-    100, 400, 500, 800, 1000, 1500, 2000, 5000, 10000
-  ];
-
-  const [error, setError] = useState("");
-  const [pending, setTrasition] = useState(false);
-
-  const [bonusOptions, setBonusOptions] = useState<
-    {
-      id: string;
-      label: string;
-      value: number;
-      disable: boolean;
-    }[]
-  >([
+  const [bonusOptions, setBonusOptions] = useState([
     {
       id: "signinBonus",
       label: "First Deposit Bonus",
@@ -65,8 +106,8 @@ const App: React.FC = () => {
     {
       id: "referralBonus",
       label: "Refer Bonus",
-      disable: true,
       value: 0,
+      disable: true,
     },
     {
       id: "none",
@@ -76,51 +117,54 @@ const App: React.FC = () => {
     },
   ]);
 
-  const handleAmountButtonClick = (amount: number) => {
-    setSelectedAmountButton(amount);
+  const [makeDeposit] = useMakeDepositeMutation();
+
+  const totalAmount = parseFloat(depositAmount) || 0;
+  const bonusAmount =
+    selectedBonus.value > 0
+      ? Math.round((totalAmount * selectedBonus.value) / 100)
+      : 0;
+  const grandTotal = totalAmount + bonusAmount;
+  const isValidAmount = totalAmount >= 100 && totalAmount <= 50000;
+
+  const minDeposit = selectedPaymentMethod
+    ? +selectedPaymentMethod.min_deposit
+    : 100;
+  const maxDeposit = selectedPaymentMethod
+    ? +selectedPaymentMethod.max_deposit
+    : 10000;
+
+  const handleAmountBtn = (amount: number) => {
+    setSelectedAmountBtn(amount);
     setDepositAmount(amount.toString());
   };
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDepositAmount(e.target.value);
-    setSelectedAmountButton(null);
+    setSelectedAmountBtn(null);
   };
 
-  const handleWalletNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setWalletNumber(e.target.value);
-  };
-
-  const calculateBonus = (amount: number) => {
-    if (!selectedBonus) {
-      return 0;
-    }
-    return Math.round((amount * selectedBonus!.value) / 100);
-  };
-
-  const [makeDeposit] = useMakeDepositeMutation();
-
-  const handleSubmitt = () => {
-    setTrasition(true);
+  const handleSubmit = () => {
+    setPending(true);
     if (!depositAmount || +depositAmount < 0) {
-      setError("Please Enter a amount");
-      setTrasition(false);
-      return 0;
+      setError("Please enter an amount");
+      setPending(false);
+      return;
     }
-
     if (+depositAmount < 100) {
-      setError(`Minimum Deposit 100BDT`);
-      setTrasition(false);
-      return 0;
+      setError("Minimum deposit is ৳100");
+      setPending(false);
+      return;
     }
     if (+depositAmount > 10000) {
-      setError(`Maximum Deposit 10000BDT`);
-      setTrasition(false);
-      return 0;
+      setError("Maximum deposit is ৳10,000");
+      setPending(false);
+      return;
     }
     if (!walletNumber) {
-      setError("Please Enter wallet number");
-      setTrasition(false);
-      return 0;
+      setError("Please enter wallet number");
+      setPending(false);
+      return;
     }
 
     makeDeposit({
@@ -131,343 +175,368 @@ const App: React.FC = () => {
       .unwrap()
       .then((res) => {
         if (res.success) {
-          console.log({ res });
-          setTrasition(false);
+          setPending(false);
           window.location.href = res.payload.payUrl;
         }
       })
-      .catch((error: any) => {
-        console.log({ error });
-        if (error?.data?.error) {
-          toast.error(error.data.error);
-        } else {
-          toast.error(INTERNAL_SERVER_ERROR);
-        }
-        setTrasition(false);
+      .catch((err: any) => {
+        toast.error(err?.data?.error ?? INTERNAL_SERVER_ERROR);
+        setPending(false);
       });
   };
 
-  const totalAmount = parseFloat(depositAmount) || 0;
-  const bonusAmount = calculateBonus(totalAmount);
-  const grandTotal = totalAmount + bonusAmount;
-
-  const isValidAmount = totalAmount >= 100 && totalAmount <= 50000;
-
   useEffect(() => {
-    if (wallets) {
-      setSelectedPaymentMethod(wallets[0]);
-    }
+    if (wallets) setSelectedPaymentMethod(wallets[0]);
   }, [wallets]);
 
   useEffect(() => {
     if (bonus && user) {
-      let isSignBonusActive = false;
-      let isReferBonusActive = false;
-      if (bonus.signinBonus > 0 && user.wallet?.signinBonus) {
-        isSignBonusActive = true;
-      }
-      if (bonus.referralBonus > 0 && user.wallet?.referralBonus) {
-        isReferBonusActive = true;
-      }
-
-      setBonusOptions((state) => {
-        let newState = [...state];
-        if (isSignBonusActive) {
-          const index = newState.findIndex((s) => s.id == "signinBonus");
-          newState[index].disable = false;
-        }
-        if (isReferBonusActive) {
-          const index = newState.findIndex((s) => s.id == "referralBonus");
-          newState[index].disable = false;
-        }
-        newState = newState.map((state) => {
-          if (state.id == "signinBonus") {
-            return { ...state, value: bonus.signinBonus };
-          } else if (state.id == "referralBonus") {
-            return { ...state, value: bonus.referralBonus };
-          } else {
-            return state;
-          }
-        });
-        return newState;
-      });
+      const isSign = bonus.signinBonus > 0 && user.wallet?.signinBonus;
+      const isRefer = bonus.referralBonus > 0 && user.wallet?.referralBonus;
+      setBonusOptions((prev) =>
+        prev.map((opt) => {
+          if (opt.id === "signinBonus")
+            return { ...opt, disable: !isSign, value: bonus.signinBonus };
+          if (opt.id === "referralBonus")
+            return { ...opt, disable: !isRefer, value: bonus.referralBonus };
+          return opt;
+        }),
+      );
     }
   }, [user, bonus]);
 
   useEffect(() => {
-    if (error) {
-      setError("");
-    }
+    if (error) setError("");
   }, [depositAmount]);
 
   useEffect(() => {
-    if (quickAmounts.find((a) => a == +depositAmount)) {
-      setSelectedAmountButton(+depositAmount);
-    }
+    if (quickAmounts.includes(+depositAmount))
+      setSelectedAmountBtn(+depositAmount);
   }, [depositAmount]);
 
-  useEffect(() => {
-    console.log({ selectedPaymentMethod });
-  }, [selectedPaymentMethod]);
+  if (!data || isLoading || !user) return <PageLoader />;
 
   return (
-    <>
-      {data && !isLoading && user && (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
-          {/* Header */}
+    <div
+      className="min-h-screen pb-32"
+      style={{
+        background:
+          "linear-gradient(160deg,#fff8f8 0%,#fff1f2 50%,#fffbfb 100%)",
+      }}
+    >
+      <SiteHeader title="Deposit">
+        <Link
+          href="/support"
+          className="text-slate-600 hover:text-slate-900 transition-colors"
+        >
+          <MdOutlineSupportAgent className="text-xl" />
+        </Link>
+        <Link
+          href="/history"
+          className="text-slate-600 hover:text-slate-900 transition-colors"
+        >
+          <MdHistory className="text-xl" />
+        </Link>
+      </SiteHeader>
 
-          <SiteHeader title="Deposit">
-            <Link
-              href="/support"
-              className="text-gray-700 hover:text-gray-900 cursor-pointer"
-            >
-              <MdOutlineSupportAgent className="text-lg" />
-            </Link>
-            <Link
-              href="/history"
-              className="text-gray-700 hover:text-gray-900 cursor-pointer"
-            >
-              <MdHistory className="text-lg" />
-            </Link>
-          </SiteHeader>
-          <main className=" w-full px-4 py-6 space-y-6">
-            {/* Payment Methods */}
-            <section className="bg-white rounded-lg shadow-sm p-4">
-              <h2 className="text-lg font-medium text-gray-800 mb-4">
-                Payment Method
-              </h2>
-              <div className="flex overflow-x-auto pb-2 -mx-1 hide-scrollbar">
+      <main className="px-4 space-y-2">
+        <Card>
+          <div className="px-4 pt-4 pb-1">
+            <SectionTitle>Deposit Method</SectionTitle>
+          </div>
+          <div
+            className="flex gap-1.5 px-4 pb-4 overflow-x-auto"
+            style={{ scrollbarWidth: "none" }}
+          >
+            {wallets?.map((pw: any, i: number) => (
+              <PaymentMethod
+                key={i}
+                method={pw}
+                selectedPaymentMethod={selectedPaymentMethod!}
+                onClick={() => setSelectedPaymentMethod(pw)}
+              />
+            ))}
+          </div>
+        </Card>
+
+        <div className="rounded-2xl px-2 flex items-start gap-3">
+          <span className="text-red-600 mt-0.5">
+            <InfoIcon />
+          </span>
+          <div>
+            <p className="text-sm font-black text-red-600 mb-1 ">
+              Note :{" "}
+              <span className="space-y-0.5 text-red-600 font-semibold">
+                To get the amount to your account quickly, Please provide you
+                Trx-Id after making deposit.
+              </span>
+            </p>
+          </div>
+        </div>
+
+        <Card className="p-4">
+          <SectionTitle>Deposit Amount</SectionTitle>
+          <div className="relative mb-3">
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-black text-slate-400">
+              ৳
+            </span>
+            <input
+              disabled={pending}
+              type="number"
+              className="w-full pl-9 pr-4 py-3.5 rounded-2xl border text-sm font-bold text-slate-800 placeholder:text-slate-300 placeholder:font-normal focus:outline-none focus:ring-2 transition-all"
+              style={
+                {
+                  background: "linear-gradient(135deg,#fffafa,#fff5f5)",
+                  borderColor: depositAmount ? "#e11d48" : "#e2e8f0",
+                  "--tw-ring-color": "#e11d48",
+                } as any
+              }
+              placeholder="Enter amount"
+              value={depositAmount}
+              onChange={handleAmountChange}
+            />
+            {totalAmount > 0 && (
+              <div
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-black px-2 py-0.5 rounded-full text-white"
+                style={{ background: "linear-gradient(90deg,#e11d48,#be123c)" }}
+              >
+                ৳{grandTotal.toLocaleString()}
+              </div>
+            )}
+          </div>
+
+          {error && (
+            <p className="text-xs font-semibold text-red-500 mb-2 px-1">
+              {error}
+            </p>
+          )}
+
+          <div className="flex justify-between text-[11px] font-medium text-slate-400 mb-4 px-1">
+            <span>Min: {formatBDT(minDeposit)}</span>
+            <span>Max: {formatBDT(maxDeposit)}</span>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2">
+            {quickAmounts.map((amt) => {
+              const isActive = selectedAmountBtn === amt;
+              const bonusVal =
+                selectedBonus.value > 0
+                  ? Math.round((amt * selectedBonus.value) / 100)
+                  : 0;
+              return (
+                <button
+                  key={amt}
+                  disabled={pending}
+                  onClick={() => handleAmountBtn(amt)}
+                  className="relative py-2.5 px-2 rounded-2xl text-center transition-all duration-200 active:scale-95 overflow-hidden"
+                  style={{
+                    background: isActive
+                      ? "linear-gradient(135deg,#e11d48,#be123c)"
+                      : "linear-gradient(135deg,#fffafa,#fff5f5)",
+                    border: isActive
+                      ? "2px solid #e11d48"
+                      : "2px solid #e2e8f0",
+                    boxShadow: isActive ? "0 4px 16px #e11d4840" : "none",
+                    transform: isActive ? "scale(1.03)" : "scale(1)",
+                  }}
+                >
+                  {isActive && (
+                    <span
+                      className="absolute inset-0 pointer-events-none"
+                      style={{
+                        background:
+                          "linear-gradient(105deg,transparent 40%,rgba(255,255,255,0.25) 50%,transparent 60%)",
+                        animation: "shimmer 1.6s infinite",
+                        backgroundSize: "200% 100%",
+                      }}
+                    />
+                  )}
+                  <p
+                    className={`text-xs font-black relative z-10 ${isActive ? "text-white" : "text-slate-700"}`}
+                  >
+                    ৳{amt.toLocaleString()}
+                  </p>
+                  {bonusVal > 0 && (
+                    <p
+                      className={`text-[9px] font-bold relative z-10 mt-0.5 flex items-center justify-center gap-0.5 ${isActive ? "text-rose-100" : "text-rose-500"}`}
+                    >
+                      +{bonusVal} <CiGift className="text-xs" />
+                    </p>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </Card>
+
+        <Card className="p-4">
+          <SectionTitle>Select Bonus</SectionTitle>
+          <div className="space-y-2.5">
+            {bonusOptions.map((opt) => {
+              const isSelected = selectedBonus.id === opt.id;
+              const isDisabled = opt.disable;
+              return (
                 <div
-                  className={`flex-shrink-0 mx-1 cursor-pointer whitespace-nowrap`}
+                  key={opt.id}
+                  onClick={() =>
+                    !isDisabled && !pending && setSelectedBonus(opt)
+                  }
+                  className={`flex items-center gap-3 p-3.5 rounded-2xl border-2 transition-all duration-200 ${isDisabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
+                  style={{
+                    background: isSelected
+                      ? "linear-gradient(135deg,#fff1f2,#ffe4e6)"
+                      : "linear-gradient(135deg,#fffafa,#f9fafb)",
+                    borderColor: isSelected ? "#fda4af" : "#e2e8f0",
+                    boxShadow: isSelected ? "0 2px 12px #e11d4820" : "none",
+                  }}
                 >
                   <div
-                    className={`w-24 h-24 rounded-lg border-2 flex flex-col items-center justify-center p-3 transition-all ${"border-gray-200 "}`}
+                    className="w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all"
+                    style={{ borderColor: isSelected ? "#e11d48" : "#cbd5e1" }}
                   >
-                    <CiWallet className="text-2xl text-gray-600" />
-                    <span
-                      className={`mt-2 text-sm font-medium ${"text-gray-700"}`}
-                    >
-                      e-Wallet
-                    </span>
-                  </div>
-                </div>
-
-                {wallets?.map((pw, i) => (
-                  <PaymentMethod
-                    key={i}
-                    method={pw}
-                    selectedPaymentMethod={selectedPaymentMethod!}
-                    onClick={() => setSelectedPaymentMethod(pw)}
-                  />
-                ))}
-              </div>
-            </section>
-
-            {/* Guide Message */}
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  <i className="fas fa-info-circle text-yellow-500"></i>
-                </div>
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-yellow-800">
-                    Important Information
-                  </h3>
-                  <div className="mt-2 text-sm text-yellow-700">
-                    <p>
-                      • Deposits are typically processed within 5-30 minutes
-                    </p>
-                    <p>
-                      • Make sure to use an account registered under your name
-                    </p>
-                    <p>• Contact customer support if you face any issues</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Amount Input */}
-            <section className="bg-white rounded-lg shadow-sm p-4">
-              <h2 className="text-lg font-medium text-gray-800 mb-4">
-                Deposit Amount
-              </h2>
-
-              <div className="relative mb-4">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <span className="text-gray-500">BDT</span>
-                </div>
-                <input
-                  disabled={pending}
-                  type="text"
-                  className="block w-full pl-12 pr-4 py-3 border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-gray-50"
-                  placeholder="Deposit amount"
-                  value={depositAmount}
-                  onChange={handleAmountChange}
-                />
-              </div>
-
-              <div className="relative mb-4">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <span className="text-gray-500">+88</span>
-                </div>
-                <input
-                  disabled={pending}
-                  type="text"
-                  className="block w-full pl-12 pr-4 py-3 border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-gray-50"
-                  placeholder="Wallet Number"
-                  value={walletNumber}
-                  onChange={handleWalletNumberChange}
-                />
-              </div>
-
-              {error && <span className="text-sm text-red-700 ">{error}</span>}
-              <div className="text-sm text-gray-600 mb-4 flex justify-between">
-                <span>
-                  Min:
-                  {formatBDT(
-                    selectedPaymentMethod
-                      ? +selectedPaymentMethod.min_deposit
-                      : 0
-                  )}
-                </span>
-                <span>
-                  Max:{" "}
-                  {formatBDT(
-                    selectedPaymentMethod
-                      ? +selectedPaymentMethod!.max_deposit
-                      : 0
-                  )}
-                </span>
-              </div>
-
-              <div className="grid grid-cols-4 gap-2 sm:grid-cols-4">
-                {quickAmounts.map((item) => (
-                  <button
-                    disabled={pending}
-                    key={item}
-                    onClick={() => handleAmountButtonClick(item)}
-                    className={`relative py-1 px-3 border rounded-lg text-center cursor-pointer whitespace-nowrap !rounded-button ${
-                      selectedAmountButton === item
-                        ? "bg-blue-50 border-blue-500 text-blue-700"
-                        : "bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100"
-                    }`}
-                  >
-                    <div className="font-medium">{item} BDT</div>
-                    {selectedBonus.value > 0 && (
-                      <div className="text-xs text-white font-medium absolute flex items-center -top-[25%] -right-2 bg-blue-700 rounded-md">
-                        + {(item * selectedBonus.value) / 100}{" "}
-                        <CiGift className="text-xs" />
-                      </div>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </section>
-
-            {/* Bonus Selection */}
-            <section className="bg-white rounded-lg shadow-sm p-4">
-              <h2 className="text-lg font-medium text-gray-800 mb-4">
-                Select Bonus
-              </h2>
-
-              <div className="space-y-3">
-                {bonusOptions.map((option) => (
-                  <div
-                    key={option.id}
-                    className={`flex items-start p-3 border rounded-lg cursor-pointer whitespace-nowrap !rounded-button ${
-                      option.disable
-                        ? "opacity-50 cursor-not-allowed"
-                        : selectedBonus!.id === option.id
-                        ? "border-blue-500 bg-blue-50"
-                        : "border-gray-200 hover:border-gray-300"
-                    }`}
-                    onClick={() =>
-                      !option.disable && !pending && setSelectedBonus(option)
-                    }
-                  >
-                    <div className="flex-shrink-0 mt-0.5">
+                    {isSelected && (
                       <div
-                        className={`w-5 h-5 rounded-full border flex items-center justify-center ${
-                          selectedBonus!.id === option.id
-                            ? "border-blue-500"
-                            : "border-gray-400"
-                        }`}
-                      >
-                        {selectedBonus!.id === option.id && (
-                          <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                        )}
-                      </div>
-                    </div>
-                    <div className="ml-3 flex-1">
-                      <div className="font-medium text-gray-800">
-                        {option.label}
-                      </div>
-                      <div className="text-sm text-gray-600">
-                        {option.id == "signinBonus" &&
-                          `Get ${option.value}% extra on your first deposit`}
-                        {option.id == "referralBonus" &&
-                          `${option.value}% Bonus from referral`}
-                        {option.id == "none" && `Proceed without any bonus`}
-                      </div>
-                    </div>
+                        className="w-2.5 h-2.5 rounded-full"
+                        style={{
+                          background: "linear-gradient(135deg,#e11d48,#be123c)",
+                        }}
+                      />
+                    )}
                   </div>
-                ))}
-              </div>
-            </section>
-
-            {/* Summary */}
-            <section className="bg-white rounded-lg shadow-sm p-4">
-              <h2 className="text-lg font-medium text-gray-800 mb-4">
-                Summary
-              </h2>
-
-              <div className="space-y-2 mb-4">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Deposit Amount:</span>
-                  <span className="font-medium">
-                    {totalAmount.toLocaleString()} BDT
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Bonus Amount:</span>
-                  <span className="font-medium text-green-600">
-                    +{bonusAmount.toLocaleString()} BDT
-                  </span>
-                </div>
-                <div className="border-t pt-2 mt-2">
-                  <div className="flex justify-between">
-                    <span className="text-gray-800 font-medium">Total:</span>
-                    <span className="font-bold text-lg">
-                      {grandTotal.toLocaleString()} BDT
+                  <div className="flex-1 min-w-0">
+                    <p
+                      className={`text-sm font-black ${isSelected ? "text-rose-700" : "text-slate-700"}`}
+                    >
+                      {opt.label}
+                    </p>
+                    <p className="text-[11px] text-slate-400 font-medium mt-0.5">
+                      {opt.id === "signinBonus" &&
+                        `${opt.value}% extra on your first deposit`}
+                      {opt.id === "referralBonus" &&
+                        `${opt.value}% bonus from referral`}
+                      {opt.id === "none" && "Proceed without any bonus"}
+                    </p>
+                  </div>
+                  {opt.value > 0 && (
+                    <span
+                      className="text-[10px] font-black px-2 py-0.5 rounded-full flex-shrink-0"
+                      style={{
+                        background: isSelected
+                          ? "linear-gradient(90deg,#e11d48,#be123c)"
+                          : "linear-gradient(90deg,#ffe4e6,#ffd7db)",
+                        color: isSelected ? "white" : "#e11d48",
+                      }}
+                    >
+                      +{opt.value}%
                     </span>
-                  </div>
+                  )}
                 </div>
-              </div>
-            </section>
+              );
+            })}
+          </div>
+        </Card>
 
-            {/* Action Button */}
-            <button
-              className={`w-full py-4 px-6 rounded-lg font-medium text-white text-lg shadow-sm cursor-pointer whitespace-nowrap !rounded-button ${
-                isValidAmount
-                  ? "bg-blue-600 hover:bg-blue-700"
-                  : "bg-gray-400 cursor-not-allowed"
-              }`}
-              disabled={!isValidAmount || pending}
-              onClick={handleSubmitt}
-            >
-              {pending ? (
-                <PulseLoader size={12} color="#fff" />
-              ) : (
-                "Process Deposit"
+        {totalAmount > 0 && (
+          <div
+            className="rounded-2xl px-4 py-3 flex items-center justify-between"
+            style={{
+              background: "linear-gradient(135deg,#fff1f2,#ffe4e6)",
+              border: "1.5px solid #fda4af",
+              animation: "fadeUp 0.2s ease-out both",
+            }}
+          >
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-slate-500 font-medium">
+                Deposit
+              </span>
+              <span className="text-xs font-black text-slate-700">
+                ৳{totalAmount.toLocaleString()}
+              </span>
+              {bonusAmount > 0 && (
+                <>
+                  <span className="text-slate-300 text-xs">+</span>
+                  <span className="text-xs font-black text-green-600">
+                    ৳{bonusAmount.toLocaleString()} bonus
+                  </span>
+                </>
               )}
-            </button>
-          </main>
-        </div>
-      )}
+            </div>
+            <span
+              className="text-sm font-black"
+              style={{
+                background: "linear-gradient(90deg,#e11d48,#9f1239)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
+              ৳{grandTotal.toLocaleString()}
+            </span>
+          </div>
+        )}
+      </main>
 
-      {(!data || isLoading || !user) && <PageLoader />}
-    </>
+      <div
+        className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-6 pt-3"
+        style={{
+          background:
+            "linear-gradient(to top,rgba(255,248,248,1) 70%,transparent)",
+        }}
+      >
+        <button
+          onClick={handleSubmit}
+          disabled={!isValidAmount || pending}
+          className="w-full py-4 rounded-2xl text-white text-base font-black flex items-center justify-center gap-2.5 transition-all duration-200 active:scale-[0.98]"
+          style={{
+            background:
+              isValidAmount && !pending
+                ? "linear-gradient(135deg, #e11d48 0%, #be123c 50%, #9f1239 100%)"
+                : "linear-gradient(135deg,#94a3b8,#cbd5e1)",
+            boxShadow:
+              isValidAmount && !pending ? "0 8px 32px #e11d4855" : "none",
+          }}
+        >
+          {pending ? (
+            <PulseLoader size={10} color="#fff" />
+          ) : (
+            <>
+              <ArrowIcon />
+              Process Deposit
+              {grandTotal > 0 && (
+                <span className="ml-1 text-sm font-black text-white/70">
+                  · ৳{grandTotal.toLocaleString()}
+                </span>
+              )}
+            </>
+          )}
+        </button>
+      </div>
+
+      <style jsx global>{`
+        @keyframes shimmer {
+          0% {
+            background-position: -200% 0;
+          }
+          100% {
+            background-position: 200% 0;
+          }
+        }
+        @keyframes fadeUp {
+          from {
+            opacity: 0;
+            transform: translateY(6px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+          -webkit-appearance: none;
+        }
+      `}</style>
+    </div>
   );
 };
 
-export default App;
+export default DepositPage;

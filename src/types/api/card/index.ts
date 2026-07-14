@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 
 export interface CreateCardInput {
   walletNumber: string;
@@ -13,17 +13,13 @@ export interface CreateNewCardInput {
   paymentWalletId: string;
 }
 
-export type ExtendedCard = Prisma.CardGetPayload<{ include: { container  : true} }> & {
-  paymentWallet: Prisma.PaymentWalletGetPayload<object>;
-};
+// 1. Include paymentWallet (or whichever relation actually exists on Card)
+export type ExtendedCard = Prisma.CardGetPayload<{}>;
 
-export interface CardContainerWithCards {
-  cards: Prisma.CardContainerGetPayload<{ include: { cards: true } }>;
-}
-
-export type CardOutput = Omit<CardContainerWithCards, "cards"> & {
+// 2. Output structure containing array of cards
+export interface CardOutput {
   cards: ExtendedCard[];
-};
+}
 
 export interface CreateCardOutput {
   message: string;

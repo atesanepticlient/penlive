@@ -51,8 +51,8 @@ export const trackingNumberGenerate = async () => {
     const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase();
 
     trackingNumber = `${timestamp}-${randomPart}`;
-    const alreadyExist = await db.deposit.findUnique({
-      where: { trackingNumber: trackingNumber },
+    const alreadyExist = await db.deposit.findFirst({
+      where: { trxID: trackingNumber },
     });
 
     if (!alreadyExist) {
@@ -81,4 +81,59 @@ export const cardNumberGenerate = async () => {
   }
 
   return cardNumber;
+};
+
+export const getAllDeposistAndBetting = async (userId: string) => {
+  const totalDeposit = (
+    await db.deposit.aggregate({
+      where: {
+        userId: userId,
+        status: "APPROVED",
+      },
+      _sum: {
+        amount: true,
+      },
+    })
+  )._sum.amount;
+
+  const totalBetting = (
+    await db.bettingRecord.aggregate({
+      where: {
+        userId: userId,
+        status: "SETTLED",
+        OR: [{ profit: { not: null } }, { loss: { not: null } }],
+      },
+      _sum: {
+        profit: true,
+        loss: true,
+      },
+    })
+  )._sum;
+
+  const totalValidBetting = +totalBetting.profit + +totalBetting.loss;
+  return { deposit: totalDeposit || 0, betting: totalValidBetting || 0 };
+};
+
+import CryptoJS from "crypto-js";
+
+const SECRET_KEY = process.env.PRIZE_KEY;
+
+export const encryptText = (text: string): string => {
+  return CryptoJS.AES.encrypt(text, SECRET_KEY).toString();
+};
+
+export const decryptText = (cipherText: string): string | null => {
+  try {
+    const bytes = CryptoJS.AES.decrypt(cipherText, SECRET_KEY);
+    const result = bytes.toString(CryptoJS.enc.Utf8);
+
+    // if decryption fails → result will be empty
+    if (!result) {
+      return null;
+    }
+
+    return result;
+  } catch {
+    return null;
+  }
 };

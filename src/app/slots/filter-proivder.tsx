@@ -1,101 +1,101 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+
 import React, { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
-import { providers } from "../../../data/api-providers";
+import { GAME_TYPE, providers } from "../../../data/api-providers";
 import Image from "next/image";
-import { GameProvider, Title } from "@/types/game";
+import { GameProvider } from "@/types/game";
 
 const FilterProivder = ({
   onSelect,
 }: {
   onSelect: (provider: GameProvider) => void;
 }) => {
-  const [selectedProvider, setProvider] = useState<any>("all");
-
-  const selectorStyle = {
-    active: {
-      background:
-        "linear-gradient(180deg, var(--color-yellow-50, #FFE600) 0%, var(--color-orange-50, #FFB800) 100%)",
-      boxShadow:
-        "0px 1.3760000467300415px 0px 2.375999927520752px #FFF2A6 inset",
-      overflow: "hidden",
-      borderRadius: 11.01,
-      outline:
-        "1px var(--color-yellow-83-50%, rgba(255, 242, 166, 0.50)) solid",
-      outlineOffset: "-1px",
-      justifyContent: "center",
-      alignItems: "center",
-      display: "inline-flex",
-    },
-    inActive: {
-      background:
-        "linear-gradient(180deg, var(--color-cyan-27, #0F727C) 0%, var(--color-cyan-17, #004E56) 100%)",
-      boxShadow: "0px 1.3760000467300415px 0px #005540",
-      borderRadius: 11.01,
-      outline: "1px var(--color-cyan-57-10%, rgba(35, 255, 200, 0.10)) solid",
-      outlineOffset: "-1px",
-      justifyContent: "center",
-      alignItems: "center",
-      display: "inline-flex",
-    },
-  };
+  const [selectedProvider, setProvider] = useState<any>("");
 
   useEffect(() => {
     onSelect(selectedProvider);
   }, [selectedProvider]);
 
-  return (
-    <div>
-      <div className="w-full bg-wwwwwwck-44-4comdaintree mb-3 rounded-[10.4px] px-5 py-2 overflow-hidden border border-solid border-[#006165] shadow-[0px_2.08px_0px_#002631]">
-        <Swiper slidesPerView={"auto"} spaceBetween={10} className="mySwiper">
-          <SwiperSlide className="max-w-max">
-            <div
-              className="h-[45px] px-4  py-3"
-              onClick={() => setProvider("all")}
-              style={
-                selectedProvider == "all"
-                  ? selectorStyle.active
-                  : selectorStyle.inActive
-              }
-            >
-              <span
-                className={`block px-3 text-lg font-bold ${
-                  selectedProvider == "all" ? "text-black" : "text-white"
-                }`}
-              >
-                All
-              </span>
-            </div>
-          </SwiperSlide>
+  const slotsProviders = providers.filter((provider) => {
+    if (!provider.gameType) return true;
+    else {
+      if (
+        provider.gameType.includes(GAME_TYPE.SLOT) ||
+        provider.gameType.includes(GAME_TYPE.OTHERS)
+      )
+        return true;
+      else return false;
+    }
+  });
 
-          {providers.map((provider, i) => (
-            <SwiperSlide key={i} className="max-w-max">
-              <div
-                className="h-[55px] px-4 py-3"
-                onClick={() => setProvider(provider.name)}
-                style={
-                  provider.name == selectedProvider
-                    ? selectorStyle.active
-                    : selectorStyle.inActive
+  return (
+    <div className="relative w-full rounded-[12px] -translate-y-1 bg-violet-50 backdrop-blur-lg shadow-md    ">
+      <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-yellow-500/25 to-transparent" />
+      {/* inner glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,184,0,0.06),transparent_50%)]" />
+
+      <Swiper
+        slidesPerView={"auto"}
+        // spaceBetween={10}
+        className="relative z-10 !px-2 "
+      >
+        {/* All */}
+        <SwiperSlide className="!w-auto">
+          <button
+            onClick={() => setProvider("")}
+            className={`
+              relative h-[45px] min-w-[110px]  rounded-[14px] px-7
+              text-sm font-black uppercase tracking-[0.1em]
+              transition-all duration-300 translate-y-2 shadow
+              ${
+                selectedProvider === ""
+                  ? "border border-yellow-400/60 bg-gradient-to-b from-[#ffe44a] to-[#edb11b]  text-[#1a0800] shadow-[0_0_20px_rgba(255,184,0,0.5),0_4px_12px_rgba(180,100,0,0.4),inset_0_1px_0_rgba(255,255,255,0.35)]"
+                  : "bg-violet-50 !text-violet-950"
+              }
+            `}
+          >
+            {selectedProvider === "" && (
+              <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/40 to-transparent " />
+            )}
+            All
+          </button>
+        </SwiperSlide>
+
+        {/* Providers */}
+        {slotsProviders.map((provider, i) => (
+          <SwiperSlide key={i} className="!w-auto !py-2">
+            <button
+              onClick={() => setProvider(provider.product_code)}
+              className={`
+                relative flex h-[45px] min-w-[110px] items-center justify-center
+                rounded-[14px] shadow px-5 
+                transition-all duration-300 ml-2
+                ${
+                  provider.product_code === selectedProvider
+                    ? "border-yellow-400/60 bg-gradient-to-b from-[#ffe44a] to-[#edb11b] shadow-[0_0_20px_rgba(255,184,0,0.5),0_4px_12px_rgba(180,100,0,0.4),inset_0_1px_0_rgba(255,255,255,0.35)]"
+                    : "bg-violet-50"
                 }
-              >
-                <Image
-                  src={
-                    selectedProvider == provider.name
-                      ? provider.imageBlack
-                      : provider.imageWhite
-                  }
-                  alt={provider.name}
-                  className="w-[80%] h-full object-fill"
-                />
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </div>
+              `}
+            >
+              {provider.product_code === selectedProvider && (
+                <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+              )}
+              <Image
+                src={provider.image}
+                alt={provider.name}
+                width={70}
+                height={30}
+                className="h-auto  w-[70px] max-h-[28px] object-contain transition-all duration-300"
+              />
+            </button>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+
+   
     </div>
   );
 };

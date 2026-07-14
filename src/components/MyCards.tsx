@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+
 import React from "react";
 import moment from "moment";
-// Import Swiper React components
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,19 +10,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-// Import Swiper styles
 import "swiper/css";
 import "swiper/css/effect-cards";
 
-// import required modules
 import BkashCard from "@/components/cards/BkashCard";
 import NagadCard from "./cards/NagadCard";
 
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FaCreditCard } from "react-icons/fa";
 import {
-  useFetchCardsQuery,
-  useUpdateCardMutation,
+  useGetCardsQuery,
+  useCreateCardMutation,
 } from "@/lib/features/cardSlice";
 import { toast } from "sonner";
 import { INTERNAL_SERVER_ERROR } from "@/error";
@@ -31,10 +29,31 @@ import EmpryCard from "./EmpryCard";
 
 import MyCardsSkleton from "./skelton/MyCardsSkleton";
 
+interface CardData {
+  id: string;
+  isActive: boolean;
+  createdAt: Date;
+  walletNumber: string;
+  cardNumber: string;
+  paymentWallet: {
+    walletName: string;
+  };
+  container: {
+    ownerName: string;
+  };
+}
+
+interface ApiError {
+  data?: {
+    error?: string;
+  };
+}
+
 const MyCards = () => {
-  const { data, isLoading } = useFetchCardsQuery({ all: true });
-  const cards = data?.cards;
+  const { data, isLoading } = useGetCardsQuery();
+  const cards: any = data?.cards;
   console.log({ cards });
+
   return (
     <div>
       {data && !isLoading && (
@@ -45,15 +64,15 @@ const MyCards = () => {
             </h4>
           </div>
           <div className="mt-6 flex flex-col">
-            {cards?.map((card, i) => (
+            {cards?.map((card) => (
               <Card
-                key={i}
+                key={card.id}
                 cardId={card.id}
                 isActive={card.isActive}
                 issueDate={card.createdAt}
                 walletNumber={card.walletNumber}
               >
-                {card.paymentWallet.walletName.toLowerCase() == "bkash" ? (
+                {card.paymentWallet.walletName.toLowerCase() === "bkash" ? (
                   <BkashCard
                     bkashNumber={card.walletNumber}
                     cardNumber={card.cardNumber}
@@ -69,7 +88,7 @@ const MyCards = () => {
               </Card>
             ))}
 
-            {cards?.length == 0 && <EmpryCard plusRedirect="/card" />}
+            {cards?.length === 0 && <EmpryCard plusRedirect="/card" />}
           </div>
         </>
       )}
@@ -88,22 +107,23 @@ interface CardProps {
   cardId: string;
   children: React.ReactNode;
 }
+
 export const Card = (props: CardProps) => {
   const { walletNumber, isActive, issueDate, children, cardId } = props;
 
-  const [updateCardApi, { isLoading }] = useUpdateCardMutation();
+  const [updateCardApi, { isLoading }] = useCreateCardMutation();
 
-  const handleUpdateCard = (isActive: boolean, cardId: string) => {
-    updateCardApi({ id: cardId, isActive })
-      .unwrap()
-      .then(() => {})
-      .catch((error: any) => {
-        if (error.data.error) {
-          toast.error(error.data.error);
-        } else {
-          toast.error(INTERNAL_SERVER_ERROR);
-        }
-      });
+  const handleUpdateCard = (isActiveStatus: boolean, targetCardId: string) => {
+    // updateCardApi({ id: targetCardId, isActive: isActiveStatus })
+    //   .unwrap()
+    //   .then(() => {})
+    //   .catch((error: ApiError) => {
+    //     if (error.data?.error) {
+    //       toast.error(error.data.error);
+    //     } else {
+    //       toast.error(INTERNAL_SERVER_ERROR);
+    //     }
+    //   });
   };
 
   return (

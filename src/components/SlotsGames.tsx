@@ -1,12 +1,11 @@
 "use client";
 import React, { useRef } from "react";
 
-import { GameCardWithProvider } from "./GameCards";
 
 import GameSelectionHeader from "./GameSelectionHeader";
-import { useGames } from "@/lib/store.zustond";
-import { Categories } from "@/types/game";
-import GameLoader from "./loader/GameLoader";
+
+import HomeGameCard from "./games/home-game-card";
+import { getHotGames } from "@/lib/games";
 
 const SlotGames = () => {
   const gamesContainer = useRef<HTMLDivElement | null>(null);
@@ -18,37 +17,41 @@ const SlotGames = () => {
     gamesContainer.current!.scrollLeft += 130;
   };
 
-  const { getGames } = useGames((state) => state);
-  const gamesList = getGames(Categories.Slots, undefined, 20);
-  // console.log({gamesList})
-  return (
-    <div
-      className="my-4"
-      style={{
-        width: "100%",
-      }}
-    >
-      <GameSelectionHeader
-        title="Slot Games"
-        leftAction={handleLeftButtonClick}
-        rightAction={handleRightButtonClick}
-        seeMoreLink="/slots"
-      />
+  const hotGames = getHotGames({ nameSearch: "", limit: 20 });
+  if (hotGames)
+    return (
       <div
-        className="max-w-full w-full overflow-x-auto scrollbar-none scroll-smooth"
-        ref={gamesContainer}
+        className="pt-4"
+        style={{
+          width: "100%",
+        }}
       >
-        <div className="hot-games-list">
-          {gamesList &&
-            gamesList.map((game, i) => (
-              <GameCardWithProvider key={i} game={game} />
+        <GameSelectionHeader
+          title="Hot Games"
+          leftAction={handleLeftButtonClick}
+          rightAction={handleRightButtonClick}
+          seeMoreLink="/slots"
+        />
+        <div
+          className="max-w-full w-full overflow-x-auto scrollbar-none scroll-smooth"
+          ref={gamesContainer}
+        >
+          <div className="hot-games-list px-3">
+            {hotGames.map((game,i) => (
+              <HomeGameCard
+              key={i}
+                label={game.game_name}
+                image={game.image_url}
+                badge="hot"
+                product_code={game.product_code}
+                game_code={game.game_code}
+                game_type={game.game_type}
+              />
             ))}
-
-          <GameLoader lenght={20} loading={!!!gamesList} />
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
 };
 
 export default SlotGames;

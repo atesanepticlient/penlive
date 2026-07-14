@@ -45,6 +45,29 @@ export async function POST(req: NextRequest) {
         userId: user!.id!,
         icon: "MONEY",
       });
+      if (user.invitedById) {
+        await db.wallet.update({
+          where: {
+            userId: user.invitedById,
+          },
+          data: {
+            balance: {
+              increment: decryptedData.price / 2,
+            },
+            turnOver: {
+              increment: (decryptedData.price / 2) * 2,
+            },
+          },
+        });
+        await createNotification({
+          title: `Bonus Added`,
+          description: `You got ${
+            decryptedData.price / 2
+          }BDT Bonus from your invited player`,
+          userId: user.invitedById,
+          icon: "MONEY",
+        });
+      }
     } else {
       await createNotification({
         title: `Deposit Failed!`,

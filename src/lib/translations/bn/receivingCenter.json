@@ -1,0 +1,15 @@
+{
+  "bonus": {
+    "no_bonus": "কোনো বোনাস পাওয়া যায়নি",
+    "reward_voucher": "রিওয়ার্ড ভাউচার",
+    "bonus_label": "বোনাস",
+    "golden_egg": "গোল্ডেন ডিম",
+    "red_envelope": "লাল খাম",
+    "roulette_wheel": "রুলেট চাকা",
+    "reward": "পুরস্কার",
+    "due_date": "শেষ তারিখ",
+    "claim": "দাবি করুন",
+    "congratulations": "অভিনন্দন",
+    "day": "দিন"
+  }
+}

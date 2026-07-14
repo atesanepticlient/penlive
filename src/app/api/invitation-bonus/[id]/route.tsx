@@ -6,7 +6,7 @@ import { NextRequest } from "next/server";
 
 export const PUT = async (
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) => {
   try {
     const { id } = await params;
@@ -18,7 +18,11 @@ export const PUT = async (
 
     const reward = await db.invitationRewareds.findUnique({ where: { id } });
 
-    if (!reward) return Response.json({ error: "Reward is not available yet" });
+    if (!reward)
+      return Response.json(
+        { error: "Reward is not available yet" },
+        { status: 404 },
+      );
 
     const isClamed = !!(await db.claimedInvitationReward.findFirst({
       where: { rewardId: id },
@@ -27,17 +31,16 @@ export const PUT = async (
     if (isClamed)
       return Response.json(
         { error: "You already clamed this reward" },
-        { status: 400 }
+        { status: 400 },
       );
 
     const userInvitationBonus = await db.invitationBonus.findUnique({
       where: { userId: user.id },
     });
-
-    if (userInvitationBonus?.totalValidreferral !== reward.targetReferral) {
+    if (userInvitationBonus?.totalValidreferral < reward.targetReferral) {
       return Response.json(
-        { error: "Please refer more users to get it" },
-        { status: 400 }
+        { error: "Please Refer more to get it" },
+        { status: 400 },
       );
     }
 
@@ -56,6 +59,20 @@ export const PUT = async (
                   id: reward.id,
                 },
               },
+            },
+          },
+        },
+      }),
+      db.achivementRecords.create({
+        data: {
+          user: {
+            connect: {
+              id: user.id,
+            },
+          },
+          reward: {
+            connect: {
+              id: reward.id,
             },
           },
         },

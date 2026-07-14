@@ -1,0 +1,41 @@
+{
+  "page": {
+    "title": "আমার অ্যাকাউন্ট"
+  },
+  "profile": {
+    "vipLevel": "VIP {level}",
+    "playerId": "প্লেয়ার আইডি",
+    "nickname": "ডাকনাম",
+    "joined": "যোগ দিয়েছেন",
+    "copyId": "আইডি কপি করুন",
+    "signin": "লগইন"
+  },
+
+  "balance": {
+    "label": "ব্যালেন্স",
+    "updated": "ব্যালেন্স আপডেট হয়েছে",
+    "refresh": "ব্যালেন্স রিফ্রেশ করুন"
+  },
+  "actions": {
+    "deposit": "ডিপোজিট",
+    "withdrawal": "উত্তোলন",
+    "myCards": "আমার কার্ড"
+  },
+  "menu": {
+    "title": "সদস্য মেনু",
+    "items": {
+      "reward": "পুরস্কার",
+      "bettingRecord": "বাজি রেকর্ড",
+      "profitAndLoss": "লাভ এবং ক্ষতি",
+      "depositRecord": "ডিপোজিট রেকর্ড",
+      "withdrawRecord": "উত্তোলন রেকর্ড",
+      "myAccount": "আমার অ্যাকাউন্ট",
+      "securityCenter": "নিরাপত্তা কেন্দ্র",
+      "inviteFriend": "বন্ধুকে আমন্ত্রণ",
+      "internalMessage": "অভ্যন্তরীণ বার্তা",
+      "downloadApp": "অ্যাপ ডাউনলোড",
+      "customerCenter": "গ্রাহক কেন্দ্র",
+      "logout": "লগআউট"
+    }
+  }
+}

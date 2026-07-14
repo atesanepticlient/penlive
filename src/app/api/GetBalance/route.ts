@@ -67,7 +67,6 @@
 
 
 
-
 import { db } from "@/lib/db";  // Import your Prisma instance
 import { NextRequest } from "next/server";
 
@@ -123,7 +122,7 @@ export const POST = async (req: NextRequest) => {
       ErrorCode: "0",
       ErrorMessage: "No Error",
     });
-  } catch (error) {
+  } catch  {
     // Handle any internal errors
     return Response.json(
       { ErrorCode: 7, ErrorMessage: "Internal Error" },

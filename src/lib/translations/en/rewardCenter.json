@@ -1,0 +1,13 @@
+{
+  "title": "Reward",
+  "rewards": {
+    "bonus": "bonus",
+    "signin": "Signin",
+    "invite": "Invite Friends",
+    "promo": "Promo Code"
+  },
+  "benefits": "Benefits",
+  "nickname": "Nickname",
+  "signin": "Signin",
+  "vip": "VIP"
+}

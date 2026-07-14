@@ -1,4 +1,3 @@
-import { UserAvatar } from "@/components/HeaderBalance";
 import React from "react";
 
 interface HeaderProps {
@@ -18,10 +17,8 @@ const Header = ({
   return (
     <div className="h-[200px] signin-bonus-header-bg relative">
       <div className="flex items-center gap-4 px-6 py-4">
-        <UserAvatar
-          className="!w-[80px] !h-[80px] rounded-full"
-          imageUrl={profile}
-        />
+        <img src={profile} alt="User" className="w-[70px] aspect-square rounded-full border-[3px]" />
+        
         <div>
           <span className="text-base font-medium text-white">
             Player ID: {playerId}

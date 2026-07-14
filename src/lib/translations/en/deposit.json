@@ -1,0 +1,39 @@
+{
+  "page": {
+    "title": "Deposit"
+  },
+  "sections": {
+    "depositMethod": "Deposit Method",
+    "depositAmount": "Deposit Amount",
+    "selectBonus": "Select Bonus"
+  },
+  "placeholders": {
+    "enterAmount": "Enter amount"
+  },
+  "labels": {
+    "note": "Note",
+    "noteText": "To get the amount to your account quickly, Please provide you Trx-Id after making deposit.",
+    "min": "Min",
+    "max": "Max",
+    "deposit": "Deposit",
+    "bonus": "bonus"
+  },
+  "bonusOptions": {
+    "firstDepositBonus": "First Deposit Bonus",
+    "firstDepositDesc": "{value}% extra on your first deposit",
+    "referBonus": "Refer Bonus",
+    "referBonusDesc": "{value}% bonus from referral",
+    "noBonus": "No Bonus",
+    "noBonusDesc": "Proceed without any bonus"
+  },
+  "errors": {
+    "enterAmount": "Please enter an amount",
+    "minDeposit": "Minimum deposit is ৳100",
+    "maxDeposit": "Maximum deposit is ৳10,000",
+    "enterWalletNumber": "Please enter wallet number"
+  },
+  "buttons": {
+    "processDeposit": "Process Deposit",
+    "processing": "Processing..."
+  }
+}

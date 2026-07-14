@@ -51,19 +51,19 @@ const WithdrawCards = ({ cards }: { cards: ExtendedCard[] }) => {
           setActiveCard(cards[swiper.activeIndex]); // update on slide change
         }}
       >
-        {cards.map((card, i) => (
+        {cards.map((card: any, i) => (
           <SwiperSlide key={i} className="max-w-max  ">
             {card.paymentWallet.walletName.toLowerCase() == "bkash" ? (
               <BkashCard
                 bkashNumber={card.walletNumber}
                 cardNumber={card.cardNumber}
-                ownerName={card.container.ownerName}
+                ownerName={card.payerName}
               />
             ) : (
               <NagadCard
                 nagadNumber={card.walletNumber}
                 cardNumber={card.cardNumber}
-                ownerName={card.container.ownerName}
+                ownerName={card.payerName}
               />
             )}
           </SwiperSlide>

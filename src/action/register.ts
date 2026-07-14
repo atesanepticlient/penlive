@@ -9,7 +9,10 @@ import { db } from "@/lib/db";
 import { signIn } from "@/auth";
 import { LOGIN_SUCCESS } from "@/success";
 import { CredentialsSignin } from "next-auth";
-import { registerPlayer } from "@/lib/player";
+import { v4 as uuidv4 } from "uuid";
+
+import { RewardName } from "@prisma/client";
+
 export const register = async (data: zod.infer<typeof registerSchema>) => {
   try {
     const {
@@ -19,8 +22,9 @@ export const register = async (data: zod.infer<typeof registerSchema>) => {
       ageCheck,
       bonusCheck,
       referralId,
+      affiliateCode,
+      ipSign,
     } = data;
-
     if (password !== confirmPassword) {
       return { error: "Confirm Password Did not match" };
     }
@@ -34,6 +38,13 @@ export const register = async (data: zod.infer<typeof registerSchema>) => {
       return { error: "Number is already registered" };
     }
 
+    await db.affiliate.findUnique({
+      where: { phone },
+    });
+    // if (existingAffiliateWithPhone) {
+    //   return { error: "Affiliates are not allowed for user account" };
+    // }
+
     let isReferralBonusActive = false;
 
     let invitedBy = {};
@@ -46,15 +57,19 @@ export const register = async (data: zod.infer<typeof registerSchema>) => {
         });
 
         isReferralBonusActive = !!referralUser;
-        invitedBy = {
-          create: {
-            user: {
-              connect: {
-                id: referralUser.id,
-              },
-            },
+        const referralInvitation = await db.invitation.findUnique({
+          where: {
+            userId: referralUser.id,
           },
-        };
+        });
+
+        if (referralInvitation) {
+          invitedBy = {
+            connect: {
+              id: referralInvitation.id,
+            },
+          };
+        }
       }
     }
     const playerId = await playerIdGenerate();
@@ -71,7 +86,6 @@ export const register = async (data: zod.infer<typeof registerSchema>) => {
         invitedBy: {
           ...invitedBy,
         },
-        bettingRecord: { create: {} },
         wallet: {
           create: {
             balance: 0,
@@ -79,26 +93,58 @@ export const register = async (data: zod.infer<typeof registerSchema>) => {
             referralBonus: isReferralBonusActive,
           },
         },
+        Invitation: {
+          create: {
+            validRerredUsers: [],
+          },
+        },
         inviationBonus: {
           create: {},
+        },
+        dailyCheck: {
+          create: {
+            firstPrice: 3.5,
+          },
         },
       },
     });
 
-    if (referralId && referralUser) {
-      await db.invitation.update({
+    const localStore = [];
+
+    if (affiliateCode) {
+      const affiliate = await db.affiliate.findUnique({
         where: {
-          userId: referralUser.id,
-        },
-        data: {
-          referredUsers: {
-            connect: {
-              id: newUser.id,
-            },
-          },
+          uniqueCode: affiliateCode,
+          status: { not: "SUSPENDED" },
+          emailVerified: true,
         },
       });
+
+      if (affiliate) {
+        const bonusConfig = await db.affiliateRegisterBonus.findUnique({
+          where: { affiliateId: affiliate.id },
+        });
+        await userConnectToAffiliate(newUser.id, affiliate.id, {
+          reward: bonusConfig ? bonusConfig.rewardName : null,
+          ipSign,
+          callback: ({ newIpSignKey, newIpSignValue }) => {
+            localStore.push({
+              key: newIpSignKey,
+              value: newIpSignValue,
+            });
+          },
+        });
+      } else {
+        if (referralId && referralUser) {
+          await userConnectToRefererUser(referralUser.id, newUser.id);
+        }
+      }
+    } else {
+      if (referralId && referralUser) {
+        await userConnectToRefererUser(referralUser.id, newUser.id);
+      }
     }
+
     try {
       await signIn("credentials", {
         phone: newUser.phone,
@@ -114,11 +160,98 @@ export const register = async (data: zod.infer<typeof registerSchema>) => {
       }
     }
 
-    await registerPlayer(playerId);
+    // await registerPlayer(playerId);
 
-    return { success: LOGIN_SUCCESS };
+    return { success: LOGIN_SUCCESS, localStore };
   } catch (error) {
     console.log({ error });
     return { error: INTERNAL_SERVER_ERROR };
   }
+};
+
+const userConnectToAffiliate = async (
+  userId: string,
+  affiliateId: string,
+  {
+    reward,
+    ipSign,
+    callback,
+  }: {
+    reward?: RewardName;
+    ipSign?: string;
+    callback?: (props: {
+      newIpSignValue: string;
+      newIpSignKey: string;
+    }) => void;
+  },
+) => {
+  let uniqueIPCode = ipSign;
+  const sameIpLinks = await db.affiliateUser.findMany({
+    where: { userIp: uniqueIPCode, isValid: true },
+    orderBy: { createdAt: "asc" },
+  });
+
+  const isValid = sameIpLinks.length === 0;
+  const invalidReason = isValid
+    ? null
+    : "Duplicate IP address — another account from this IP is already registered";
+  console.log({ isValid });
+  await db.$transaction(async (tx) => {
+    if (isValid) {
+      uniqueIPCode = uuidv4();
+      callback({
+        newIpSignKey: "-entry-token",
+        newIpSignValue: uniqueIPCode,
+      });
+
+      if (reward) {
+        await tx.customRewardEvent.create({
+          data: {
+            user: { connect: { id: userId } },
+            title: "Welcome Reward",
+            rewardFor: "GIFT",
+            size: 1,
+            expiry: new Date(Date.now() + 24 * 60 * 60 * 1000),
+            name: reward,
+          },
+        });
+
+        await tx.notification.create({
+          data: {
+            user: { connect: { id: userId } },
+            title: "Welcome Reward added",
+            description: "You Got a reward for newly register to this account",
+          },
+        });
+      }
+    }
+
+    await tx.affiliateUser.create({
+      data: {
+        affiliateId: affiliateId,
+        userId,
+        userIp: uniqueIPCode,
+        isValid,
+        invalidReason,
+      },
+    });
+  });
+};
+
+const userConnectToRefererUser = async (
+  referraUserId: string,
+  userId: string,
+) => {
+  await db.invitation.update({
+    where: {
+      userId: referraUserId,
+    },
+    data: {
+      referredUsers: {
+        connect: {
+          id: userId,
+        },
+      },
+    },
+  });
 };

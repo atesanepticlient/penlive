@@ -8,7 +8,7 @@ export const POST = async (req: NextRequest) => {
     const url = await loginGames(username, gpid, gameid);
 
     return Response.json({ success: true, payload: { url } }, { status: 200 });
-  } catch (error) {
+  } catch  {
     return Response.json({ error: INTERNAL_SERVER_ERROR }, { status: 500 });
   }
 };

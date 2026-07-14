@@ -1,7 +1,7 @@
 "use client";
 import React, { useRef } from "react";
 
-import { GameCardWithProvider } from "./GameCards";
+import { GameCardWithProvider } from "./games/GameCards";
 
 import GameSelectionHeader from "./GameSelectionHeader";
 // import { useGames } from "@/lib/store.zustond";
@@ -84,16 +84,16 @@ const ESports = () => {
         leftAction={handleLeftButtonClick}
         rightAction={handleRightButtonClick}
         seeMoreLink="#"
-  />
+      />
       <div
         className="max-w-full w-full overflow-x-auto scrollbar-none scroll-smooth"
         ref={gamesContainer}
       >
         <div className="hot-games-list">
-          {sports &&
+          {/* {sports &&
             sports.map((game, i) => (
               <GameCardWithProvider game={game} key={i} />
-            ))}
+            ))} */}
         </div>
       </div>
     </div>

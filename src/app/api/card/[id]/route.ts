@@ -16,17 +16,11 @@ export const PUT = async (
     const { id } = await params;
     const { isActive } = await req.json();
 
-    const card = await db.card.findFirst({
-      where: { id },
-      include: { container: true },
-    });
+    const card = await db.card.findUnique({ where: { id } });
     if (!card)
       return Response.json({ error: "Card Not Found" }, { status: 404 });
 
-    console.log("Container owner ", card.container.userId);
-    console.log("User Id ", user.id);
-
-    if (card.container.userId !== user.id)
+    if (card.userId !== user.id)
       return Response.json(
         { error: "You have no Permission to update this card" },
         { status: 403 }

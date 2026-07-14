@@ -1,0 +1,33 @@
+{
+  "page": {
+    "title": "বন্ধুকে আমন্ত্রণ"
+  },
+  "overview": {
+    "title": "আমন্ত্রণ ওভারভিউ",
+    "totalInvited": "মোট আমন্ত্রিত",
+    "activeUsers": "সক্রিয় ব্যবহারকারী",
+    "totalEarnings": "মোট উপার্জন"
+  },
+  "rewards": {
+    "title": "আমন্ত্রণ পুরস্কার",
+    "claimReward": "পুরস্কার দাবি করুন"
+  },
+  "records": {
+    "title": "আমন্ত্রণ রেকর্ড",
+    "date": "তারিখ",
+    "friend": "বন্ধু",
+    "status": "অবস্থা",
+    "reward": "পুরস্কার"
+  },
+  "leaderboard": {
+    "title": "লিডারবোর্ড",
+    "rank": "র‍্যাঙ্ক",
+    "inviter": "আমন্ত্রণকারী",
+    "invitations": "আমন্ত্রণ"
+  },
+  "share": {
+    "title": "আপনার লিঙ্ক শেয়ার করুন",
+    "copyLink": "লিঙ্ক কপি করুন",
+    "inviteCode": "আপনার আমন্ত্রণ কোড"
+  }
+}

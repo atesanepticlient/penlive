@@ -1,0 +1,25 @@
+{
+  "page": {
+    "title": "Security Center"
+  },
+  "password": {
+    "loginPassword": "Login Password",
+    "withdrawPassword": "Withdrawal Password",
+    "changePassword": "Change Password",
+    "setPassword": "Set Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password"
+  },
+  "phone": {
+    "title": "Phone Number",
+    "change": "Change Phone Number",
+    "verify": "Verify Phone Number"
+  },
+  "twoFactor": {
+    "title": "Two-Factor Authentication",
+    "enable": "Enable 2FA",
+    "disable": "Disable 2FA",
+    "status": "Status"
+  }
+}

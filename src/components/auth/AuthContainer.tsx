@@ -22,26 +22,36 @@ const AuthContaner = ({
   title,
 }: AuthContainerProps) => {
   return (
-    <div className="bg-[url(https://c.animaapp.com/m9drzmnaxdV67z/img/background.png)] bg-[#003e3e] bg-cover bg-[50%_50%] w-h-full h-screen ">
-      <div className="flex justify-center py-5 pt-12">
-        <Image src={logo} alt="ck444" className="w-[100px] h-auto" />
+    <div className=" ">
+      <div className="min-h-screen bg-neutral-950 flex items-center justify-center px-4">
+        {/* Background subtle glow */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-neutral-900 to-black pointer-events-none" />
+
+        <div className="relative w-full max-w-md p-8 bg-neutral-900/50 border border-neutral-800 rounded-2xl backdrop-blur-xl shadow-2xl">
+          {/* Logo Section */}
+          <div className="flex flex-col items-center ">
+            <div className="flex justify-center py-3 pt-12">
+              <Image src={logo} alt="ck444" className="w-[100px] h-auto" />
+            </div>
+          </div>
+          <div className="text-center mb-5">
+            <span className="text-3xl font-light tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white via-neutral-200 to-neutral-500">
+              {title}
+            </span>
+          </div>
+
+          <div>{children}</div>
+
+          <div className="mt-3  text-center">
+            <span className="text-white">
+              {formRedirectText}{" "}
+              <Link href={formRediretLink} className="text-[#f4cb46] underline">
+                {formRedirectLinkPlaceholder}
+              </Link>
+            </span>
+          </div>
+        </div>
       </div>
-
-      <div className="flex flex-col items-center mb-2">
-        <h4 className="text-[#ffb800] font-bold text-xl mb-3">{title}</h4>
-
-        <p className="text-white/90 text-sm text-center mt-3">
-          {formRedirectText}{" "}
-          <Link
-            href={formRediretLink}
-            className="text-[#41cbd0] font-semibold hover:underline"
-          >
-            {formRedirectLinkPlaceholder}
-          </Link>
-        </p>
-      </div>
-
-      <div className="w-[80%] mx-auto mt-8 max-w-[400px]">{children}</div>
     </div>
   );
 };

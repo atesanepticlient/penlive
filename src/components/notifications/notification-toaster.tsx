@@ -1,29 +1,27 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // components/notification-toaster.tsx
 "use client";
-
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Pusher from "pusher-js";
-
-const iconMap : any = {
-  MONEY: "💲",
-  BELL: "🔔",
-  TROPHY: "🏆",
-  WARNING: "⚠️",
-  INFO: "ℹ️",
-  default: "🔔",
-};
+import { deleteNotification, markAsRead } from "@/action/notifications";
 
 export function NotificationToaster({ userId }: { userId: string }) {
   const router = useRouter();
+
+  const onShow = (notification: any) => {
+    markAsRead(notification.id);
+  };
+
+  const onManualClose = (notification: any) => {
+    deleteNotification(notification.id);
+  };
 
   useEffect(() => {
     const createContainer = () => {
       const container = document.createElement("div");
       container.id = "notification-container";
       container.className = `
-        fixed bottom-4 right-4
+        fixed top-8 right-4
         space-y-3
         z-50
         w-full max-w-xs
@@ -43,9 +41,9 @@ export function NotificationToaster({ userId }: { userId: string }) {
       toastElement.id = toastId;
       toastElement.className = `
         notification-toast
-        bg-white dark:bg-gray-800
+        bg-[#ffffff] !opacity-[0.90] dark:bg-gray-800
         border border-gray-200 dark:border-gray-700
-        rounded-lg shadow-lg
+        rounded-md shadow-lg
         px-4
         py-2
         cursor-pointer
@@ -66,27 +64,32 @@ export function NotificationToaster({ userId }: { userId: string }) {
       progressBar.style.animationDuration = "5000ms";
 
       toastElement.innerHTML = `
-        <div class="flex items-center gap-2">
-          <span class="text-2xl">
-            ${iconMap[notification.icon] || iconMap.default}
-          </span>
+        <div class="flex items-center gap-2 relative py-1">
+          <div class="w-1 h-[50px] bg-blue-500 rounded-sm"></div>
+          <div class="w-5 h-5 rounded-full flex justify-center items-center bg-blue-500 text-white">
+          i</div>
           <div class="flex-1">
-            <h4 class="font-semibold text-gray-900 dark:text-white">
-              ${notification.title}
+            <h4 class="font-semibold text-sm text-gray-900 dark:text-white">
+              New Message
             </h4>
             ${
               notification.description
                 ? `
-              <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+              <p class="text-xs text-gray-600 dark:text-gray-300  line-clamp-1">
                 ${notification.description}
               </p>
             `
                 : ""
             }
+
+
           </div>
-          <button class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
-            <X class="h-4 w-4" />
-          </button>
+         <button class="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex-shrink-0 self-start mt-0.5">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+          
         </div>
       `;
 
@@ -96,12 +99,12 @@ export function NotificationToaster({ userId }: { userId: string }) {
       const closeButton = toastElement.querySelector("button");
       closeButton?.addEventListener("click", (e) => {
         e.stopPropagation();
-        dismissToast(toastElement);
+        dismissToast(toastElement, true);
       });
 
       // Add click handler
       toastElement.addEventListener("click", () => {
-        router.push("/notifications");
+        router.push(`/notifications?id=${notification.id}`);
         dismissToast(toastElement);
       });
 
@@ -109,6 +112,7 @@ export function NotificationToaster({ userId }: { userId: string }) {
       const container =
         document.getElementById("notification-container") || createContainer();
       container.prepend(toastElement);
+      onShow(notification);
 
       // Auto-dismiss after 5 seconds
       const timeoutId = setTimeout(() => {
@@ -117,20 +121,21 @@ export function NotificationToaster({ userId }: { userId: string }) {
 
       // Store timeout ID for cleanup
       toastElement.dataset.timeoutId = timeoutId.toString();
-    });
 
-    const dismissToast = (toastElement: HTMLElement) => {
-      toastElement.classList.add(
-        "animate-out",
-        "fade-out",
-        "slide-out-to-right-8"
-      );
-      toastElement.addEventListener("animationend", () => {
-        const timeoutId = toastElement.dataset.timeoutId;
-        if (timeoutId) clearTimeout(parseInt(timeoutId));
-        toastElement.remove();
-      });
-    };
+      const dismissToast = (toastElement: HTMLElement, manual = false) => {
+        if (manual) onManualClose(notification);
+        toastElement.classList.add(
+          "animate-out",
+          "fade-out",
+          "slide-out-to-right-8",
+        );
+        toastElement.addEventListener("animationend", () => {
+          const timeoutId = toastElement.dataset.timeoutId;
+          if (timeoutId) clearTimeout(parseInt(timeoutId));
+          toastElement.remove();
+        });
+      };
+    });
 
     return () => {
       channel.unbind_all();

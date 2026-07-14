@@ -13,6 +13,15 @@ export const POST = async (req: NextRequest) => {
     if (!user)
       return Response.json({ error: "Refresh the page" }, { status: 401 });
 
+    const dbUser = await db.user.findUnique({
+      where: { id: user.id },
+      select: { id: true, withdrawPassword: true },
+    });
+
+    if (!dbUser) {
+      return Response.json({ error: "User not found" }, { status: 404 });
+    }
+
     const { paymentWalletId, password, walletNumber, ownerName } =
       (await req.json()) as CreateNewCardInput;
 
@@ -21,17 +30,8 @@ export const POST = async (req: NextRequest) => {
         {
           error: "Invalid Input",
         },
-        { status: 400 }
+        { status: 400 },
       );
-
-    const container = await db.cardContainer.findFirst({
-      where: { userId: user.id },
-    });
-
-    if (container)
-      return Response.json({
-        message: "Please Make new card on Existing Container",
-      });
 
     const existingCardWithNumber = await db.card.findFirst({
       where: { walletNumber },
@@ -42,48 +42,59 @@ export const POST = async (req: NextRequest) => {
         {
           error: "Card is avialiable! Try with another Number",
         },
-        { status: 400 }
+        { status: 400 },
       );
 
-    const hasdPassword = await bcrypt.hash(password, 20);
+    const paymentWallet = await db.paymentWallet.findUnique({
+      where: { id: paymentWalletId },
+    });
+
+    if (!paymentWallet) {
+      return Response.json(
+        { error: "Invalid payment wallet" },
+        { status: 400 },
+      );
+    }
+
+    const walletName = paymentWallet.walletName.toLowerCase();
+    const cardName = walletName.includes("bkash")
+      ? "BKASH"
+      : walletName.includes("nagad")
+        ? "NAGAD"
+        : null;
+
+    if (!cardName) {
+      return Response.json({ error: "Invalid card type" }, { status: 400 });
+    }
+
+    if (!dbUser.withdrawPassword) {
+      const hashed = await bcrypt.hash(password, 10);
+      await db.user.update({
+        where: { id: user.id },
+        data: { withdrawPassword: hashed },
+      });
+    } else {
+      const isMatch = await bcrypt.compare(password, dbUser.withdrawPassword);
+      if (!isMatch) {
+        return Response.json({ error: "Invalid Password" }, { status: 400 });
+      }
+    }
+
     const cardNumber = await cardNumberGenerate();
-    const cardContainer = await db.cardContainer.create({
+    const card = await db.card.create({
       data: {
-        ownerName,
-        password: hasdPassword,
-        cards: {
-          create: [
-            {
-              cardNumber,
-              walletNumber,
-              paymentWalletid: paymentWalletId,
-            },
-          ],
-        },
-        user: {
-          connect: {
-            id: user.id,
-          },
-        },
+        cardNumber,
+        walletNumber,
+        payerName: ownerName,
+        cardName,
+        userId: user.id,
+        containerId: user.id,
       },
     });
 
-    const card: any = await db.card.findFirst({
-      where: { containerId: cardContainer.id, walletNumber },
-      include: { container: true },
-    });
-
-    const paymentWallet = await db.paymentWallet.findUnique({
-      where: { id: card.paymentWalletid },
-    });
-    console.log({ card });
-    console.log({ paymentWallet });
-    console.log("card.paymentWalletid ", card.paymentWalletid);
-
-    card.paymentWallet = paymentWallet;
     return Response.json(
-      { message: "New card created", card: card },
-      { status: 201 }
+      { message: "New card created", card: { ...card, paymentWallet } },
+      { status: 201 },
     );
   } catch (error) {
     console.log("careate new card error ", error);

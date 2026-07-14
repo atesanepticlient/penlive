@@ -2,6 +2,7 @@
 import { ExtendedCard } from "@/types/api/card";
 import { Categories, GamesList, NetEnt } from "@/types/game";
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface WithdrawCardType {
   card: ExtendedCard | null;
@@ -22,13 +23,13 @@ interface GameType {
     category: string,
     name?: string,
     limit?: number,
-    provider?: any
+    provider?: any,
   ) => NetEnt[] | null;
 
   getCustomeCategoriesGames: (
     category?: string,
     search?: string,
-    limit?: number
+    limit?: number,
   ) => NetEnt[] | null;
 
   getFavoriesGames: (gamesId: string[]) => NetEnt[] | null;
@@ -66,7 +67,7 @@ export const useGames = create<GameType>((set, get) => ({
     if (name) {
       const searchLower = name.toLowerCase();
       flitedGames = flitedGames.filter((game) =>
-        game.name.toLowerCase().includes(searchLower)
+        game.name.toLowerCase().includes(searchLower),
       );
     }
 
@@ -76,7 +77,7 @@ export const useGames = create<GameType>((set, get) => ({
 
     return flitedGames;
   },
-  
+
   getCustomeCategoriesGames: (category, search, limit) => {
     const games = get().games!;
     if (!games) return null;
@@ -290,7 +291,9 @@ export const useGames = create<GameType>((set, get) => ({
 
     if (search) {
       filtedGames = filtedGames.filter((game: any) =>
-        game.gameInfos[0]?.gameName.toLowerCase().includes(search.toLowerCase())
+        game.gameInfos[0]?.gameName
+          .toLowerCase()
+          .includes(search.toLowerCase()),
       );
     }
     if (limit !== undefined && limit > 0) {
@@ -305,7 +308,7 @@ export const useGames = create<GameType>((set, get) => ({
     const allGamesArrays = Object.values(games).flat();
 
     const flitedGames = allGamesArrays.filter((game) =>
-      gamesId.includes(game.id)
+      gamesId.includes(game.id),
     );
 
     return flitedGames;
@@ -315,4 +318,59 @@ export const useGames = create<GameType>((set, get) => ({
   setError: (error) => set((state) => ({ ...state, error })),
 }));
 
+interface NotificationBadge {
+  achivementRewardsCount: number;
+  airDropCount: number;
+  bonusReceivingRewardCount: number;
+  dailyCheckinCount: number;
+  siginBonueCount: number;
+  unSeenMessagesCount: number;
+}
+interface NotificationType {
+  badge: NotificationBadge;
+  setBadge: (badge: NotificationBadge) => void;
+}
+export const useNotificationBadge = create<NotificationType>((set) => ({
+  badge: {
+    achivementRewardsCount: 0,
+    airDropCount: 0,
+    bonusReceivingRewardCount: 0,
+    dailyCheckinCount: 0,
+    siginBonueCount: 0,
+    unSeenMessagesCount: 0,
+  },
+  setBadge: (badge) => set((state) => ({ ...state, badge })),
+}));
 
+type Lang = "ENG" | "BN";
+
+type LangState = {
+  lang: Lang;
+  toggleLang: () => void;
+  setLang: (lang: Lang) => void;
+};
+
+export const useLangStore = create<LangState>()(
+  persist(
+    (set, get) => ({
+      lang: "ENG", // default (used if nothing in localStorage)
+
+      toggleLang: () => {
+        const current = get().lang;
+        set({ lang: current === "ENG" ? "BN" : "ENG" });
+      },
+
+      setLang: (lang) => set({ lang }),
+    }),
+    {
+      name: "lang-storage",
+
+      // optional: ensure fallback to ENG if corrupted
+      onRehydrateStorage: () => (state) => {
+        if (!state?.lang) {
+          state?.setLang("ENG");
+        }
+      },
+    },
+  ),
+);

@@ -28,6 +28,18 @@ export async function GET(request: Request) {
       db.notification.count({ where: { userId } }),
     ]);
 
+    const threeDaysAgo = new Date();
+    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+
+    await db.notification.deleteMany({
+      where: {
+        userId: userId,
+        createdAt: {
+          lt: threeDaysAgo, // older than 3 days
+        },
+      },
+    });
+
     return NextResponse.json({
       notifications: notifications || [],
       totalCount: totalCount || 0,
@@ -35,7 +47,7 @@ export async function GET(request: Request) {
   } catch {
     return NextResponse.json(
       { error: "Failed to fetch notifications" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -62,7 +74,7 @@ export async function POST(req: Request) {
   if (!validation.success) {
     return NextResponse.json(
       { error: validation.error.errors },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -71,11 +83,11 @@ export async function POST(req: Request) {
 
   // Now we call the `createNotification` function
   const result = await createNotification({
-    userId,  // userId is now guaranteed to be present
-    title, 
-    description, 
-    icon, 
-    metadata
+    userId, // userId is now guaranteed to be present
+    title,
+    description,
+    icon,
+    metadata,
   });
 
   if (!result.success) {

@@ -1,29 +1,10 @@
 "use client";
-import React from "react";
+import AnimatedSlider from "@/components/hightlights/slider-neumoriphic";
 
-const page = () => {
-  const handleDeposit = async () => {
-    const response = await fetch("/api/notifications", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        userId: "cmc017py00000un84afcgykrw",
-        title: "Deposit Received",
-        description: "Your deposit of $100 is being processed",
-        icon: "MONEY",
-      }),
-    });
-
-    if (!response.ok) {
-      console.error("Failed to send notification");
-    }
-  };
-
+export default function Page() {
   return (
-    <div>
-      <button onClick={() => handleDeposit()}>Button Click</button>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <AnimatedSlider initialValue={1200} onChange={()=> {}} />
     </div>
   );
-};
-
-export default page;
+}

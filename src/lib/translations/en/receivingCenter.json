@@ -1,0 +1,15 @@
+{
+  "bonus": {
+    "no_bonus": "No Bonus Available",
+    "reward_voucher": "Reward Voucher",
+    "bonus_label": "Bonus",
+    "golden_egg": "Golden Egg",
+    "red_envelope": "Red Envelope",
+    "roulette_wheel": "Roulette Wheel",
+    "reward": "Reward",
+    "due_date": "Due Date",
+    "claim": "Claim",
+    "congratulations": "Congratulations",
+    "day": "day"
+  }
+}

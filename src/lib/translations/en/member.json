@@ -1,0 +1,40 @@
+{
+  "page": {
+    "title": "My Account"
+  },
+  "profile": {
+    "vipLevel": "VIP {level}",
+    "playerId": "Player ID",
+    "nickname": "Nickname",
+    "joined": "Joined",
+    "copyId": "Copy ID",
+    "signin": "Signin"
+  },
+  "balance": {
+    "label": "Balance",
+    "updated": "Balance updated",
+    "refresh": "Refresh balance"
+  },
+  "actions": {
+    "deposit": "Deposit",
+    "withdrawal": "Withdrawal",
+    "myCards": "My Cards"
+  },
+  "menu": {
+    "title": "Member Menu",
+    "items": {
+      "reward": "Reward",
+      "bettingRecord": "Betting Record",
+      "profitAndLoss": "Profit and Loss",
+      "depositRecord": "Deposit Record",
+      "withdrawRecord": "Withdraw Record",
+      "myAccount": "My Account",
+      "securityCenter": "Security Center",
+      "inviteFriend": "Invite Friend",
+      "internalMessage": "Internal Message",
+      "downloadApp": "Download App",
+      "customerCenter": "Customer Center",
+      "logout": "Logout"
+    }
+  }
+}

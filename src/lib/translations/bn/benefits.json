@@ -1,0 +1,25 @@
+{
+  "page": {
+    "title": "VIP সুবিধাসমূহ"
+  },
+  "level": {
+    "current": "বর্তমান স্তর",
+    "next": "পরবর্তী স্তর",
+    "progress": "পরবর্তী স্তরে অগ্রগতি"
+  },
+  "benefits": {
+    "title": "আপনার সুবিধাসমূহ",
+    "weeklyBonus": "সাপ্তাহিক বোনাস",
+    "monthlyBonus": "মাসিক বোনাস",
+    "birthdayBonus": "জন্মদিনের বোনাস",
+    "exclusiveOffers": "এক্সক্লুসিভ অফার",
+    "personalManager": "ব্যক্তিগত অ্যাকাউন্ট ম্যানেজার",
+    "fasterWithdrawal": "দ্রুত উত্তোলন",
+    "higherLimits": "উচ্চতর বাজি সীমা"
+  },
+  "requirements": {
+    "title": "স্তরের প্রয়োজনীয়তা",
+    "turnover": "প্রয়োজনীয় টার্নওভার",
+    "currentTurnover": "বর্তমান টার্নওভার"
+  }
+}

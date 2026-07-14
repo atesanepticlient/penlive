@@ -1,71 +1,78 @@
-import Image from "next/image";
+"use client";
+
 import React from "react";
-
-import notice from "@/../public/icons/notice.png";
 import Marquee from "react-fast-marquee";
+import Image from "next/image";
+import notice from "@/../public/icons/notice.png";
+import { useGetHeadlineQuery } from "@/lib/features/settingApiSlice";
 
-const AppNotice = () => {
+type Props = {
+  variant?: "PLATFORM" | "NORMAL";
+};
+
+const AppNotice: React.FC<Props> = ({ variant = "PLATFORM" }) => {
+  const { data, isLoading, error } = useGetHeadlineQuery();
+
+  if (isLoading || !data || error) {
+    return null;
+  }
+
   return (
-    <div className="px-1">
+    <div className={`${variant == "NORMAL" && "px-2"}`}>
       <div
-        style={{
-          width: "100%",
-          height: 32,
-          paddingLeft: 11.4,
-          paddingRight: 11.4,
-          paddingTop: 6.2,
-          paddingBottom: 6.2,
-          background:
-            "linear-gradient(180deg, var(--color-cyan-10, #002632) 0%, var(--color-cyan-11, #003A3A) 100%)",
-          boxShadow: "0px 1.7331600189208984px 0px #00333A",
-          overflow: "hidden",
-          borderRadius: 52,
-          outline:
-            "1px var(--color-cyan-30-50%, rgba(17, 134, 125, 0.50)) solid",
-          outlineOffset: "-1px",
-          justifyContent: "flex-start",
-          alignItems: "center",
-          gap: 7.8,
-          display: "inline-flex",
-        }}
+        className={`
+          inline-flex items-center gap-2
+          w-full h-[30px]
+         
+          overflow-hidden
+          ${
+            variant === "PLATFORM"
+              ? "bg-[linear-gradient(90deg,#1a0d2e,#0d0b1a,#1a0d2e)] border-b border-[rgba(255,215,0,0.12)]"
+              : "bg-[linear-gradient(180deg,#111111,#1A1A1A)] rounded-[52px] border border-[rgba(212,175,55,0.3)]  mt-3 "
+          }
+        `}
       >
-        <Image
-          style={{ width: 17.67, height: 17.67, position: "relative" }}
-          src={notice}
-          alt="notice"
-        />
-        <div
-          style={{
-            flex: "1 1 0",
-            height: 15.7,
-            paddingLeft: 20.8,
-            paddingRight: 69.83,
-            overflow: "hidden",
-            justifyContent: "flex-start",
-            alignItems: "center",
-            display: "flex",
-          }}
-        >
-          <Marquee>
-            <p
-              style={{
-                flex: "1 1 0",
-                justifyContent: "center",
-                display: "flex",
-                flexDirection: "column",
-                color: "var(--color-orange-64, #FFAB49)",
-                fontSize: 13,
-                fontFamily: "Segoe UI",
-                fontWeight: "400",
+        {/* LEFT LABEL / ICON */}
+        {variant === "PLATFORM" ? (
+          <div
+            className="
+              text-[8.5px]
+              font-bold
+              text-white
+              px-[7px] h-[90%] flex items-center
+              flex-shrink-0
+              tracking-[1px]
+              whitespace-nowrap
+              font-['Orbitron']
+              bg-[linear-gradient(90deg,#ff003c,#ff6b00)]
+              shadow-[4px_0_10px_rgba(255,0,60,0.4)]
+            "
+          >
+            🔥 LIVE
+          </div>
+        ) : (
+          <div className="w-[18px] h-[18px] flex-shrink-0">
+            <Image src={notice} alt="notice" className="w-full h-full" />
+          </div>
+        )}
 
-                textShadow: "0px 2px 0px rgba(17, 0, 0, 0.30)",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-              }}
-            >
-              Mbuzz88 🌟 আপনার প্রথম জমাতে 50% বোনাস পান! 🎉
-            </p>
-          </Marquee>
+        {/* MARQUEE */}
+        <div className="flex-1 overflow-hidden">
+          {variant === "PLATFORM" ? (
+            <Marquee gradient={false} speed={40}>
+              <div className="flex anim-ticker ">
+                <span className="text-[12px] font-normal text-[#ffd900] font-sans">
+                  <div dangerouslySetInnerHTML={{ __html: data.html }} />
+                </span>
+              </div>
+            </Marquee>
+          ) : (
+            <Marquee gradient={false} speed={40}>
+              <p className="text-[#D4AF37] text-[13px] font-medium font-['Segoe_UI'] whitespace-nowrap">
+                <div dangerouslySetInnerHTML={{ __html: data.html }} />
+              </p>
+            </Marquee>
+          )}
         </div>
       </div>
     </div>

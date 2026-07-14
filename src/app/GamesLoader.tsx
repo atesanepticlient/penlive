@@ -1,38 +1,33 @@
 "use client";
-import {
-  useFetch568WinGamesQuery,
-  useFetchGamesListQuery,
-  useFetchNewProviderGamesListQuery,
-} from "@/lib/features/gamesApiSlice";
-import { useGames } from "@/lib/store.zustond";
-import { useEffect } from "react";
+import { useFetchGamesListQuery } from "@/lib/features/gamesApiSlice";
+
 
 const GamesLoader = () => {
-  // const { data: oldProviderData, isLoading: isOldProviderLoading } = useFetchGamesListQuery();
+  const { data } = useFetchGamesListQuery({});
   // const { data: newProviderData, isLoading: isNewProviderLoading } = useFetchNewProviderGamesListQuery();
 
-  const { data: gamesData, isLoading } = useFetch568WinGamesQuery({});
-  console.log("games data : ", gamesData);
-  const { setLoading, setGames } = useGames((state) => state);
+  console.log({ gamesList: data });
 
-  useEffect(() => {
-    // if (!isNewProviderLoading && newProviderData) {
-    //   setLoading(false);
-    //   setGames(newProviderData.gamesList);
-    //   console.log('new done')
-    // }
+  // const { setLoading, setGames } = useGames((state) => state);
 
-    // if (!isOldProviderLoading && oldProviderData) {
-    //   setLoading(false);
-    //   setGames(oldProviderData.gamesList);
-    //   console.log('old done')
-    // }
+  // useEffect(() => {
+  //   if (!isNewProviderLoading && newProviderData) {
+  //     setLoading(false);
+  //     setGames(newProviderData.gamesList);
+  //     console.log('new done')
+  //   }
 
-    if (!isLoading && gamesData) {
-      setLoading(false);
-      setGames(gamesData.gamesList);
-    }
-  }, [gamesData, isLoading]);
+  //   if (!isOldProviderLoading && oldProviderData) {
+  //     setLoading(false);
+  //     setGames(oldProviderData.gamesList);
+  //     console.log('old done')
+  //   }
+
+  //   if (!isLoading && gamesData) {
+  //     setLoading(false);
+  //     setGames(gamesData.gamesList);
+  //   }
+  // }, [gamesData, isLoading]);
 
   return null;
 };

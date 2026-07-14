@@ -2,17 +2,15 @@
 import AppHeader from "@/components/AppHeader";
 import React from "react";
 const storage = LocalArrayStorage<string>();
-import { GameCardWithProvider } from "@/components/GameCards";
-import { useGames } from "@/lib/store.zustond";
-import GameLoader from "@/components/loader/GameLoader";
+import { GameCardWithProvider } from "@/components/games/GameCards";
+
 import SideNavLayout from "@/components/SideNavLayout";
 import { LocalArrayStorage } from "@/lib/favorites";
 import { getGames } from "@/lib/player";
 
 const Roulette = () => {
-  const { getFavoriesGames } = useGames((state) => state);
   const gamesId = storage.getAll("favorites-games");
-  const gamesList = getGames(gamesId)
+  const gamesList = getGames(gamesId);
   return (
     <SideNavLayout>
       <div>
@@ -24,7 +22,7 @@ const Roulette = () => {
                 <GameCardWithProvider game={game} key={i} />
               ))}
 
-            <GameLoader lenght={20} loading={!!!gamesList} />
+            {/* <GameLoader lenght={20} loading={!!!gamesList} /> */}
           </div>
           {gamesList && gamesList.length == 0 && (
             <span className="block text-center text-lg font-semibold text-[#23FFC8]">

@@ -12,7 +12,6 @@ import { useForm } from "react-hook-form";
 import { RiCloseCircleLine } from "react-icons/ri";
 import zod from "zod";
 import { loginSchema } from "@/schema";
-import Variant1 from "../icons/Variant2";
 
 import { FaEyeSlash } from "react-icons/fa6";
 import { FaEye } from "react-icons/fa6";
@@ -21,8 +20,11 @@ import { login } from "@/action/login";
 import { redirect, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 import SpinLoader from "../loader/SpinLoader";
+import { FaPhone } from "react-icons/fa";
+import { useText } from "@/hook/useText";
 
 const LoginForm = () => {
+  const t = useText("/login");
   const [pending, startTransiction] = useTransition();
   const customRedirect = useSearchParams().get("redirect") || "";
 
@@ -51,6 +53,16 @@ const LoginForm = () => {
     confirmPassword: boolean;
   }>({ password: false, confirmPassword: false });
 
+  const inputBaseClass = `
+    w-full mb-3 outline-none text-sm px-10 py-3.5 
+    bg-[#0A0A0A] text-white rounded-xl overflow-hidden 
+    border border-white/10 focus:border-[#D4AF37]/50 
+    transition-all duration-300 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]
+    placeholder:text-white/30 font-medium
+  `;
+
+  const iconBaseClass = "w-4 h-4 text-[#F9E498] opacity-70";
+
   return (
     <>
       <Form {...form}>
@@ -63,14 +75,18 @@ const LoginForm = () => {
                 <FormControl>
                   <div className="relative">
                     <input
-                      placeholder="Enter Phone"
+                      placeholder={
+                        (t.login as any)?.form?.phone?.placeholder ||
+                        "Enter Phone Number"
+                      }
                       disabled={pending}
                       {...field}
-                      className="text-white w-full mb-2 outline-none text-sm px-8 py-3 bg-wwwwwwck-44-4comdaintree rounded-[10.4px] overflow-hidden border border-solid border-[#006165] focus:border-[#2f9396] shadow-[0px_2.08px_0px_#002631] placeholder:font-www-wwwck444-com-semantic-input font-[number:var(--www-wwwck444-com-semantic-input-font-weight)] placeholder:text-wwwwwwck444combright-turquoise placeholder:text-[length:var(--www-wwwck444-com-semantic-input-font-size)] placeholder:tracking-[var(--www-wwwck444-com-semantic-input-letter-spacing)] placeholder:leading-[var(--www-wwwck444-com-semantic-input-line-height)] placeholder:[font-style:var(--www-wwwck444-com-semantic-input-font-style)]"
+                      className={inputBaseClass}
+                      autoComplete="off"
                     />
 
                     <div className="flex w-[19px] h-[19px] items-center justify-center absolute top-[45%] -translate-y-1/2 left-2.5">
-                      <Variant1 className="!relative !flex-1 !grow !h-[18.72px]" />
+                      <FaPhone className={iconBaseClass} />
                     </div>
 
                     {form.getValues("phone") && (
@@ -78,7 +94,7 @@ const LoginForm = () => {
                         onClick={() => form.setValue("phone", "")}
                         className="flex w-[19px] h-[19px] items-center justify-center absolute top-[45%] -translate-y-1/2 right-2.5"
                       >
-                        <RiCloseCircleLine className="!relative !flex-1 !grow !h-[18.72px] text-wwwwwwck444combright-turquoise " />
+                        <RiCloseCircleLine className="!relative !flex-1 !grow !h-[18.72px] text-[#F9E498] " />
                       </button>
                     )}
                   </div>
@@ -97,30 +113,33 @@ const LoginForm = () => {
                   <div className="relative">
                     <input
                       type={passwordShow.password ? "text" : "password"}
-                      placeholder="Password"
+                      placeholder={
+                        (t.login as any)?.form?.password?.placeholder ||
+                        "Password"
+                      }
                       disabled={pending}
                       {...field}
-                      className="text-white w-full mb-2 outline-none text-sm px-8 py-3 bg-wwwwwwck-44-4comdaintree rounded-[10.4px] overflow-hidden border border-solid border-[#006165] focus:border-[#2f9396] shadow-[0px_2.08px_0px_#002631] placeholder:font-www-wwwck444-com-semantic-input font-[number:var(--www-wwwck444-com-semantic-input-font-weight)] placeholder:text-wwwwwwck444combright-turquoise placeholder:text-[length:var(--www-wwwck444-com-semantic-input-font-size)] placeholder:tracking-[var(--www-wwwck444-com-semantic-input-letter-spacing)] placeholder:leading-[var(--www-wwwck444-com-semantic-input-line-height)] placeholder:[font-style:var(--www-wwwck444-com-semantic-input-font-style)]"
+                      className={inputBaseClass}
                     />
 
                     <div className="flex w-[19px] h-[19px] items-center justify-center absolute top-[45%] -translate-y-1/2 left-2.5">
-                      <IoLockOpen className="!relative !flex-1 !grow !h-[18.72px] text-wwwwwwck444combright-turquoise" />
+                      <IoLockOpen className={iconBaseClass} />
                     </div>
 
                     <button
                       type="button"
                       onClick={() =>
-                        setPasswordShow((state) => ({
-                          ...state,
-                          password: !state.password,
+                        setPasswordShow((s) => ({
+                          ...s,
+                          password: !s.password,
                         }))
                       }
-                      className="flex w-[19px] h-[19px] items-center justify-center absolute top-[45%] -translate-y-1/2 right-2.5"
+                      className="absolute right-3.5 top-1/2 -translate-y-[65%] text-white/40 hover:text-[#F9E498]"
                     >
                       {passwordShow.password ? (
-                        <FaEye className="!relative !flex-1 !grow !h-[18.72px] text-wwwwwwck444combright-turquoise " />
+                        <FaEye size={16} />
                       ) : (
-                        <FaEyeSlash className="!relative !flex-1 !grow !h-[18.72px] text-wwwwwwck444combright-turquoise " />
+                        <FaEyeSlash size={16} />
                       )}
                     </button>
                   </div>
@@ -175,7 +194,7 @@ const LoginForm = () => {
                   textShadow: "0px 1px 0px rgba(159, 52, 0, 0.20)",
                 }}
               >
-                Login
+                {(t.login as any)?.form?.submit || "LOGIN"}
               </div>
             </div>
           </button>

@@ -1,0 +1,33 @@
+{
+  "page": {
+    "title": "Invite Friends"
+  },
+  "overview": {
+    "title": "Invitation Overview",
+    "totalInvited": "Total Invited",
+    "activeUsers": "Active Users",
+    "totalEarnings": "Total Earnings"
+  },
+  "rewards": {
+    "title": "Invitation Rewards",
+    "claimReward": "Claim Reward"
+  },
+  "records": {
+    "title": "Invitation Records",
+    "date": "Date",
+    "friend": "Friend",
+    "status": "Status",
+    "reward": "Reward"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "rank": "Rank",
+    "inviter": "Inviter",
+    "invitations": "Invitations"
+  },
+  "share": {
+    "title": "Share Your Link",
+    "copyLink": "Copy Link",
+    "inviteCode": "Your Invite Code"
+  }
+}

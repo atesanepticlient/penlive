@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { GameCardWithProvider } from "./GameCards";
+import { GameCardWithProvider } from "./games/GameCards";
 import GameSelectionHeader from "./GameSelectionHeader";
 import { useGames } from "@/lib/store.zustond";
 import GameLoader from "./loader/GameLoader";
@@ -8,7 +8,7 @@ import GameLoader from "./loader/GameLoader";
 const HotGames = () => {
   const [gamesList, setGamesList] = useState<any[]>([]); // State to store hot games
   const { getCustomeCategoriesGames } = useGames((state) => state);
- 
+
   // Fetch hot games using the getCustomeCategoriesGames function
   useEffect(() => {
     const fetchHotGames = () => {
@@ -37,7 +37,7 @@ const HotGames = () => {
       {/* Game Selection Header */}
       <GameSelectionHeader
         title="Hot Games"
-        leftAction={handleLeftButtonClick}  // left button action for scrolling
+        leftAction={handleLeftButtonClick} // left button action for scrolling
         rightAction={handleRightButtonClick} // right button action for scrolling
         seeMoreLink="/hot-games" // Adjust link if necessary
       />
@@ -48,11 +48,13 @@ const HotGames = () => {
         ref={gamesContainer}
       >
         <div className="hot-games-list">
-          {gamesList?.length > 0 ? (
-            gamesList.map((game, i) => <GameCardWithProvider key={i} game={game} />)
+          {/* {gamesList?.length > 0 ? (
+            gamesList.map((game, i) => (
+              <GameCardWithProvider key={i} game={game} />
+            ))
           ) : (
             <GameLoader lenght={20} loading={true} />
-          )}
+          )} */}
         </div>
       </div>
     </div>

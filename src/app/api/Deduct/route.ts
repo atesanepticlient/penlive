@@ -45,24 +45,11 @@ export const POST = async (req: NextRequest) => {
     }
 
     // Update the user's wallet balance and betting record
-    await db.user.update({
-      where: {
-        id: user.id,
-      },
+    const updatedWallet = await db.wallet.update({
+      where: { userId: user.id },
       data: {
-        wallet: {
-          update: {
-            balance: {
-              decrement: Amount, // Deduct the amount from the wallet
-            },
-          },
-        },
-        bettingRecord: {
-          update: {
-            totalBet: {
-              increment: Amount, // Increment the total bet amount
-            },
-          },
+        balance: {
+          decrement: Amount,
         },
       },
     });
@@ -84,11 +71,19 @@ export const POST = async (req: NextRequest) => {
       },
     });
 
+    await db.bettingRecord.create({
+      data: {
+        userId: user.id,
+        betAmount: Amount,
+        status: "RUNNING",
+      },
+    });
+
     // Return a successful response with the account information
     return Response.json(
       {
         AccountName: user.name,
-        Balance: user.wallet?.balance,
+        Balance: updatedWallet.balance,
         ErrorCode: 0,
         ErrorMessage: "No Error",
         BetAmount: Amount,

@@ -2,11 +2,9 @@
 import AppHeader from "@/components/AppHeader";
 import React, { useState } from "react";
 
-import { GameCardWithProvider } from "@/components/GameCards";
 import { useGames } from "@/lib/store.zustond";
 import { Categories } from "@/types/game";
 import PrimaryInput from "@/components/form/input";
-import GameLoader from "@/components/loader/GameLoader";
 import SideNavLayout from "@/components/SideNavLayout";
 
 const Card = () => {
@@ -28,12 +26,12 @@ const Card = () => {
             />
           </div>
           <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-3 lg:gap-4">
-            {gamesList &&
+            {/* {gamesList &&
               gamesList.map((game, i) => (
                 <GameCardWithProvider game={game} key={i} />
-              ))}
+              ))} */}
 
-            <GameLoader lenght={20} loading={!!!gamesList} />
+            {/* <GameLoader lenght={20} loading={!!!gamesList} /> */}
           </div>
           {gamesList && gamesList.length == 0 && (
             <span className="block text-center text-lg font-semibold text-[#23FFC8]">

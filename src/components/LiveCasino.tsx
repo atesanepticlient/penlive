@@ -1,7 +1,7 @@
 "use client";
 import React, { useRef } from "react";
 
-import { GameCardWithProvider } from "./GameCards";
+import { GameCardWithProvider } from "./games/GameCards";
 
 import GameSelectionHeader from "./GameSelectionHeader";
 import { useGames } from "@/lib/store.zustond";
@@ -44,7 +44,7 @@ const LiveCasino = () => {
               <GameCardWithProvider game={game} key={i} />
             ))}
 
-          <GameLoader lenght={20} loading={!!!gamesList} />
+          <GameLoader length={20} loading={!!!gamesList} />
         </div>
       </div>
     </div>

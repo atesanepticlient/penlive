@@ -1,0 +1,25 @@
+{
+  "page": {
+    "title": "Betting Record"
+  },
+  "filters": {
+    "date": "Date",
+    "game": "Game",
+    "type": "Type",
+    "status": "Status"
+  },
+  "table": {
+    "date": "Date",
+    "game": "Game",
+    "betAmount": "Bet Amount",
+    "payout": "Payout",
+    "profit": "Profit/Loss",
+    "status": "Status"
+  },
+  "summary": {
+    "totalBets": "Total Bets",
+    "totalWagered": "Total Wagered",
+    "totalPayout": "Total Payout",
+    "netProfit": "Net Profit"
+  }
+}

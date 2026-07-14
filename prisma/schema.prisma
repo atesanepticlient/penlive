@@ -14,146 +14,27 @@ datasource db {
 }
 
 
-
-
-model User{
-  id                String @id @default(cuid()) 
-  phone             String @unique
-  name              String @default("Pro User")
-  password          String
-  withdrawPassword  String?
-  playerId          String @unique
-  facebook          String? @default("")
-  isBanned          Boolean
-  referId           String @unique
-  wallet            Wallet?
-  apayDeposits      APayDeposit[]
-  deposit           Deposit[]
-  createdAt         DateTime @default(now())
-  cardContainer     CardContainer?
-  apayWithdraws     APayWithdraw[]
-  withdraws         Withdraw[]
-  inviationBonus    InvitationBonus?
-  invitedById       String?
-  notifications     Notification[]
-  Invitation        Invitation?
-  invitedBy         Invitation? @relation("ReferredUsers", fields: [invitedById], references: [id])
-  signinBonus       ClaimedSigninReward[]
-
-  bettingRecord     BettingRecord?
-  bets              Bet[]
-}
-model Bet {
-  id            String   @id @default(cuid())
-  productType   Int
-  gameType      Int
-  gameId        Int
-  amount        Decimal
-  winloss       Decimal?
-  transferCode  String
-  transactionId String
-  status        BetStatus @default(RUNNING)
-  result        BetResult?
-  userId        String
-  user          User @relation(fields: [userId], references: [id])
-  createdAt     DateTime @default(now())
-
-  // REMOVE this ↓
-  // @@unique([transferCode, transactionId])
-
-  // (Optional) add a simple index for lookups
-  @@index([transferCode, transactionId])
+enum BettingCategory {
+  SLOT
+  LIVE
+  POKER
+  FISH
+  SPORTS
 }
 
-model BettingRecord {
-  id                String @id @default(cuid()) 
-  totalBet          Decimal @default(0)
-  totalWin          Decimal @default(0)
-
-  userId            String @unique
-  user              User @relation(fields: [userId], references: [id])
+enum BetStatus {
+  RUNNING
+  SETTLED
+  CANCELED
+  VOID
 }
 
-model Invitation {
-  id                String @id @default(cuid()) 
-  userId              String @unique
-  user                User     @relation(fields: [userId], references: [id])
-  referredUsers       User[] @relation("ReferredUsers")
+enum BetResult {
+  WON
+  LOST
+  TIE
+  VOID
 }
-
-model InvitationBonus {
-  id                      String @id @default(cuid()) 
-  totalRegisters          Int @default(0)
-  totalValidreferral      Int @default(0)
-  claimedRewards          ClaimedInvitationReward[]
-  userId                  String @unique
-  user                    User @relation(fields: [userId], references: [id])
-}
-
-model InvitationRewareds {
-  id                      String @id @default(cuid()) 
-  rewardImg               String
-  targetReferral          Int
-  prize                   Decimal
-  claimedUsers            ClaimedInvitationReward[]
-  
-}
-
-model SigninBonusRewards {
-  id                      String @id @default(cuid()) 
-  day                     String
-  prize                   Int
-  deposit                 Decimal
-  claimedUsers            ClaimedSigninReward[]
-
-}
-
-model ClaimedSigninReward {
-  id                      String @id @default(cuid()) 
-  rewardId                String
-  reward                  SigninBonusRewards @relation(fields: [rewardId], references: [id])
-  userId                  String @unique
-  user                    User @relation(fields: [userId], references: [id])
-  createdAt               DateTime @default(now())
-  depositId               String @unique
-  deposit                 Deposit? @relation(fields: [depositId],references: [id])
-  isClamed                Boolean @default(false)
-}
-
-model ClaimedInvitationReward {
-  id                   String               @id @default(cuid())
-  invitationBonusId    String
-  rewardId             String
-  claimedAt            DateTime             @default(now())
-  createdAt         DateTime @default(now())
-  invitationBonus      InvitationBonus      @relation(fields: [invitationBonusId], references: [id])
-  reward               InvitationRewareds   @relation(fields: [rewardId], references: [id])
-
-  @@unique([invitationBonusId, rewardId]) // optional: prevent duplicate claims
-}
-
-
-
-
-model Wallet {
-  id                      String @id @default(cuid()) 
-  balance                 Decimal
-  signinBonus             Boolean @default(false)
-  referralBonus           Boolean @default(false)
-  currency                String @default("BDT")
-  turnOver                Decimal @default(0)
-  userId                  String @unique
-  user                    User @relation(fields: [userId], references: [id])
- 
-}
-
-model Bonus {
-  id                      String @id @default(cuid()) 
-  signinBonus             Int @default(5)
-  referralBonus           Int @default(5)
-}
-
-
 
 enum PaymentWalletType {
   EWALLET
@@ -161,25 +42,15 @@ enum PaymentWalletType {
   CARD
   CRYPTO
 }
-model PaymentWallet {
-  id                      String @id @default(cuid())
-  walletLogo              String
-  walletName              String
-  walletType              PaymentWalletType @default(EWALLET)
 
+enum TrxWallet {
+  BKASH
+  NAGAD
 }
 
-model DepositWallet {
-  id                      String @id @default(cuid()) 
-  paymentWalletId         String
-  walletsNumber           String[]
-  instructions            String
-  warning                 String?
-  trxType                 String
-  minDeposit              Decimal
-  maximumDeposit          Decimal
-  isActive                Boolean @default(true)
-  deposits                Deposit[] @relation("WalletDeposits")
+enum CardName {
+  BKASH
+  NAGAD
 }
 
 enum DepositStatus {
@@ -187,127 +58,423 @@ enum DepositStatus {
   APPROVED
   REJECTED
 }
-model APayDeposit {
-  id                  String @id @default(cuid())
-  orderId             String
-  trxId               String
-  ps                  String
-  createdAt           DateTime @default(now())
-  userId              String
-  user                User @relation(fields: [userId], references: [id])
-}
-model APayWithdraw {
-  id                  String @id @default(cuid())
-  orderId             String
-  ps                  String
-  trxId               String
-  createdAt           DateTime @default(now())
-  userId              String
-  user                User @relation(fields: [userId], references: [id])
-}
-model Deposit {
-  id                      String @id @default(cuid()) 
-  amount                  Decimal
-  bonus                   Decimal?
-  bonusFor                String
-  senderNumber            String
-  trxID                   String?
-  walletId                String
-  walletNumber            String
-  trackingNumber          String @unique
-  expire                  DateTime
-  status                  DepositStatus @default(PENDING)
-  wallet                  DepositWallet  @relation("WalletDeposits", fields: [walletId], references: [id], onDelete: Cascade)
-  userId                  String
-  user                    User @relation(fields: [userId],references: [id])
-  createdAt               DateTime @default(now())
-  ClaimedSigninReward     ClaimedSigninReward?
-}
-
-
-
-model CardContainer{
-  id                      String @id @default(cuid()) 
-  ownerName               String
-  password                String
-  userId                  String @unique
-  user                    User @relation(fields: [userId], references: [id])
-  createdAt               DateTime @default(now())
-  cards                   Card[]
-}
-
-model Card{
-  id                      String @id @default(cuid()) 
-  cardNumber              String
-  walletNumber            String
-  paymentWalletid         String 
-  containerId             String 
-  isActive                Boolean @default(true)
-  container               CardContainer @relation(fields: [containerId], references: [id])
-  createdAt               DateTime @default(now())
-  withdraws               Withdraw[] 
-}
 
 enum WithdrawStatus {
   PENDING
   APPROVED
   REJECTED
 }
-model Withdraw {
-  id                      String @id @default(cuid()) 
-  amount                  Decimal
-  expire                  DateTime
-  status                  WithdrawStatus @default(PENDING)  
-  createdAt               DateTime @default(now())
-  cardId                  String
-  card                    Card @relation(fields: [cardId], references: [id])
-  userId                  String
-  user                    User @relation(fields: [userId], references: [id])
-}
 
 enum ManagementRole {
-  ADMIN 
+  OWNER
+  ADMIN
   SUBADMIN
+  SUPPORT
 }
-model Admin {
-  id                      String @id @default(cuid()) 
-  name                    String
-  role                    ManagementRole @default(ADMIN)
-  email                   String @unique
-  password                String
-   
-
-}
-
-model EmailVerificationToken {
-  id                      String @id @default(cuid()) 
-  expire                  DateTime
-  token                   String
-  createdAt               DateTime @default(now())
-}
-
-
-model SiteSetting{
-  id                          String @id @default(cuid()) 
-  maxWithdraw                 Decimal? @default(0)
-  minWithdraw                 Decimal? @default(0)
-  dpTurnover                  Decimal? @default(0)
-
-}
-
-
 
 enum NotificationIcon {
- MONEY
-BELL
+  MONEY
+  BELL
   TROPHY
   WARNING
   INFO
   DEPOSIT
   WITHDRAW
   BONUS
-
 }
+
+enum AirDropName {
+  FIRST_JOIN
+}
+
+enum AirDropStatus {
+  PENDING
+  CLAIMED
+}
+
+enum RewardName {
+  SPIN
+  ENVELOP
+  EGGHUNT
+}
+
+enum RewardEventTicketType {
+  DEPOSIT
+  BET
+  INVITE
+}
+
+enum AffiliateStatus {
+  ACTIVE
+  SUSPENDED
+  PARTNER
+}
+
+enum MilestoneType {
+  USER_COUNT
+  MIN_DEPOSIT
+  VALID_BETTING
+}
+
+enum RewardClaimStatus {
+  PENDING
+  PAID
+}
+
+enum MissionStatus {
+  TODAY
+  COMING_SOON
+  FINISHED
+}
+
+
+
+// ─── USER & WALLET ────────────────────────────────────────────────────────────
+
+model User {
+  id                 String    @id @default(cuid())
+  phone              String    @unique
+  name               String    @default("Pro User")
+  profileImage       String    @default("")
+  password           String
+  withdrawPassword   String?
+  playerId           String    @unique
+  facebook           String?   @default("")
+  isBanned           Boolean   @default(false)
+  referId            String    @unique
+  wallet             Wallet?
+  apayDeposits       APayDeposit[]
+  deposit            Deposit[]
+  createdAt          DateTime  @default(now())
+  apayWithdraws       APayWithdraw[]
+  withdraws          Withdraw[]
+  inviationBonus     InvitationBonus?
+  invitedById        String?
+  notifications      Notification[]
+  Invitation         Invitation?
+  invitedBy          Invitation?   @relation("ReferredUsers", fields: [invitedById], references: [id])
+  signinBonus        ClaimedSigninReward[]
+  bettingRecord      BettingRecord[]
+  luckyWheelActive   LuckyWheelActive[]
+  bets               Bet[]
+  dailyCheck         DailyCheck?
+  airDrop            AirDrop[]
+  depositeTickets    DepositTicket[]
+  vipLevel           UserVIPLevel?
+  vipRewards         VIPRewardUserProgress[]
+  inviationsRecords  InviataionRewardRecord[]
+  achivementRecords  AchivementRecords[]
+  autoUpdateDates    AutoUpdateDate?
+  customReward       CustomRewardEvent[]
+  fixedReweard       FixedAmountReward[]
+  cards              Card[]
+  weeklyTrackers     UserWeeklyRewardTracker[]
+  missionProgress    UserMissionProgress[]
+}
+
+model Wallet {
+  id          String  @id @default(cuid())
+  balance     Decimal @default(0)
+  signinBonus Boolean @default(false)
+  referralBonus Boolean @default(false)
+  currency    String  @default("BDT")
+  turnOver    Decimal @default(0)
+  userId      String  @unique
+  user        User    @relation(fields: [userId], references: [id])
+}
+
+// ─── BETTING ──────────────────────────────────────────────────────────────────
+
+model Bet {
+  id            String     @id @default(cuid())
+  productType   Int
+  gameType      Int
+  gameId        Int
+  amount        Decimal
+  winloss       Decimal?
+  transferCode  String
+  transactionId String
+  status        BetStatus  @default(RUNNING)
+  result        BetResult?
+  userId        String
+  user          User       @relation(fields: [userId], references: [id])
+  createdAt     DateTime   @default(now())
+
+  @@index([transferCode, transactionId])
+}
+
+model BettingRecord {
+  id         String          @id @default(cuid())
+  createdAt  DateTime        @default(now())
+  name       String?
+  category   BettingCategory?  @default(SLOT)
+  betAmount  Decimal
+  profit     Decimal?
+  loss       Decimal?
+  status     BetStatus       @default(RUNNING)
+  orderNo    String?
+  wagerCode  String?
+  roundId    String?
+  userId     String
+  user       User            @relation(fields: [userId], references: [id])
+}
+
+// ─── INVITATION ──────────────────────────────────────────────────────────────
+
+model Invitation {
+  id              String @id @default(cuid())
+  userId          String @unique
+  user            User   @relation(fields: [userId], references: [id])
+  referredUsers   User[] @relation("ReferredUsers")
+  validRerredUsers Json[] // {createdAt : Date, id : user_id}
+}
+
+model InvitationBonus {
+  id                 String                    @id @default(cuid())
+  totalRegisters     Int                       @default(0)
+  totalValidreferral Int                       @default(0)
+  claimedRewards     ClaimedInvitationReward[]
+  claimedRewardsTime DateTime?
+  userId             String                    @unique
+  user               User                      @relation(fields: [userId], references: [id])
+}
+
+// ─── INVITATION REWARDS ──────────────────────────────────────────────────────
+
+model InvitationRewareds {
+  id             String                    @id @default(cuid())
+  rewardImg      String
+  targetReferral Int
+  prize          Decimal
+  claimedUsers   ClaimedInvitationReward[]
+  userRecoreds   AchivementRecords[]
+}
+
+model AchivementRecords {
+  id        String             @id @default(cuid())
+  userId    String
+  user      User               @relation(fields: [userId], references: [id])
+  createdAt DateTime           @default(now())
+  rewardId  String
+  reward    InvitationRewareds @relation(fields: [rewardId], references: [id])
+}
+
+model ClaimedInvitationReward {
+  id                String             @id @default(cuid())
+  invitationBonusId String
+  rewardId          String
+  claimedAt         DateTime           @default(now())
+  createdAt         DateTime           @default(now())
+  invitationBonus   InvitationBonus    @relation(fields: [invitationBonusId], references: [id])
+  reward            InvitationRewareds @relation(fields: [rewardId], references: [id])
+
+  @@unique([invitationBonusId, rewardId])
+}
+
+model inviataionRewardRequirements {
+  id           String @id @default(cuid())
+  requirements Json[]
+}
+
+model InviataionRewardRecord {
+  id        String   @id @default(cuid())
+  bonus     Decimal
+  friendId  String   @unique
+  userId    String
+  user      User     @relation(references: [id], fields: [friendId])
+  createdAt DateTime @default(now())
+}
+
+// ─── SIGNIN BONUS ────────────────────────────────────────────────────────────
+
+model SigninBonusRewards {
+  id          String                  @id @default(cuid())
+  day         String
+  cash        Int
+  eggHunt     Boolean?
+  beg         Boolean?
+  wheel       Boolean?
+  deposit     Decimal?                @default(0)
+  betting     Decimal?                @default(0)
+  claimedUsers ClaimedSigninReward[]
+}
+
+model ClaimedSigninReward {
+  id        String               @id @default(cuid())
+  rewardId  String
+  reward    SigninBonusRewards   @relation(fields: [rewardId], references: [id])
+  userId    String
+  user      User                 @relation(fields: [userId], references: [id])
+  createdAt DateTime             @default(now())
+  isClamed  Boolean              @default(false)
+}
+
+// ─── PAYMENT / DEPOSITS / WITHDRAWALS ────────────────────────────────────────
+
+model PaymentWallet {
+  id          String           @id @default(cuid())
+  walletLogo  String
+  walletName  String
+  walletType  PaymentWalletType @default(EWALLET)
+}
+
+model DepositWallet {
+  id              String   @id @default(cuid())
+  paymentWalletId String
+  walletsNumber   String[]
+  instructions    String
+  warning         String?
+  trxType         String
+  minDeposit      Decimal
+  maximumDeposit  Decimal
+  isActive        Boolean  @default(true)
+}
+
+model APayDeposit {
+  id        String   @id @default(cuid())
+  orderId   String
+  trxId     String
+  ps        String
+  createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Deposit {
+  id             String        @id @default(cuid())
+  amount         Decimal
+  bonus          Decimal?
+  bonusFor       String?
+  senderNumber   String
+  trxID          String?
+  status         DepositStatus @default(PENDING)
+  wallet         TrxWallet     @default(BKASH)
+  userId         String
+  user           User          @relation(fields: [userId], references: [id])
+  createdAt      DateTime      @default(now())
+  statusUpdateAt DateTime?
+}
+
+model Card {
+  id            String      @id @default(cuid())
+  cardNumber    String
+  payerName     String
+  walletNumber  String      @unique
+  cardName      CardName    @default(BKASH)
+  containerId   String
+  isActive      Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  withdraws     Withdraw[]
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
+}
+
+model APayWithdraw {
+  id        String   @id @default(cuid())
+  orderId   String
+  ps        String
+  trxId     String
+  createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Withdraw {
+  id        String        @id @default(cuid())
+  amount    Decimal
+  expire    DateTime
+  status    WithdrawStatus @default(PENDING)
+  createdAt DateTime      @default(now())
+  cardId    String
+  card      Card          @relation(fields: [cardId], references: [id])
+  userId    String
+  user      User          @relation(fields: [userId], references: [id])
+}
+
+// ─── ADMIN AUTH ──────────────────────────────────────────────────────────────
+
+model Admin {
+  id           String         @id @default(cuid())
+  name         String
+  role         ManagementRole @default(ADMIN)
+  email        String         @unique
+  password     String
+  otpCode      String?
+  otpExpiresAt DateTime?
+  isActive     Boolean        @default(true)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  // Allowed IPs for this admin
+  allowedIps   AdminAllowedIp[]
+
+  // Fine-grained route access
+  accessRoutes AdminRouteAccess[]
+}
+
+model AdminAllowedIp {
+  id        String   @id @default(cuid())
+  ip        String
+  label     String?
+  adminId   String
+  admin     Admin    @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([adminId, ip])
+}
+
+model AdminRouteAccess {
+  id           String   @id @default(cuid())
+  adminId      String
+  admin        Admin    @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  category     String   // e.g. "users", "affiliates", "rewards"
+  subCategory  String?  // e.g. "bets", "bonuses"
+  route        String   // e.g. "/api/users", "/users/list", "/dashboard/users"
+  httpMethods  String[] // ["GET","POST","PUT","DELETE"] — empty means all allowed
+  hiddenFields Json[]   // ["exportBtn", "deleteBtn", "statusColumn"] — UI elements to hide
+  isBlocked    Boolean  @default(false) // true = completely blocked
+  createdAt    DateTime @default(now())
+
+  @@unique([adminId, route])
+}
+
+model AdminLog {
+  id        String   @id @default(cuid())
+  adminId  String
+  action   String   // e.g. "UPDATE_USER", "BAN_USER", "CREATE_ADMIN"
+  target   String?  // e.g. "user_id", "admin_id"
+  details  Json?    // extra info
+  ip       String?
+  createdAt DateTime @default(now())
+
+  @@index([adminId])
+  @@index([createdAt])
+}
+
+model EmailVerificationToken {
+  id        String   @id @default(cuid())
+  expire    DateTime
+  token     String
+  createdAt DateTime @default(now())
+}
+
+// ─── SITE SETTINGS / BONUS ────────────────────────────────────────────────────
+
+model Bonus {
+  id             String @id @default(cuid())
+  signinBonus    Int    @default(5)
+  referralBonus  Int    @default(5)
+}
+
+model SiteSetting {
+  id          String   @id @default(cuid())
+  maxWithdraw Decimal? @default(0)
+  minWithdraw Decimal? @default(0)
+  dpTurnover  Decimal? @default(0)
+}
+
+// ─── NOTIFICATIONS ───────────────────────────────────────────────────────────
+
 model Notification {
   id          String           @id @default(cuid())
   title       String
@@ -322,21 +489,567 @@ model Notification {
   @@index([userId])
 }
 
+// ─── LUCKY WHEEL / DAILY CHECK / AIRDROP ─────────────────────────────────────
 
-
-enum BetStatus {
-  RUNNING
-  SETTLED 
-  CANCELED
-  VOID 
-}
-enum BetResult {
-  WON
-  LOST
-  TIE
-  VOID
+model LuckyWheelActive {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 }
 
+model DailyCheck {
+  id           String    @id @default(cuid())
+  userId       String    @unique
+  user         User      @relation(fields: [userId], references: [id])
+  lastChecked  DateTime?
+  firstPrice   Decimal?
+}
+
+model AirDrop {
+  id           String       @id @default(cuid())
+  status       AirDropStatus @default(PENDING)
+  prizeCliamed Decimal      @default(0)
+  userId       String
+  user         User         @relation(references: [id], fields: [userId])
+  airDropId    String
+  airDrop      AirDropEvent @relation(references: [id], fields: [airDropId])
+  dpFullFill   Decimal?     @default(0)
+}
+
+model AirDropEvent {
+  id            String     @id @default(cuid())
+  name          AirDropName @unique
+  prize         Decimal
+  expiry        DateTime?
+  dpRequirement Decimal?   @default(450)
+  airDrops      AirDrop[]
+}
+
+model DepositTicket {
+  id        String   @id @default(cuid())
+  price     Decimal
+  expire    DateTime
+  userId    String
+  user      User     @relation(references: [id], fields: [userId])
+  createdAt DateTime @default(now())
+}
+
+// ─── REWARD EVENTS ───────────────────────────────────────────────────────────
+
+model RewardEventExpiry {
+  id      String    @id @default(cuid())
+  spin    DateTime
+  envelop DateTime?
+  eggHunt DateTime?
+}
+
+model RewardEvent {
+  id        String               @id @default(cuid())
+  account   Decimal
+  title     String?
+  name      RewardName
+  ticketType RewardEventTicketType @default(DEPOSIT)
+  createdAt DateTime             @default(now())
+  isActive  Boolean              @default(true)
+  usersData Json[] // [{claimable : true, userId : '...', createdAt : new Date()}]
+}
+
+model CustomRewardEvent {
+  id        String    @id @default(cuid())
+  size      Decimal
+  name      RewardName
+  rewardFor String?
+  title     String?
+  createdAt DateTime  @default(now())
+  expiry    DateTime
+  userId    String
+  user      User      @relation(references: [id], fields: [userId])
+}
+
+model FixedAmountReward {
+  id        String   @id @default(cuid())
+  prize     Decimal
+  rewardFor String?
+  title     String?
+  createdAt DateTime @default(now())
+  userId    String
+  expiry    DateTime?
+  user      User     @relation(references: [id], fields: [userId])
+}
+
+// ─── VIP SYSTEM ──────────────────────────────────────────────────────────────
+
+model VIPLevelRequirements {
+  id     String @id @default(cuid())
+  levels Json[] // [{level:1, totalDeposit:0, totalDepositCount:0, totalBet:0}]
+}
+
+model UserVIPLevel {
+  id                   String @id @default(cuid())
+  level                Int    @default(0)
+  nextLevelRequirements Json // {level:1, totalDeposit:0, totalDepositCount:0, totalBet:0}
+  userId               String @unique
+  user                 User   @relation(references: [id], fields: [userId])
+}
+
+model VIPRewardRequirements {
+  id              String                 @id @default(cuid())
+  levelRequire    Int
+  validForDay     Int
+  totalDeposit    Decimal                @default(0)
+  totalBet        Decimal                @default(0)
+  reward          Decimal                @default(0)
+  associatedRewards VIPRewardUserProgress[]
+}
+
+model VIPRewardUserProgress {
+  id            String                @id @default(cuid())
+  expiry        DateTime
+  createdAt     DateTime              @default(now())
+  requirementId String
+  requirements  VIPRewardRequirements @relation(references: [id], fields: [requirementId])
+  userId        String
+  user          User                  @relation(references: [id], fields: [userId])
+}
+
+// ─── AUTO UPDATE ─────────────────────────────────────────────────────────────
+
+model AutoUpdatesInterval {
+  id       String  @id @default(cuid())
+  deposit  Int?
+  betting  Int?
+}
+
+model AutoUpdateDate {
+  id       String   @id @default(cuid())
+  deposit  DateTime?
+  betting  DateTime?
+  userId   String   @unique
+  user     User     @relation(fields: [userId], references: [id])
+}
+
+// ─── AFFILIATES ──────────────────────────────────────────────────────────────
+
+model Affiliate {
+  id            String          @id @default(cuid())
+  email         String          @unique
+  phone         String          @unique
+  name          String
+  password      String
+  emailVerified Boolean         @default(false)
+  verifyToken   String?
+  verifyOtp     String?
+  verifyOtpExpiry DateTime?
+  uniqueCode    String          @unique
+  status        AffiliateStatus @default(ACTIVE)
+  level         Int             @default(0)
+  salaryPercent Decimal         @default(0.05)
+  lastSalaryDate DateTime?
+  balanceUsdt   Decimal         @default(0)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  associatedUsers  AffiliateUser[]
+  milestoneProgress AffiliateMilestoneProgress[]
+  milestoneRewards  MilestoneRewardClaim[]
+  salaryHistory    SalaryHistory[]
+  salaryPeriods    AffiliateSalaryPeriod[]
+  withdrawals      AffiliateWithdraw[]
+  withdrawMethods   WithdrawMethod[]
+  registerBonus     AffiliateRegisterBonus?
+  weeklySchema      AffiliateWeeklySchema?
+}
+
+model AffiliateUser {
+  id            String    @id @default(cuid())
+  affiliateId   String
+  affiliate     Affiliate @relation(fields: [affiliateId], references: [id])
+  userId        String    @unique
+  userIp        String
+  isValid       Boolean   @default(true)
+  invalidReason String?
+  createdAt     DateTime  @default(now())
+
+  @@index([affiliateId])
+  @@index([userId])
+}
+
+model Milestone {
+  id          String        @id @default(cuid())
+  title       String
+  description String?
+  type        MilestoneType
+  target      Decimal
+  rewardUsdt  Decimal
+  order       Int           @default(0)
+  isActive    Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+
+  progress     AffiliateMilestoneProgress[]
+  rewardClaims MilestoneRewardClaim[]
+}
+
+model AffiliateMilestoneProgress {
+  id           String    @id @default(cuid())
+  affiliateId  String
+  affiliate    Affiliate @relation(fields: [affiliateId], references: [id])
+  milestoneId  String
+  milestone    Milestone @relation(fields: [milestoneId], references: [id])
+  currentValue Decimal   @default(0)
+  completed    Boolean   @default(false)
+  completedAt  DateTime?
+  updatedAt    DateTime  @updatedAt
+
+  @@unique([affiliateId, milestoneId])
+  @@index([affiliateId])
+}
+
+model MilestoneRewardClaim {
+  id          String            @id @default(cuid())
+  affiliateId String
+  affiliate   Affiliate         @relation(fields: [affiliateId], references: [id])
+  milestoneId String
+  milestone   Milestone         @relation(fields: [milestoneId], references: [id])
+  amountUsdt  Decimal
+  status      RewardClaimStatus @default(PENDING)
+  claimedAt   DateTime          @default(now())
+  paidAt      DateTime?
+
+  @@unique([affiliateId, milestoneId])
+}
+
+model SalaryHistory {
+  id               String   @id @default(cuid())
+  affiliateId      String
+  affiliate        Affiliate @relation(fields: [affiliateId], references: [id])
+  periodStart      DateTime
+  periodEnd        DateTime
+  totalBetVolumeBdt Decimal
+  totalBetVolumeUsd Decimal
+  percent          Decimal
+  earnedUsdt       Decimal
+  paidAt           DateTime @default(now())
+
+  @@index([affiliateId])
+}
+
+model SalaryConfig {
+  id              String   @id @default("singleton")
+  cycleDays       Int      @default(7)
+  usdRate         Decimal  @default(122)
+  enabled         Boolean  @default(true)
+  autoDispatch    Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model AffiliateSalaryPeriod {
+  id               String     @id @default(cuid())
+  affiliateId      String
+  affiliate        Affiliate  @relation(fields: [affiliateId], references: [id])
+  periodStart      DateTime
+  periodEnd        DateTime
+  totalLossBdt     Decimal
+  salaryPercent    Decimal
+  earnedUsdt       Decimal
+  isPaid           Boolean    @default(false)
+  paidAt           DateTime?
+  createdAt        DateTime   @default(now())
+
+  @@unique([affiliateId, periodStart])
+  @@index([affiliateId])
+  @@index([periodStart])
+}
+
+model AffiliateWithdraw {
+  id          String        @id @default(cuid())
+  affiliateId String
+  affiliate   Affiliate     @relation(fields: [affiliateId], references: [id])
+  amountUsdt  Decimal
+  address     String
+  status      WithdrawStatus @default(PENDING)
+  note        String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([affiliateId])
+}
+
+model WithdrawMethod {
+  id          String    @id @default(cuid())
+  affiliateId String
+  affiliate   Affiliate @relation(fields: [affiliateId], references: [id])
+  label       String    @default("USDT/TRC20")
+  address     String
+  isDefault   Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+
+  @@index([affiliateId])
+}
+
+model AffiliateRegisterBonus {
+  id          String     @id @default(cuid())
+  affiliateId String     @unique
+  affiliate   Affiliate  @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+  rewardName  RewardName @default(SPIN)
+  expireDays  Int        @default(7)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model AffiliateWeeklySchema {
+  id             String    @id @default(cuid())
+  affiliateId    String    @unique
+  affiliate      Affiliate @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+  minDeposit     Decimal?
+  minBet         Decimal?
+  rewardFor      String?
+  schemaCreatedAt DateTime @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  dispatches    WeeklyBonusDispatch[]
+  userTrackers  UserWeeklyRewardTracker[]
+}
+
+model UserWeeklyRewardTracker {
+  id            String               @id @default(cuid())
+  userId        String
+  user          User                 @relation(fields: [userId], references: [id])
+  schemaId      String
+  schema        AffiliateWeeklySchema @relation(fields: [schemaId], references: [id], onDelete: Cascade)
+  lastRewardAt  DateTime             @default(now())
+
+  @@unique([userId, schemaId])
+  @@index([schemaId])
+}
+
+model WeeklyBonusDispatch {
+  id         String               @id @default(cuid())
+  schemaId   String
+  schema     AffiliateWeeklySchema @relation(fields: [schemaId], references: [id], onDelete: Cascade)
+  sentAt     DateTime             @default(now())
+  userCount  Int
+  totalPrize Decimal
+
+  @@index([schemaId])
+}
+
+model WeeklyBonusRate {
+  id             String   @id @default("singleton")
+  depositPercent Decimal  @default(0.04)
+  betPercent     Decimal  @default(0.05)
+  updatedAt      DateTime @updatedAt
+}
+
+// ─── MISSIONS ────────────────────────────────────────────────────────────────
+
+model MissionTemplate {
+  id          String    @id @default(cuid())
+  vipLevel    Int       // 0-9
+  title       String
+  description String?
+  startDate   DateTime?  // mission date (12am to 12am)
+  endDate     DateTime?
+  status      MissionStatus @default(TODAY)
+  milestones  MissionMilestone[]
+  userProgress UserMissionProgress[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([vipLevel])
+  @@index([startDate])
+  @@index([status])
+}
+
+model MissionMilestone {
+  id              String            @id @default(cuid())
+  missionTemplateId String
+  missionTemplate MissionTemplate   @relation(fields: [missionTemplateId], references: [id], onDelete: Cascade)
+  order           Int               @default(0) // 1-7
+  targetValidBet  Decimal           // e.g. 100, 1000, 5000
+  rewardCash      Decimal           @default(0)
+  rewardType      RewardName? 
+  rewardTypeTitle String?
+  isClaimed       Boolean           @default(false)
+  claimedAt       DateTime?
+  createdAt       DateTime          @default(now())
+
+  @@index([missionTemplateId])
+}
+
+model UserMissionProgress {
+  id             String           @id @default(cuid())
+  userId         String
+  user           User             @relation(fields: [userId], references: [id])
+  missionTemplateId String
+  missionTemplate MissionTemplate @relation(fields: [missionTemplateId], references: [id])
+  currentValidBet Decimal         @default(0)
+  completedMilestones Int         @default(0) // how many milestones claimed
+  startDateOfDay  DateTime?
+  lastUpdated    DateTime         @default(now())
+
+  @@unique([userId, missionTemplateId])
+  @@index([userId])
+  @@index([missionTemplateId])
+}
+
+// ─── BETTING REBATE ──────────────────────────────────────────────────────────
+
+model BettingRebate {
+  id          String   @id @default(cuid())
+  category    BettingCategory @default(SLOT)
+  rebatePercent Decimal @default(0)
+  minBet      Decimal  @default(0)
+  isActive    Boolean  @default(true)
+  updatedAt   DateTime @updatedAt
+}
+
+// ─── CMS / BANNERS ───────────────────────────────────────────────────────────
+
+model Banner {
+  id        String   @id @default(cuid())
+  heading   String?
+  imageUrl  String
+  linkUrl   String?
+  isActive  Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── SUPPORT CHAT AI ─────────────────────────────────────────────────────────
+
+model SupportChat {
+  id        String   @id @default(cuid())
+  content   String   // markdown free text
+  isActive  Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+}
 
 
 
+
+
+// Per-method withdrawal configuration
+// One row per CardName (BKASH, NAGAD). Seeded on first boot.
+model WithdrawMethodConfig {
+  id            String   @id @default(cuid())
+  method        CardName @unique           // BKASH | NAGAD
+  isActive      Boolean  @default(true)   // toggle visibility for users
+  displayName   String                    // e.g. "bKash", "Nagad"
+  logoUrl       String   @default("")     // optional icon URL
+  minAmount     Decimal  @default(500)    // per-method floor
+  maxAmount     Decimal  @default(50000)  // per-method ceiling
+  dailyLimit    Decimal  @default(0)      // 0 = no limit
+  processingFee Decimal  @default(0)      // flat fee in BDT (0 = free)
+  feePercent    Decimal  @default(0)      // % fee (0 = free)
+  note          String   @default("")     // shown to user at withdrawal time
+  updatedAt     DateTime @updatedAt
+}
+
+// Global withdrawal configuration (singleton row, id = "singleton")
+model WithdrawGlobalConfig {
+  id               String   @id @default("singleton")
+  minWithdraw      Decimal  @default(500)
+  maxWithdraw      Decimal  @default(50000)
+  autoApproveBelow Decimal  @default(0)    // 0 = never auto-approve
+  requiresReview   Boolean  @default(true)
+  maintenanceMode  Boolean  @default(false)
+  maintenanceMsg   String   @default("Withdrawals are temporarily paused for maintenance.")
+  updatedAt        DateTime @updatedAt
+}
+
+
+model DepositMethodConfig {
+  id                String    @id @default(cuid())
+  method            TrxWallet @unique           // BKASH | NAGAD
+  isActive          Boolean   @default(true)    // toggle for users
+  displayName       String                      // e.g. "bKash", "Nagad"
+  logoUrl           String    @default("")
+  minAmount         Decimal   @default(100)
+  maxAmount         Decimal   @default(100000)
+  bonusPercent      Decimal   @default(0)       // % bonus on each deposit (0 = none)
+  firstDepositBonus Decimal   @default(0)       // flat BDT bonus for first deposit (0 = none)
+  note              String    @default("")      // shown to user at deposit time
+  updatedAt         DateTime  @updatedAt
+}
+
+// Global deposit configuration (singleton, id = "singleton")
+model DepositGlobalConfig {
+  id               String   @id @default("singleton")
+  minDeposit       Decimal  @default(100)
+  maxDeposit       Decimal  @default(100000)
+  autoApproveBelow Decimal  @default(0)     // 0 = never auto-approve
+  requiresReview   Boolean  @default(true)
+  maintenanceMode  Boolean  @default(false)
+  maintenanceMsg   String   @default("Deposits are temporarily paused for maintenance.")
+  bonusEnabled     Boolean  @default(true)  // master switch for all bonuses
+  updatedAt        DateTime @updatedAt
+}
+
+
+
+
+
+model SiteTextContent {
+  id               String   @id @default("singleton")
+  headLine         String?
+}
+
+
+
+model ForgetPasswordOtp {
+  id                 String    @id @default(cuid())
+  code        String
+  expiry      DateTime
+  phone       String @unique
+}
+
+
+model ChangePasswordAccessToken{
+  id                 String    @id @default(cuid())
+  expiry      DateTime
+    phone       String @unique
+}
+
+
+
+// Stores the global rebate configuration (singleton)
+model BettingRebateConfig {
+  id          String   @id @default("singleton")
+  percent     Decimal  @default(0.05)   // e.g. 0.05 = 5% of referral's loss
+  isEnabled   Boolean  @default(true)
+  minLoss     Decimal  @default(0)      // minimum referral loss to qualify (0 = no minimum)
+  description String   @default("")     // admin note
+  updatedAt   DateTime @updatedAt
+}
+
+// One record per dispatch run — tracks when it happened and what was included
+model RebateDispatch {
+  id              String               @id @default(cuid())
+  percent         Decimal              // % used for this dispatch
+  periodStart     DateTime             // loss counted from this date
+  periodEnd       DateTime             // loss counted to this date (dispatch time)
+  totalLoss       Decimal              @default(0)  // total referral loss in period
+  totalRebate     Decimal              @default(0)  // total BDT credited
+  totalReferers   Int                  @default(0)
+  totalReferrals  Int                  @default(0)
+  createdAt       DateTime             @default(now())
+  items           RebateDispatchItem[]
+}
+
+// One row per referer per dispatch — what they received and from which referrals
+model RebateDispatchItem {
+  id           String         @id @default(cuid())
+  dispatchId   String
+  dispatch     RebateDispatch @relation(fields: [dispatchId], references: [id], onDelete: Cascade)
+  refererId    String         // the user who gets the rebate
+  refererName  String
+  rebateAmount Decimal        // BDT credited to this referer
+  totalLoss    Decimal        // sum of referral losses that generated this rebate
+  referralCount Int           @default(0)  // how many valid referrals contributed
+  createdAt    DateTime       @default(now())
+
+  @@index([dispatchId])
+  @@index([refererId])
+}

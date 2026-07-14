@@ -1,155 +1,118 @@
+"use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from "react";
-import { RiMenuFoldLine } from "react-icons/ri";
+import React, { useState } from "react";
 
-import logo from "@/../public/logo.png";
-import Image from "next/image";
-import Link from "next/link";
-import { findCurrentUser } from "@/data/user";
 import HeaderBalance from "./HeaderBalance";
 import AppSideCanva from "./AppSideCanva";
+import PrimaryButton from "./buttons/PrimaryButton";
+import SecondaryButton from "./buttons/SecondaryButton";
+import { useFetchWalletQuery } from "@/lib/features/walletApiSlice";
+import { useText } from "@/hook/useText";
+import AuthModal from "./auth/auth-modal";
 
-const Header = async () => {
-  const user: any = await findCurrentUser();
+const styles = {
+  header: {
+    platform:
+      "sticky top-0 z-[100] px-[14px] py-[10px] flex items-center justify-between gap-2 border-b border-[rgba(255,215,0,0.28)] backdrop-blur-[14px] bg-[rgba(7,5,16,0.96)] shadow-[0_2px_24px_rgba(255,215,0,0.07)]",
+  },
+};
+
+const Header = () => {
+  const { data: wallet } = useFetchWalletQuery();
+  const t = useText("/");
+
+  const [openAuthModal, setOpenAuthModal] = useState<"login" | "register">(
+    null,
+  );
+
   return (
-    <header
-      className="flex items-center justify-between px-3 py-2"
-      style={{
-        width: "100%",
-        height: 70,
+    <>
+      <header
+        className={`${styles.header.platform}`}
+        // style={{
+        //   width: "100%",
+        //   height: 70,
+        //   zIndex: 1000,
+        //   position: "sticky",
+        //   top: 0,
 
-        zIndex: 1000,
-        position: "sticky",
-        top: 0,
-        background: "var(--color-cyan-21, #155155)",
-      }}
-    >
-      <div className="flex items-center  gap-2">
-        <div
-          data-variant="21"
-          style={{
-            width: 26,
-            height: 26,
-          }}
-        >
-          <div
-            style={{
-              width: 26,
-              height: 26,
-
-              overflow: "hidden",
-            }}
-          >
-            <AppSideCanva
-              trigger={
-                <RiMenuFoldLine className="w-6 h-5 cursor-pointer text-white " />
-              }
-            />
+        //   // 🔥 BLACK BACKGROUND
+        //   background: "#111111",
+        //   boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
+        // }}
+      >
+        <div className="flex items-center flex-shrink-0 gap-2 b">
+          <div>
+            <AppSideCanva trigger={<PlatFormSidebarTrigger />} />
           </div>
+
+          {/* LOGO */}
+          <PlatFormLogo />
         </div>
-        <Image
-          style={{
-            width: 89.98,
-            height: 28.08,
-          }}
-          src={logo}
-          alt="logo"
-        />
-      </div>
 
-      {user && (
-        <HeaderBalance
-          balance={+user!.wallet!.balance}
-          currency={user!.wallet!.currency}
-        />
-      )}
-      {!user && (
-        <div className="flex items-center  gap-2">
-          <Link
-            href={"/login"}
-            style={{
-              height: 28.08,
-              minWidth: 70.72,
-              paddingLeft: 18.39,
-              paddingRight: 18.39,
-              paddingTop: 1,
-              paddingBottom: 1,
+        {wallet && (
+          <HeaderBalance
+            balance={+wallet.payload.balance}
+            currency={wallet.payload.currency}
+          />
+        )}
 
-              background:
-                "linear-gradient(180deg, var(--color-cyan-27, #0F727C) 0%, var(--color-cyan-17, #004E56) 100%)",
-              boxShadow: "0px 1.0399999618530273px 0px #003941",
-              borderRadius: 6.24,
-              outline:
-                "1px var(--color-cyan-30-50%, rgba(17, 134, 125, 0.50)) solid",
-              outlineOffset: "-1px",
-              justifyContent: "center",
-              alignItems: "center",
-              display: "inline-flex",
-            }}
-          >
-            <div
-              style={{
-                textAlign: "center",
-                justifyContent: "center",
-                display: "flex",
-                flexDirection: "column",
-                color: "var(--color-orange-64, #FFAB49)",
-                fontSize: 12.5,
-                fontFamily: "Segoe UI",
-                fontWeight: "700",
-                lineHeight: 14.35,
-                wordWrap: "break-word",
-                textShadow: "0px 1px 0px rgba(17, 0, 0, 0.30)",
-              }}
-            >
-              Login
-            </div>
-          </Link>
-          <Link
-            href={"/register"}
-            style={{
-              height: 28.08,
-              minWidth: 70.72,
-              paddingTop: 1,
-              paddingBottom: 1,
-              paddingLeft: 10.4,
-              paddingRight: 10.41,
+        {!wallet && (
+          <div className="flex items-center gap-3">
+            {/* LOGIN BUTTON */}
 
-              background:
-                "linear-gradient(180deg, var(--color-yellow-50, #FFE600) 0%, var(--color-orange-50, #FFB800) 100%)",
-              boxShadow: "0px 1.0399999618530273px 0px #B64100",
-              overflow: "hidden",
-              borderRadius: 6.24,
-              outline:
-                "1px var(--color-yellow-83-50%, rgba(255, 242, 166, 0.50)) solid",
-              outlineOffset: "-1px",
-              justifyContent: "center",
-              alignItems: "center",
-              display: "inline-flex",
-            }}
-          >
-            <div
-              style={{
-                textAlign: "center",
-                justifyContent: "center",
-                display: "flex",
-                flexDirection: "column",
-                color: "var(--color-orange-36, #B64100)",
-                fontSize: 12.5,
-                fontFamily: "Segoe UI",
-                fontWeight: "700",
-                lineHeight: 14.35,
-                wordWrap: "break-word",
-                textShadow: "0px 1px 0px rgba(159, 52, 0, 0.20)",
-              }}
-            >
-              Register
-            </div>
-          </Link>
-        </div>
-      )}
-    </header>
+            <SecondaryButton onClick={() => setOpenAuthModal("login")}>
+              {(t.auth as { login?: string })?.login || "Login"}
+            </SecondaryButton>
+
+            {/* REGISTER BUTTON */}
+
+            <PrimaryButton onClick={() => setOpenAuthModal("register")}>
+              {(t.auth as { register?: string })?.register || "Register"}
+            </PrimaryButton>
+          </div>
+        )}
+      </header>
+
+      <AuthModal
+        show={!!openAuthModal}
+        selectModal={openAuthModal}
+        onClose={() => setOpenAuthModal(null)}
+      />
+    </>
   );
 };
 
 export default Header;
+
+const PlatFormLogo = () => {
+  return (
+    <div>
+      <div
+        className="text-[16px] mt-1 leading-none font-extralight font-cinzel bg-[linear-gradient(135deg,#ffd700,#ffe97a,#b8860b,#ffd700)] bg-clip-text
+  text-transparent
+  drop-shadow-[0_0_7px_rgba(255,215,0,0.45)]"
+      >
+        Penlive
+      </div>
+      <div
+        className="text-[7px] mt-0.5 text-[#ff003c] tracking-[2.5px] font-['Orbitron']
+  drop-shadow-[0_0_7px_#ff003c]"
+      >
+        CASINO BD
+      </div>
+    </div>
+  );
+};
+
+const PlatFormSidebarTrigger = () => {
+  return (
+    <div className="w-[36px] bg-red-700! h-[36px] rounded-[10px] flex flex-col justify-center items-center gap-1 cursor-pointer border border-[rgba(255,215,0,0.28)] bg-[linear-gradient(145deg,#1e1535,#0e0b1c)] shadow-[0_0_10px_rgba(255,215,0,0.08)]">
+      <span className="block w-4 h-[2px] rounded-sm bg-[linear-gradient(90deg,#ffd700,#ffe97a)] shadow-[0_0_5px_rgba(255,215,0,0.55)]"></span>
+
+      <span className="block w-[11px] h-[2px] rounded-sm bg-[linear-gradient(90deg,#ffd700,#ffe97a)] shadow-[0_0_5px_rgba(255,215,0,0.55)]"></span>
+
+      <span className="block w-4 h-[2px] rounded-sm bg-[linear-gradient(90deg,#ffd700,#ffe97a)] shadow-[0_0_5px_rgba(255,215,0,0.55)]"></span>
+    </div>
+  );
+};

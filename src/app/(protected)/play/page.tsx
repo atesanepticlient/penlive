@@ -5,9 +5,7 @@ import useCurrentUser from "@/hook/useCurrentUser";
 
 import {
   useLogin568WinMutation,
-  useOpenGameMutation,
 } from "@/lib/features/gamesApiSlice";
-import { loginGames } from "@/lib/player";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -31,7 +29,7 @@ const Play = () => {
         const url = res.payload.url;
         setIframe(url);
       })
-      .catch((error) => {
+      .catch(() => {
         setError(true);
       });
   }, [gameId, gpId]);

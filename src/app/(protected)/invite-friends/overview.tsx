@@ -18,6 +18,9 @@ import Image from "next/image";
 import { FaLink } from "react-icons/fa6";
 import { StaticticType } from "@/types/api/reward";
 import useCurrentUser from "@/hook/useCurrentUser";
+import Leaderboard from "./leader.board";
+import RewardCalculator from "./reward-calculate";
+import { useFetchInviatationReuiremntsQuery } from "@/lib/features/rewardApiSlice";
 
 interface OverviewProps {
   statictic: StaticticType;
@@ -35,7 +38,10 @@ const Overview = ({ statictic }: OverviewProps) => {
         totalIncome={totalIncome}
       />
       <InviteLink invitationCode={user.referId} />
+      <Requirements />
       <ReleasedReward />
+      <Leaderboard />
+      <RewardCalculator />
     </div>
   );
 };
@@ -186,7 +192,7 @@ const ReleasedReward = () => {
 
   return (
     <div className="py-5">
-      <h3 className="text-[#1b1b4b] text-3xl font-bold text-center my-4">
+      <h3 className="text-[#1b1b4b] text-2xl font-bold text-center my-4">
         Rewards Released to Date
       </h3>
       <div className="space-y-3">
@@ -216,6 +222,76 @@ const ReleasedReward = () => {
           </div>
         ))}
       </div>
+    </div>
+  );
+};
+
+const Requirements = () => {
+  const { data, isLoading } = useFetchInviatationReuiremntsQuery();
+
+  const requirementsData = data?.payload?.requirements;
+  return (
+    <div>
+      {requirementsData && !isLoading && (
+        <div className="py-6">
+          <table cellPadding={4}>
+            <thead>
+              <tr className="border border-[#9d9d9ddd]">
+                <th className="border border-[#9d9d9ddd]">
+                  <span className="text-[13px] ">Inviter VIP Level</span>
+                </th>
+                <th className="border border-[#9d9d9ddd]">
+                  <span className="text-[13px] ">Referral bonus/person</span>
+                </th>
+                <th className="border border-[#9d9d9ddd]">
+                  <span className="text-[13px] ">Requirements</span>
+                </th>
+                <th className="border border-[#9d9d9ddd]">
+                  <span className="text-[13px] ">How to get</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {requirementsData.requirements.map((req, i) => (
+                <tr key={i} className="border border-[#9d9d9ddd]">
+                  <td className="border border-[#9d9d9ddd] text-center">
+                    <span className="text-[13px]">
+                      Vip {req.vipLevels.join("-")}
+                    </span>
+                  </td>
+                  <td className="border border-[#9d9d9ddd] text-center">
+                    <span className="text-[13px]">
+                      {req.reward.money}{" "}
+                      {req.reward.goldenEgg && "& Golden Egg"}{" "}
+                      {req.reward.envelop && "& Red Envelop"}{" "}
+                      {req.reward.spinWheel && "& Spin Wheel"}{" "}
+                    </span>
+                  </td>
+                  <td className="border border-[#9d9d9ddd] text-center">
+                    <span className="text-[13px]">
+                      Deposit {req.requirements.deposit} & Bet{" "}
+                      {req.requirements.bet}
+                    </span>
+                  </td>
+
+                  {/* ✅ Only render once */}
+                  {i === 0 && (
+                    <td
+                      className="border border-[#9d9d9ddd] text-center"
+                      rowSpan={requirementsData.requirements.length}
+                    >
+                      <span className="max-w-[100px] block text-[13px]">
+                        Noon the next day before 10 oclock Automatic transfer
+                        to account
+                      </span>
+                    </td>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };

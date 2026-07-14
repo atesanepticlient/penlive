@@ -1,0 +1,37 @@
+{
+  "page": {
+    "title": "Withdrawal"
+  },
+  "form": {
+    "amount": {
+      "label": "Amount",
+      "placeholder": "Enter withdrawal amount"
+    },
+    "method": {
+      "label": "Withdrawal Method",
+      "placeholder": "Select withdrawal method"
+    },
+    "account": {
+      "label": "Account Number",
+      "placeholder": "Enter your account number"
+    },
+    "password": {
+      "label": "Withdrawal Password",
+      "placeholder": "Enter withdrawal password"
+    },
+    "submit": "Submit Withdrawal"
+  },
+  "info": {
+    "availableBalance": "Available Balance",
+    "minWithdraw": "Minimum withdrawal",
+    "maxWithdraw": "Maximum withdrawal",
+    "processingTime": "Processing time",
+    "fee": "Transaction fee"
+  },
+  "status": {
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "completed": "Completed"
+  }
+}

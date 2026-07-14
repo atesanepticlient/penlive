@@ -13,6 +13,8 @@ export const registerSchema = zod
     ageCheck: zod.optional(zod.boolean()),
     bonusCheck: zod.optional(zod.boolean()),
     referralId: zod.optional(zod.string()),
+    affiliateCode: zod.optional(zod.string()),
+    ipSign: zod.optional(zod.string()),
   })
   .refine(
     ({ password, confirmPassword }) => {
@@ -23,7 +25,7 @@ export const registerSchema = zod
       }
       return true;
     },
-    { path: ["confirmPassword"], message: "Confirm Password didn't match" }
+    { path: ["confirmPassword"], message: "Confirm Password didn't match" },
   );
 
 export const loginSchema = zod.object({

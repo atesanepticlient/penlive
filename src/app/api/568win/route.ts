@@ -23,7 +23,7 @@ export const GET = async () => {
       }
       gamesList = response.data?.seamlessGameProviderGames;
       console.log("Games list from route : ", response.data);
-    } catch (error) {
+    } catch  {
       gamesList = null;
     }
 

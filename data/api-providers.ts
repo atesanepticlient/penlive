@@ -1,245 +1,244 @@
-import evo_white from "../public/games/provider/EVO-WHITE.png";
-import evo_black from "../public/games/provider/EVO-BLACK.png";
-
-import ne_white from "../public/games/provider/NE-WHITE.png";
-import ne_black from "../public/games/provider/NE-BLACK.png";
-
-import pg_white from "../public/games/provider/PG-WHITE.png";
-import pg_black from "../public/games/provider/PG-BLACK.png";
-
-import playngo_white from "../public/games/provider/PLAYNGO-WHITE.png";
-import playngo_black from "../public/games/provider/PLAYNGO-BLACK.png.png";
-
-import rt_white from "../public/games/provider/RT-WHITE.png";
-import rt_black from "../public/games/provider/RT-BLACK.png";
-
-import mg_white from "../public/games/provider/MG-WHITE.png";
-import mg_black from "../public/games/provider/MG-BLACK.png";
-
-import jili_white from "../public/games/provider/JL.png";
-import jili_black from "../public/games/provider/JL-BLACK.png";
-
-import amatic_white from "../public/games/provider/AMATIC.png";
-import amatic_black from "../public/games/provider/AMATIC-BLACK.png";
-
-import amg_white from "../public/games/provider/AMG-WHITE.png";
-import amg_black from "../public/games/provider/AMG-BLACK.png";
-
-import apex_white from "../public/games/provider/APEX.png";
-import apex_black from "../public/games/provider/APEX-BLACK.png";
-
-import apollo_white from "../public/games/provider/APOLLO.png";
-import apollo_black from "../public/games/provider/APOLLO-BLACK.png";
-
-import aricart_white from "../public/games/provider/ARISTOCRAT.png";
-import aricart_black from "../public/games/provider/ARISTOCRAT-BLACK.png";
-
-import bingo_white from "../public/games/provider/BINGO.png";
-import bingo_black from "../public/games/provider/BINGO-BLACK.png";
-
-import booming_white from "../public/games/provider/BOOMING.png";
-import booming_black from "../public/games/provider/BOOMING-BLACK.png";
-
-import egt_white from "../public/games/provider/EGT-WHITE.png";
-import egt_black from "../public/games/provider/EGT-BLACK.png";
-
-import firekirin_white from "../public/games/provider/FIREKIRIN.png";
-import firekirin_black from "../public/games/provider/FIREKIRIN-BLACK.png";
-
-import goldenrace_white from "../public/games/provider/GOLDENRACE.png";
-import goldenrace_black from "../public/games/provider/GOLDENRACE-BLACK.png";
-
-import hadbanero_white from "../public/games/provider/HABANERO.png";
-import hadbanero_black from "../public/games/provider/HABANERO-BLACK.png";
-
-import igt_white from "../public/games/provider/IGT.png";
-import igt_black from "../public/games/provider/IGT-BLACK.png";
-
-import kajot_white from "../public/games/provider/KAJOT.png";
-import kajot_black from "../public/games/provider/KAJOT-BLACK.png";
-
-import keno_white from "../public/games/provider/KENO.png";
-import keno_black from "../public/games/provider/KENO-BLACK.png";
-
-import mancala_white from "../public/games/provider/MANCALA.png";
-import mancala_black from "../public/games/provider/MANCALA-BLACK.png";
-
-import pp_white from "../public/games/provider/PP-WHITE.png";
-import pp_black from "../public/games/provider/PP-BLACK.png";
-
-import quickspin_white from "../public/games/provider/QUICSPIN.png";
-import quickspin_black from "../public/games/provider/QUICSPIN-BLACK.png";
-
-import rubyplay_white from "../public/games/provider/RUBYPLAY.png";
-import rubyplay_black from "../public/games/provider/RUBYPLAY-BLACK.png";
-
-import vegas_white from "../public/games/provider/VEGAS.png";
-import vegas_black from "../public/games/provider/VEGAS-BLACK.png";
-
-import wd_white from "../public/games/provider/WD-WHITE.png";
-import wd_black from "../public/games/provider/WD-BLACK.png";
-
-import zitro_white from "../public/games/provider/ZITRO.png";
-import zitro_black from "../public/games/provider/ZITRO-BLACK.png";
-
-import spribe_white from "../public/games/provider/SPB-WHITE.png";
-import spribe_black from "../public/games/provider/SPB-BLACK.png";
-
-import { GameProvider, Title } from "@/types/game";
-
+import spribe from "@/../public/games/provider/SPB-BLACK.png";
+import spribeWh from "@/../public/games/provider/SPB-WHITE.png";
+import jili from "@/../public/games/provider/JL-BLACK.png";
+import jiliWh from "@/../public/games/provider/JL.png";
+import jdb from "@/../public/games/provider/JDB-BLACK.png";
+import jdbWh from "@/../public/games/provider/JDB-WHITE.png";
+import pg from "@/../public/games/provider/PG-BLACK.png";
+import pgWh from "@/../public/games/provider/PG-WHITE.png";
+import playtech from "@/../public/games/provider/PT-BLACK.png";
+import playtechWh from "@/../public/games/provider/PT-WHITE.png";
+import pragmatic from "@/../public/games/provider/PP-BLACK.png";
+import pragmaticWh from "@/../public/games/provider/PP-WHITE.png";
+import evo from "@/../public/games/provider/EVO-BLACK.png";
+import evoWh from "@/../public/games/provider/EG4-WHITE.png";
+import fachi from "@/../public/games/provider/FC-BLACK.png";
+import fachiWh from "@/../public/games/provider/FC-WHITE.png";
+import joker from "@/../public/games/provider/JK-BLACK.png";
+import jokerWh from "@/../public/games/provider/JK-WHITE.png";
+import sagaming from "@/../public/games/provider/SG-BLACK.png";
+import sagamingWh from "@/../public/games/provider/SG-WHITE.png";
+import netent from "@/../public/games/provider/NE-BLACK.png";
+import netentWh from "@/../public/games/provider/NE-WHITE.png";
+import redtiger from "@/../public/games/provider/RT-BLACK.png";
+import redtigerWh from "@/../public/games/provider/RT-WHITE.png";
+import dereamgaming from "@/../public/games/provider/DREAM-BLACK.png";
+import dereamgamingWH from "@/../public/games/provider/DRAGOON-WHITE.png";
+import biggaming from "@/../public/games/provider/BIG-GAMING.png";
+import simpleplay from "@/../public/games/provider/SIMPLE-PLAY-BLACK.png";
+import simpleplayWh from "@/../public/games/provider/SIMPLE-PLAY-WHITE.png";
+import cq9 from "@/../public/games/provider/CQ9-BLACK.png";
+import cq9Wh from "@/../public/games/provider/CQ9-WHITE.png";
+import booming from "@/../public/games/provider/BOOMING-BLACK.png";
+import boomingWh from "@/../public/games/provider/BOOMING.png";
+import wow from "@/../public/games/provider/WOW-BLACK.png";
+import wowWh from "@/../public/games/provider/WOW-WHITE.png";
+import bigpot from "@/../public/games/provider/BIG-GAMING.png";
+import amigo from "@/../public/games/provider/AMG-BLACK.png";
+import amigoWh from "@/../public/games/provider/AMG-WHITE.png";
+import dragoon from "@/../public/games/provider/DRAGOON-BLACK.png";
+import dragoonWh from "@/../public/games/provider/DRAGOON-WHITE.png";
+import g5 from "@/../public/games/provider/5G-BLACK.png";
+import g5Wh from "@/../public/games/provider/5G-COLOR.png";
+import bng from "@/../public/games/provider/BNG-BLACK.png";
+import bngWh from "@/../public/games/provider/BNG-WHITE.png";
+import evoplay from "@/../public/games/provider/EP-BLACK.png";
+import evoplayWh from "@/../public/games/provider/EP-WHITE.png";
+import spadegaming from "@/../public/games/provider/SA-GAMING-BLACK.png";
+import spadegamingWh from "@/../public/games/provider/SA-GAMING-WHITE.png";
+import novomatic from "@/../public/games/provider/NOVOMATIC-BLACK.png";
+import mrsloty from "@/../public/games/provider/MRSLOTY.png";
+export enum GAME_TYPE {
+  SLOT,
+  LIVE_CASINO,
+  FISHING,
+  COCK_FIGHTING,
+  OTHERS,
+  POKER,
+}
 export const providers: {
-  name: GameProvider;
-  imageBlack: any;
-  imageWhite: any;
+  name: string;
+  image: any;
+  imageWh: any;
+  product_code: string | number;
+  gameType?: GAME_TYPE[];
 }[] = [
-  {
-    name: "JiLiGaming",
-    imageBlack: jili_black,
-    imageWhite: jili_white,
-  },
-  {
-    name: "EvolutionGaming",
-    imageBlack: evo_black,
-    imageWhite: evo_white,
-  },
-
-  {
-    name: "PGSoft",
-    imageBlack: pg_black,
-    imageWhite: pg_white,
-  },
-
-  // {
-  //   name: Title.NetEnt,
-  //   imageBlack: ne_black,
-  //   imageWhite: ne_white,
-  // },
-
-  {
-    name: "PlayNgo",
-    imageBlack: playngo_black,
-    imageWhite: playngo_white,
-  },
-
-  {
-    name: "RedTiger",
-    imageBlack: rt_black,
-    imageWhite: rt_white,
-  },
-
-  // {
-  //   name: Title.Microgaming,
-  //   imageBlack: mg_black,
-  //   imageWhite: mg_white,
-  // },
-  // {
-  //   name: Title.Amatic,
-  //   imageBlack: amatic_black,
-  //   imageWhite: amatic_white,
-  // },
-  // {
-  //   name: Title.AmigoGaming,
-  //   imageBlack: amg_black,
-  //   imageWhite: amg_white,
-  // },
-  // {
-  //   name: Title.Apex,
-  //   imageBlack: apex_black,
-  //   imageWhite: apex_white,
-  // },
-  {
-    name: "Apollo",
-    imageBlack: apollo_black,
-    imageWhite: apollo_white,
-  },
+  // --- First Order (Priority Providers) ---
   {
     name: "Spribe",
-    imageBlack: spribe_black,
-    imageWhite: spribe_white,
+    image: spribe,
+    imageWh: spribeWh,
+    product_code: 1138,
   },
-  // {
-  //   name: Title.Aristocrat,
-  //   imageBlack: aricart_black,
-  //   imageWhite: aricart_white,
-  // },
-  // {
-  //   name: Title.Bingo,
-  //   imageBlack: bingo_black,
-  //   imageWhite: bingo_white,
-  // },
-  // {
-  //   name: Title.Booming,
-  //   imageBlack: booming_black,
-  //   imageWhite: booming_white,
-  // },
-  // {
-  //   name: Title.Egt,
-  //   imageBlack: egt_black,
-  //   imageWhite: egt_white,
-  // },
-  // {
-  //   name: Title.Firekirin,
-  //   imageBlack: firekirin_black,
-  //   imageWhite: firekirin_white,
-  // },
-  // {
-  //   name: Title.Goldenrace,
-  //   imageBlack: goldenrace_black,
-  //   imageWhite: goldenrace_white,
-  // },
   {
-    name: "Habanero",
-    imageBlack: hadbanero_black,
-    imageWhite: hadbanero_white,
+    name: "Jili",
+    image: jili,
+    imageWh: jiliWh,
+    product_code: 1091,
   },
-  // {
-  //   name: Title.Igt,
-  //   imageBlack: igt_black,
-  //   imageWhite: igt_white,
-  // },
-  // {
-  //   name: Title.Kajot,
-  //   imageBlack: kajot_black,
-  //   imageWhite: kajot_white,
-  // },
-  // {
-  //   name: Title.Keno,
-  //   imageBlack: keno_black,
-  //   imageWhite: keno_white,
-  // },
-  // {
-  //   name: Title.Mancala,
-  //   imageBlack: mancala_black,
-  //   imageWhite: mancala_white,
-  // },
   {
-    name: "PragmaticPlaySlot",
-    imageBlack: pp_black,
-    imageWhite: pp_white,
+    name: "JDB",
+    image: jdb,
+    imageWh: jdbWh,
+    product_code: 1085,
   },
-  // {
-  //   name: Title.Quickspin,
-  //   imageBlack: quickspin_black,
-  //   imageWhite: quickspin_white,
-  // },
-  // {
-  //   name: Title.Rubyplay,
-  //   imageBlack: rubyplay_black,
-  //   imageWhite: rubyplay_white,
-  // },
-  // {
-  //   name: Title.Vegas,
-  //   imageBlack: vegas_black,
-  //   imageWhite: vegas_white,
-  // },
-  // {
-  //   name: Title.Wazdan,
-  //   imageBlack: wd_black,
-  //   imageWhite: wd_white,
-  // },
-  // {
-  //   name: Title.Zitro,
-  //   imageBlack: zitro_black,
-  //   imageWhite: zitro_white,
-  // },
+  {
+    name: "PG Soft",
+    image: pg,
+    imageWh: pgWh,
+    product_code: 1007,
+  },
+  {
+    name: "PLAYTECH",
+    image: playtech,
+    imageWh: playtechWh,
+    product_code: 1242,
+  },
+  {
+    name: "PragmaticPlay",
+    image: pragmatic,
+    imageWh: pragmaticWh,
+    product_code: 1006,
+  },
+  {
+    name: "SA Gaming",
+    image: sagaming,
+    imageWh: sagamingWh,
+    product_code: 1185,
+  },
+  {
+    name: "PNG",
+    image: "",
+    imageWh: "",
+    product_code: 1273,
+    gameType: [
+      GAME_TYPE.COCK_FIGHTING,
+      GAME_TYPE.FISHING,
+      GAME_TYPE.LIVE_CASINO,
+      GAME_TYPE.POKER,
+    ],
+  },
+  {
+    name: "Evolution",
+    image: evo,
+    imageWh: evoWh,
+    product_code: 1002,
+  },
+  {
+    name: "Fachai",
+    image: fachi,
+    imageWh: fachiWh,
+    product_code: 1079,
+  },
+  {
+    name: "Joker",
+    image: joker,
+    imageWh: jokerWh,
+    product_code: 1225,
+  },
+
+  // --- Remaining Providers ---
+  {
+    name: "Evolution (Netent)",
+    image: netent,
+    imageWh: netentWh,
+    product_code: 1168,
+  },
+  {
+    name: "Evolution (RedTiger)",
+    image: redtiger,
+    imageWh: redtigerWh,
+    product_code: 1169,
+  },
+  {
+    name: "Dream Gaming",
+    image: dereamgaming,
+    imageWh: dereamgamingWH, // Using imported dereamgamingWH
+    product_code: 1052,
+  },
+  {
+    name: "BigGaming",
+    image: biggaming,
+    imageWh: biggaming, // No white version imported
+    product_code: 1004,
+  },
+  {
+    name: "Simple Play",
+    image: simpleplay,
+    imageWh: simpleplayWh,
+    product_code: 1231,
+  },
+  {
+    name: "CQ9",
+    image: cq9,
+    imageWh: cq9Wh,
+    product_code: 1009,
+  },
+  {
+    name: "MrSlotty",
+    image: mrsloty,
+    imageWh: mrsloty, // No white version imported
+    product_code: 1064,
+  },
+  {
+    name: "BoomingGames",
+    image: booming,
+    imageWh: boomingWh,
+    product_code: 1115,
+  },
+  {
+    name: "WOW GAMING",
+    image: wow,
+    imageWh: wowWh,
+    product_code: 1148,
+  },
+  {
+    name: "BIGPOT",
+    image: bigpot,
+    imageWh: bigpot, // No white version imported
+    product_code: 1154,
+  },
+  {
+    name: "N2",
+    image: novomatic,
+    imageWh: novomatic, // No white version imported
+    product_code: 1163,
+  },
+  {
+    name: "AmigoGaming",
+    image: amigo,
+    imageWh: amigoWh,
+    product_code: 1192,
+  },
+  {
+    name: "DRAGOON SOFT",
+    image: dragoon,
+    imageWh: dragoonWh,
+    product_code: 1255,
+  },
+  {
+    name: "5G",
+    image: g5,
+    imageWh: g5Wh,
+    product_code: 1259,
+  },
+  {
+    name: "BNG",
+    image: bng,
+    imageWh: bngWh,
+    product_code: 1262,
+  },
+  {
+    name: "Yfg",
+    image: evoplay,
+    imageWh: evoplayWh,
+    product_code: 1274,
+  },
+  {
+    name: "SpadeGaming",
+
+    image: spadegaming,
+    imageWh: spadegamingWh,
+    product_code: 1221,
+  },
 ];

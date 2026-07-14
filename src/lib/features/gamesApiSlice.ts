@@ -1,15 +1,16 @@
 import { GameContent, GamesList } from "@/types/game";
 import { apiSlice } from "./apiSlice";
 
+
 const depositApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     // Existing endpoint for old provider
     fetchGamesList: builder.query<
-      { success: boolean; gamesList: GamesList },
-      void
+      any,
+      { product_code?: string; size?: string; offset?: string }
     >({
-      query: () => ({
-        url: "api/asiaapi",
+      query: ({ product_code = "all", size = "21", offset = "0" }) => ({
+        url: `api/games/get?product_code=${product_code}&size=${size}&offset=${offset}`,
         method: "GET",
       }),
     }),
@@ -29,6 +30,14 @@ const depositApiSlice = apiSlice.injectEndpoints({
     openGame: builder.mutation<GameContent, { gameId: string; demo: string }>({
       query: (body) => ({
         url: `api/open-game`,
+        method: "POST",
+        body: body,
+      }),
+    }),
+
+    openGSCGame: builder.mutation<any, any>({
+      query: (body) => ({
+        url: `/api/games/open`,
         method: "POST",
         body: body,
       }),
@@ -56,4 +65,5 @@ export const {
   useFetchNewProviderGamesListQuery,
   useFetch568WinGamesQuery,
   useLogin568WinMutation,
+  useOpenGSCGameMutation,
 } = depositApiSlice;

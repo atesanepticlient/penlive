@@ -1,0 +1,167 @@
+import { findCurrentUser } from "@/data/user";
+import { createHash } from "crypto";
+import { NextRequest, NextResponse } from "next/server";
+
+interface LaunchGameRequest {
+  game_code?: string;
+  product_code: number;
+  game_type: string;
+  language_code?: number;
+  ip: string;
+  platform: "WEB" | "DESKTOP" | "MOBILE";
+  widget_id?: string;
+  is_widget_login?: boolean;
+  operator_lobby_url: string;
+}
+
+interface LaunchGameResponse {
+  code: number;
+  message: string;
+  url?: string;
+  content?: string;
+}
+
+function generateSignature(
+  requestTime: string,
+  secretKey: string,
+  operatorCode: string,
+  key: string,
+): string {
+  const signatureString = `${requestTime}${secretKey}${key}${operatorCode}`;
+  return createHash("md5").update(signatureString).digest("hex");
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const secretKey = process.env.GSC_SECRET_KEY;
+    const operatorCode = process.env.GSC_OPERATOR_CODE;
+    const operatorUrl = process.env.GSC_BASE_URL;
+
+    // Validate environment variables
+    if (!secretKey || !operatorCode || !operatorUrl) {
+      return NextResponse.json(
+        {
+          error: "Missing required environment variables",
+        },
+        { status: 500 },
+      );
+    }
+
+    const user: any = await findCurrentUser();
+    if (!user)
+      return NextResponse.json(
+        { error: "Authentication Failed" },
+        { status: 401 },
+      );
+
+    // Parse request body
+    const body: LaunchGameRequest = await req.json();
+    console.log({ body });
+    // Validate required fields
+    const requiredFields = [
+      "product_code",
+      "game_type",
+      "ip",
+      "platform",
+      "operator_lobby_url",
+    ];
+
+    for (const field of requiredFields) {
+      if (!(field in body)) {
+        return NextResponse.json(
+          {
+            error: `Missing required field: ${field}`,
+          },
+          { status: 400 },
+        );
+      }
+    }
+
+    // Validate platform enum
+    if (!["WEB", "DESKTOP", "MOBILE"].includes(body.platform)) {
+      return NextResponse.json(
+        {
+          error: "Invalid platform. Must be WEB, DESKTOP, or MOBILE",
+        },
+        { status: 400 },
+      );
+    }
+
+    // Generate current timestamp (seconds)
+    const requestTime = Math.floor(Date.now() / 1000);
+
+    // Generate signature: md5(request_time + secret_key + "launchgame" + operator_code)
+    const sign = generateSignature(
+      requestTime.toString(),
+      secretKey,
+      operatorCode,
+      "launchgame",
+    );
+
+    // const phone = user.phone;
+    const password = user.id;
+    const nickname = user.name;
+    const currency = "IDR";
+
+    // Build the launch game request payload
+    const launchGamePayload = {
+      operator_code: operatorCode,
+      member_account: "s0350",
+      password: password,
+      nickname: nickname || "",
+      currency: currency,
+      game_code: body.game_code || null,
+      product_code: body.product_code,
+      game_type: body.game_type,
+      language_code: body.language_code || 0,
+      ip: body.ip,
+      platform: body.platform,
+      // widget_id: body.widget_id || undefined,
+      // is_widget_login: body.is_widget_login || false,
+      sign,
+      request_time: requestTime,
+      operator_lobby_url: body.operator_lobby_url,
+    };
+
+    // Remove undefined fields
+    Object.keys(launchGamePayload).forEach(
+      (key) =>
+        launchGamePayload[key as keyof typeof launchGamePayload] ===
+          undefined &&
+        delete launchGamePayload[key as keyof typeof launchGamePayload],
+    );
+
+    // Call the GSC+ Launch Game API
+    const response = await fetch(`${operatorUrl}/api/operators/launch-game`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accpet: "application/json",
+      },
+      body: JSON.stringify(launchGamePayload),
+    });
+
+    // if (!response.ok) {
+    //   return NextResponse.json(
+    //     {
+    //       error: `GSC+ API error: ${response.statusText}`,
+    //     },
+    //     { status: response.status },
+    //   );
+    // }
+    console.log({ launchGamePayload });
+    const result: LaunchGameResponse = await response.json();
+    console.log({ result });
+
+    return NextResponse.json(result, { status: 200 });
+  } catch (error) {
+    console.error("Launch Game API Error:", error);
+
+    return NextResponse.json(
+      {
+        error: "Internal Server Error",
+      },
+      { status: 500 },
+    );
+  }
+}

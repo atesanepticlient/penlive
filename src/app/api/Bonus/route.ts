@@ -7,7 +7,6 @@ export const POST = async (req: NextRequest) => {
       CompanyKey,
       ProductType,
       GameType,
-      NewGameType,
       Username,
       Amount,
       TransferCode,

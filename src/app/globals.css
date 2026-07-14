@@ -8,14 +8,42 @@
 }
 
 :root {
+  --www-jili5565-com-helvetica-neue-bold-font-family:
+    "Helvetica Neue", Helvetica;
+  --www-jili5565-com-helvetica-neue-bold-font-size: 40.5px;
+  --www-jili5565-com-helvetica-neue-bold-font-style: normal;
+  --www-jili5565-com-helvetica-neue-bold-font-weight: 700;
+  --www-jili5565-com-helvetica-neue-bold-letter-spacing: 0px;
+  --www-jili5565-com-helvetica-neue-bold-line-height: 46.61000061035156px;
+  --www-jili5565-com-helvetica-neue-regular-font-family:
+    "Helvetica Neue", Helvetica;
+  --www-jili5565-com-helvetica-neue-regular-font-size: 16px;
+  --www-jili5565-com-helvetica-neue-regular-font-style: normal;
+  --www-jili5565-com-helvetica-neue-regular-font-weight: 400;
+  --www-jili5565-com-helvetica-neue-regular-letter-spacing: 0px;
+  --www-jili5565-com-helvetica-neue-regular-line-height: 18.399999618530273px;
+  --www-jili5565-com-kohinoor-bangla-bold-font-family:
+    "Kohinoor Bangla", Helvetica;
+  --www-jili5565-com-kohinoor-bangla-bold-font-size: 54.70000076293945px;
+  --www-jili5565-com-kohinoor-bangla-bold-font-style: normal;
+  --www-jili5565-com-kohinoor-bangla-bold-font-weight: 700;
+  --www-jili5565-com-kohinoor-bangla-bold-letter-spacing: 0px;
+  --www-jili5565-com-kohinoor-bangla-bold-line-height: 62.869998931884766px;
+  --www-jili5565-com-kohinoor-bangla-regular-font-family:
+    "Kohinoor Bangla", Helvetica;
+  --www-jili5565-com-kohinoor-bangla-regular-font-size: 16px;
+  --www-jili5565-com-kohinoor-bangla-regular-font-style: normal;
+  --www-jili5565-com-kohinoor-bangla-regular-font-weight: 400;
+  --www-jili5565-com-kohinoor-bangla-regular-letter-spacing: 0px;
+  --www-jili5565-com-kohinoor-bangla-regular-line-height: 18.399999618530273px;
   --www-wwwck444-com-segoe-UI-regular-font-family: "Segoe UI", Helvetica;
   --www-wwwck444-com-segoe-UI-regular-font-size: 10.237499237060547px;
   --www-wwwck444-com-segoe-UI-regular-font-style: normal;
   --www-wwwck444-com-segoe-UI-regular-font-weight: 400;
   --www-wwwck444-com-segoe-UI-regular-letter-spacing: 0px;
   --www-wwwck444-com-segoe-UI-regular-line-height: normal;
-  --www-wwwck444-com-segoe-UI-regular-underline-font-family: "Segoe UI",
-    Helvetica;
+  --www-wwwck444-com-segoe-UI-regular-underline-font-family:
+    "Segoe UI", Helvetica;
   --www-wwwck444-com-segoe-UI-regular-underline-font-size: 12.3046875px;
   --www-wwwck444-com-segoe-UI-regular-underline-font-style: normal;
   --www-wwwck444-com-segoe-UI-regular-underline-font-weight: 400;
@@ -47,6 +75,23 @@
   --wwwwwwck444comfrosted-mint: rgba(224, 255, 247, 1);
   --wwwwwwck444comselective-yellow: rgba(255, 184, 0, 1);
   --wwwwwwck444comvis-vis-50: rgba(255, 242, 166, 0.5);
+  --spacing-7: 1.75rem;
+
+  /* PURPLE - Slot */
+  --p-body: radial-gradient(circle at 50% 45%, #8400ff 0%, #110521 100%);
+  --p-stroke: linear-gradient(180deg, #4b0091 0%, #9126f6 100%);
+
+  /* RED - Poker */
+  --r-body: radial-gradient(circle at 50% 45%, #ff0022 0%, #1a0305 100%);
+  --r-stroke: linear-gradient(180deg, #870010 0%, #ff1a39 100%);
+
+  /* BLUE - Fish */
+  --b-body: radial-gradient(circle at 50% 45%, #006aff 0%, #051125 100%);
+  --b-stroke: linear-gradient(180deg, #004195 0%, #1d7bff 100%);
+
+  /* GREEN - Live */
+  --g-body: radial-gradient(circle at 50% 45%, #00ff5e 0%, #05140a 100%);
+  --g-stroke: linear-gradient(180deg, #007b31 0%, #1bff6e 100%);
 }
 
 .app {
@@ -54,7 +99,7 @@
   background-size: cover;
   width: 100%;
   height: auto;
-  background-color: #003e3e;
+  background-color: #333;
 }
 
 .scrollbar-none::-webkit-scrollbar {
@@ -71,8 +116,9 @@
 }
 .hot-games-list {
   display: grid;
+  align-items: start;
   grid-template-columns: repeat(10, 140px);
-  gap: 10px;
+  gap: 9px;
 }
 
 .shiny-card {
@@ -138,6 +184,7 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+    --spacing-7: 1.75rem;
   }
   .dark {
     --background: 240 10% 3.9%;
@@ -177,7 +224,6 @@
 }
 
 .wallet-bg {
-  background-color: #134e4a;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2000 1500'%3E%3Cdefs%3E%3CradialGradient id='a' gradientUnits='objectBoundingBox'%3E%3Cstop offset='0' stop-color='%23082624'/%3E%3Cstop offset='1' stop-color='%23134E4A'/%3E%3C/radialGradient%3E%3ClinearGradient id='b' gradientUnits='userSpaceOnUse' x1='0' y1='750' x2='1550' y2='750'%3E%3Cstop offset='0' stop-color='%230e3a37'/%3E%3Cstop offset='1' stop-color='%23134E4A'/%3E%3C/linearGradient%3E%3Cpath id='s' fill='url(%23b)' d='M1549.2 51.6c-5.4 99.1-20.2 197.6-44.2 293.6c-24.1 96-57.4 189.4-99.3 278.6c-41.9 89.2-92.4 174.1-150.3 253.3c-58 79.2-123.4 152.6-195.1 219c-71.7 66.4-149.6 125.8-232.2 177.2c-82.7 51.4-170.1 94.7-260.7 129.1c-90.6 34.4-184.4 60-279.5 76.3C192.6 1495 96.1 1502 0 1500c96.1-2.1 191.8-13.3 285.4-33.6c93.6-20.2 185-49.5 272.5-87.2c87.6-37.7 171.3-83.8 249.6-137.3c78.4-53.5 151.5-114.5 217.9-181.7c66.5-67.2 126.4-140.7 178.6-218.9c52.3-78.3 96.9-161.4 133-247.9c36.1-86.5 63.8-176.2 82.6-267.6c18.8-91.4 28.6-184.4 29.6-277.4c0.3-27.6 23.2-48.7 50.8-48.4s49.5 21.8 49.2 49.5c0 0.7 0 1.3-0.1 2L1549.2 51.6z'/%3E%3Cg id='g'%3E%3Cuse href='%23s' transform='scale(0.12) rotate(60)'/%3E%3Cuse href='%23s' transform='scale(0.2) rotate(10)'/%3E%3Cuse href='%23s' transform='scale(0.25) rotate(40)'/%3E%3Cuse href='%23s' transform='scale(0.3) rotate(-20)'/%3E%3Cuse href='%23s' transform='scale(0.4) rotate(-30)'/%3E%3Cuse href='%23s' transform='scale(0.5) rotate(20)'/%3E%3Cuse href='%23s' transform='scale(0.6) rotate(60)'/%3E%3Cuse href='%23s' transform='scale(0.7) rotate(10)'/%3E%3Cuse href='%23s' transform='scale(0.835) rotate(-40)'/%3E%3Cuse href='%23s' transform='scale(0.9) rotate(40)'/%3E%3Cuse href='%23s' transform='scale(1.05) rotate(25)'/%3E%3Cuse href='%23s' transform='scale(1.2) rotate(8)'/%3E%3Cuse href='%23s' transform='scale(1.333) rotate(-60)'/%3E%3Cuse href='%23s' transform='scale(1.45) rotate(-30)'/%3E%3Cuse href='%23s' transform='scale(1.6) rotate(10)'/%3E%3C/g%3E%3C/defs%3E%3Cg transform='rotate(0 0 0)'%3E%3Cg transform='rotate(0 0 0)'%3E%3Ccircle fill='url(%23a)' r='3000'/%3E%3Cg opacity='0.5'%3E%3Ccircle fill='url(%23a)' r='2000'/%3E%3Ccircle fill='url(%23a)' r='1800'/%3E%3Ccircle fill='url(%23a)' r='1700'/%3E%3Ccircle fill='url(%23a)' r='1651'/%3E%3Ccircle fill='url(%23a)' r='1450'/%3E%3Ccircle fill='url(%23a)' r='1250'/%3E%3Ccircle fill='url(%23a)' r='1175'/%3E%3Ccircle fill='url(%23a)' r='900'/%3E%3Ccircle fill='url(%23a)' r='750'/%3E%3Ccircle fill='url(%23a)' r='500'/%3E%3Ccircle fill='url(%23a)' r='380'/%3E%3Ccircle fill='url(%23a)' r='250'/%3E%3C/g%3E%3Cg transform='rotate(0 0 0)'%3E%3Cuse href='%23g' transform='rotate(10)'/%3E%3Cuse href='%23g' transform='rotate(120)'/%3E%3Cuse href='%23g' transform='rotate(240)'/%3E%3C/g%3E%3Ccircle fill-opacity='0.1' fill='url(%23a)' r='3000'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   background-attachment: fixed;
   background-size: cover;
@@ -193,7 +239,9 @@
   background-size: cover;
 }
 .wiggle-glow {
-  animation: wiggle 1.2s ease-in-out infinite, glow 2s ease-in-out infinite;
+  animation:
+    wiggle 1.2s ease-in-out infinite,
+    glow 2s ease-in-out infinite;
   display: inline-block;
   @apply text-gray-700;
 }
@@ -210,13 +258,19 @@
 
 @keyframes glow {
   0% {
-    text-shadow: 0 0 2px #0ea5e9, 0 0 5px #0ea5e9;
+    text-shadow:
+      0 0 2px #0ea5e9,
+      0 0 5px #0ea5e9;
   }
   50% {
-    text-shadow: 0 0 10px #0ea5e9, 0 0 20px #0ea5e9;
+    text-shadow:
+      0 0 10px #0ea5e9,
+      0 0 20px #0ea5e9;
   }
   100% {
-    text-shadow: 0 0 2px #0ea5e9, 0 0 5px #0ea5e9;
+    text-shadow:
+      0 0 2px #0ea5e9,
+      0 0 5px #0ea5e9;
   }
 }
 
@@ -263,11 +317,8 @@
   text-transform: uppercase;
   color: #0000;
   -webkit-text-stroke: 1px rgb(255, 230, 0);
-  background: radial-gradient(
-        1.13em at 50% 1.6em,
-        rgb(255, 230, 0) 99%,
-        #0000 101%
-      )
+  background:
+    radial-gradient(1.13em at 50% 1.6em, rgb(255, 230, 0) 99%, #0000 101%)
       calc(50% - 1.6em) 0/3.2em 100% text,
     radial-gradient(1.13em at 50% -0.8em, #0000 99%, rgb(255, 230, 0) 101%) 50%
       0.8em/3.2em 100% repeat-x text;
@@ -278,7 +329,9 @@
 }
 @keyframes l9 {
   to {
-    background-position: calc(50% + 1.6em) 0, calc(50% + 3.2em) 0.8em;
+    background-position:
+      calc(50% + 1.6em) 0,
+      calc(50% + 3.2em) 0.8em;
   }
 }
 
@@ -328,7 +381,25 @@
   background-size: cover;
   background-position: center;
 }
-
+.bonus-reciving-bg {
+  background: url("../../public/bonus-cards/bonus.png") no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+.promo-bg {
+  background: url("../../public/bonus-cards/promo.png") no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+.reward-profile {
+  background: url("../../public/reward-profile-bg.png") no-repeat;
+  position: relative;
+  background-size: contain;
+}
+.reward-recive {
+  background: url("../../public/bonus/bg.jpg") no-repeat;
+  background-size: cover;
+}
 .announcement-bg {
   background: url("../../public/announcement-header.svg") no-repeat;
   background-size: cover;
@@ -762,4 +833,453 @@
   background: url("../../public/icons/rewards/bg-effect.png") no-repeat;
   background-position: center;
   background-size: cover;
+}
+
+.auth-bg {
+  background: url("../../public/auth-bg.jpg");
+}
+
+@keyframes rewardPop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.6);
+  }
+  30% {
+    opacity: 1;
+    transform: translate(-50%, -60%) scale(1.2);
+  }
+  60% {
+    transform: translate(-50%, -90%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -120%) scale(0.9);
+  }
+}
+
+.animate-reward {
+  animation: rewardPop 1.5s ease-out forwards;
+}
+
+/* wheel style */
+.wheel-plate {
+  background: url("../../public/wheel/xyzp_zp-D33LQaJx.png") no-repeat;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  width: calc(100% - 70px);
+}
+
+.wheel-border {
+  position: absolute;
+  width: 100%;
+  background: url("../../public/wheel/xyzp_gx1-Bt-z6utD.png") no-repeat;
+  background-size: cover;
+  background-position: center;
+  animation: spin 8s linear infinite;
+  @apply aspect-square;
+}
+
+.wheel-grow {
+  position: absolute;
+  width: calc(100% - 20px);
+  background: url("../../public/wheel/xyzp_gx2-DsRNuu37.png") no-repeat;
+  background-size: contain;
+  z-index: -1;
+  @apply aspect-square;
+}
+
+/* remove the old keyframes spin & animation on wheel-border */
+
+.spin-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  width: 50px;
+  height: 65px;
+  background: url("../../public/wheel/go-wheel.png") no-repeat;
+  background-size: cover;
+  background-position: center;
+  z-index: 3;
+}
+
+.reward-icon {
+  transform: rotate(112deg);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+.slice-highlight {
+  position: absolute;
+  top: 30px;
+  left: calc(50% + 2px);
+  width: 100px;
+  transform: translate(-50%);
+  height: 130px;
+  z-index: 2;
+  background: url("../../public/wheel/xyzp_zj-Bqxz6E8v.png") no-repeat;
+  background-size: contain;
+  animation: blink 500ms infinite;
+}
+.slices-blue {
+  position: absolute;
+  top: 0;
+  left: 35px;
+  width: 332px;
+  height: 332px;
+  background: url("../../public/wheel/xyzp_zj-Bqxz6E8v2.png") no-repeat;
+  background-size: contain;
+  z-index: 1;
+}
+.leader-board-bg {
+  background: url("../../public/wheel/xyzp_gx1-Bt-z6utDx.png") no-repeat;
+  background-size: contain;
+}
+
+@keyframes leaderboard-marquee {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%); /* move by half (because we duplicate list) */
+  }
+}
+
+.leaderboard-marquee {
+  animation: leaderboard-marquee 5s linear infinite;
+}
+
+.reward-modal-bg {
+  background: url("../../public/promotion/reward-banner.png") no-repeat;
+  background-size: contain;
+  animation: reward-pop 350ms ease-out forwards;
+}
+
+/* Intro animation for the reward modal */
+@keyframes reward-pop {
+  0% {
+    transform: scale(0.2) translateY(40px);
+  }
+  60% {
+    transform: scale(1.05) translateY(-4px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* invitation leader board */
+.animate-infinite-scroll {
+  animation: scrollLoop 10s linear infinite;
+}
+
+@keyframes scrollLoop {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    /* This scrolls exactly one full length of the original list */
+    transform: translate3d(0, var(--scroll-offset), 0);
+  }
+}
+
+.profile-inner {
+  background: url(../../public/profile/profile-inner.png) no-repeat;
+  width: 100%;
+  height: 300px;
+  background-size: cover;
+  background-position: top;
+}
+.member-profile {
+  background: url(../../public/profile/profile.png) no-repeat;
+  width: 85%;
+  height: 280px;
+  background-size: cover;
+  background-position: top;
+}
+@media (max-width: 480px) {
+  .member-profile {
+    width: 95%;
+  }
+}
+@media (max-width: 400px) {
+  .member-profile {
+    width: 98%;
+  }
+}
+
+.shine {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+
+  background: linear-gradient(
+    120deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.35),
+    transparent 60%
+  );
+
+  filter: blur(8px); /* 🔥 softness */
+  animation: shineMove 2s linear infinite;
+}
+
+@keyframes shineMove {
+  0% {
+    transform: translate(-100%, -100%);
+  }
+  100% {
+    transform: translate(100%, 100%);
+  }
+}
+
+/* vip */
+.vip-level-banner {
+  background: url(../../public/vip/level-bg.png) no-repeat;
+  background-size: contain;
+}
+
+.bottom-to-top-push {
+  animation: bottomToTopPush 150ms ease-in-out;
+}
+.bottom-to-top-pull {
+  animation: bottomToTopPull 150ms ease-in-out;
+}
+@keyframes bottomToTopPush {
+  0% {
+    bottom: -200px;
+  }
+  100% {
+    bottom: 40px;
+  }
+}
+@keyframes bottomToTopPull {
+  0% {
+    bottom: 40px;
+  }
+  100% {
+    bottom: -200px;
+  }
+}
+
+.promo-code-profile {
+  background: url(../../public/bonus-cards/promo-bg.JPG) no-repeat;
+  background-size: cover;
+  width: 100%;
+  height: 200px;
+}
+
+@keyframes shake {
+  0% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(-2deg);
+  }
+  40% {
+    transform: rotate(2deg);
+  }
+  60% {
+    transform: rotate(-2deg);
+  }
+  80% {
+    transform: rotate(2deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.egg-shake {
+  display: inline-block;
+  animation: shake 0.1s infinite;
+}
+.egg-grid:first-of-type {
+  grid-column: span 4;
+}
+
+.hammer-animation {
+  animation: hammer 800ms cubic-bezier(0.01, 0.64, 0.18, 0.87);
+  perspective: 10px;
+}
+@keyframes hammer {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(45deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+/* bonus recieve centre */
+.reward-lebel-orang {
+  @apply bg-gradient-to-br from-[#EE4335] to-[#ffa682];
+}
+.reward-lebel-red {
+  @apply bg-gradient-to-br from-[#ff0000fe] to-[#ffa5a8];
+}
+.reward-lebel-blue {
+  @apply bg-gradient-to-br from-[#2563EB] to-[#7DD3FC];
+}
+.reward-lebel-pink {
+  @apply bg-gradient-to-br from-[#FF3B3B] to-[#FF6EC7];
+}
+.spin-bonus-recive-list-card-red {
+  background: url(../../public/bonus/spin-wheel-card-bg-red.jpg) no-repeat;
+  background-size: cover;
+}
+.spin-bonus-recive-list-card-blue {
+  background: url(../../public/bonus/spin-wheel-card-bg-blue.jpg) no-repeat;
+  background-size: cover;
+}
+
+/* notification badge */
+.notification-badge {
+  @apply ml-auto flex h-[18px] w-[18px] items-center justify-center rounded-full bg-[#FF003C] text-[10px] font-bold text-white shadow-[0_0_8px_rgba(255,0,60,0.7)];
+}
+
+/* custom toast styles */
+
+.card-grid {
+  display: flex;
+  gap: 20px;
+  padding: 50px;
+  justify-content: center;
+}
+
+.casino-card {
+  width: 90px;
+  height: 105px;
+  border-radius: 20px; /* Smooth premium "Squircle" */
+  position: relative;
+
+  padding-bottom: 20px;
+  cursor: pointer;
+
+  /* THE HIGH-HIGHLIGHT STROKE */
+  border: 1px solid transparent;
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+
+  /* INNER RIM SHIMMER: This adds that tiny white line inside the edge */
+  box-shadow:
+    inset 0px 1px 1px rgba(255, 255, 255, 0.4),
+    0px 15px 30px rgba(0, 0, 0, 0.9);
+
+  transition: transform 0.3s ease;
+}
+
+/* Applying the specific Vibrant Gradients */
+.purple {
+  background-image: var(--p-body), var(--p-stroke);
+}
+.red {
+  background-image: var(--r-body), var(--r-stroke);
+}
+.blue {
+  background-image: var(--b-body), var(--b-stroke);
+}
+.green {
+  background-image: var(--g-body), var(--g-stroke);
+}
+
+/* TOP SURFACE GLOW (Environmental Lighting) */
+.casino-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(255, 255, 255, 0.18) 0%,
+    transparent 65%
+  );
+  pointer-events: none;
+}
+
+/* BENGALI TEXT STYLE */
+.casino-card span {
+  font-family: "Hind Siliguri", sans-serif;
+  color: white;
+
+  font-weight: 500;
+  z-index: 2;
+  text-shadow: 0px 2px 10px rgba(0, 0, 0, 1);
+}
+
+.platform-bg {
+  background-color: #050510;
+  background-image:
+    radial-gradient(ellipse 60% 40% at 20% 15%, #3d0a6e55 0%, transparent 70%),
+    radial-gradient(ellipse 50% 35% at 80% 10%, #0a1a6e44 0%, transparent 70%),
+    radial-gradient(ellipse 55% 30% at 50% 50%, #1a0a3e33 0%, transparent 70%),
+    radial-gradient(ellipse 45% 35% at 15% 80%, #2a0a5e44 0%, transparent 70%),
+    radial-gradient(ellipse 50% 30% at 85% 75%, #0a0a4e33 0%, transparent 70%);
+}
+
+.mission-header-bg {
+  background: url(../../public/mission/main/missions-header-bg.jpg) no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+.mission-progress-header-bg {
+  background: url(../../public/mission/main/mission-info-card-bg.jpg) no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+.mission-progress-disabled-header-bg {
+  background: url(../../public/mission/main/mission-info-card-disabled-bg.jpg)
+    no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+.leadeboard-header-bg {
+  background: url(../../public/mission/leaderboard/leader-board-header-bg.png)
+    no-repeat;
+  background-size: contain;
+}
+
+.games-header-bg {
+  background: url(../../public/games/header-bg.png) no-repeat;
+  background-size: cover;
+}
+
+@keyframes infinite-slide {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-infinite-slide {
+  animation: infinite-slide 35s linear infinite;
+}
+
+.animate-infinite-slide:hover {
+  animation-play-state: paused;
 }

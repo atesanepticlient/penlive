@@ -7,7 +7,25 @@ const PrimaryInput: FC<InputHTMLAttributes<HTMLInputElement>> = ({
   return (
     <input
       {...props}
-      className={`text-white w-full mb-2 outline-none text-base px-8 py-4 bg-wwwwwwck-44-4comdaintree rounded-[10.4px] overflow-hidden border border-solid border-[#006165] focus:border-[#2f9396] shadow-[0px_2.08px_0px_#002631] placeholder:font-www-wwwck444-com-semantic-input font-[number:var(--www-wwwck444-com-semantic-input-font-weight)] placeholder:text-wwwwwwck444combright-turquoise placeholder:text-[length:var(--www-wwwck444-com-semantic-input-font-size)] placeholder:tracking-[var(--www-wwwck444-com-semantic-input-letter-spacing)] placeholder:leading-[var(--www-wwwck444-com-semantic-input-line-height)] placeholder:[font-style:var(--www-wwwck444-com-semantic-input-font-style)] ${className}`}
+      className={`
+        h-[58px]
+        w-full
+        rounded-2xl
+     
+        bg-white
+        px-5
+        text-violet-950
+        outline-none
+        backdrop-blur-xl
+        transition-all
+        duration-300
+        placeholder:text-gray-500
+        placeholder:font-bold
+        shadow-lg
+        focus:border-voilet-500/50
+        focus:ring-0
+        ${className}
+      `}
     />
   );
 };

@@ -9,16 +9,11 @@ export const POST = async (req: NextRequest) => {
       WinLoss,
       ResultType,
       ResultTime,
-      CommissionStake,
-      GameResult,
-      CompanyKey,
+   
       Username,
       ProductType,
       GameType,
-      Gpid,
-      IsCashOut,
-      ExtraInfo,
-      SeamlessGameExtraInfo
+   
     } = await req.json();
 
     // Validate required fields
@@ -89,7 +84,7 @@ export const POST = async (req: NextRequest) => {
     }
 
     // Update the bet status to settled and record the win/loss
-    const updatedBet = await db.bet.update({
+     await db.bet.update({
       where: {
         id: bet.id, // Using bet's unique id for update
       },

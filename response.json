@@ -1,0 +1,102 @@
+{
+  "meta": {
+    "run_id": "CHK-2025-11-03-184522-AXN12",
+    "version": "2.5.0",
+    "environment": "production",
+    "system_id": "BETSYS-CORE-001",
+    "initiated_by": "runner_v3",
+    "region": "ap-south-1",
+    "api_call_sequence_count": 21
+  },
+  "overall_status": {
+    "state": "FAILED",
+    "severity": "CRITICAL",
+    "failure_reason": "Insufficient funds in connected payment gateway",
+    "recovery_action_required": true,
+    "recommended_action": "Top up gateway account to minimum 105000000 before reattempt.",
+    "triggered_alerts": [
+      "fund_precheck_insufficient_balance",
+      "withdrawal_chain_halt",
+      "gateway_credit_low"
+    ]
+  },
+  "api_execution_trace": [
+    {
+      "api_name": "get-merchant-balance",
+      "endpoint": "/fund/get-merchant-balance",
+      "method": "GET",
+      "trace_id": "TRC-001-AUTH",
+      "status": "SUCCESS",
+      "response_time_ms": 82,
+      "retries": 0,
+      "dependencies": []
+    },
+    
+    {
+      "api_name": "withdraw",
+      "endpoint": "/fund/withdraw",
+      "method": "POST",
+      "trace_id": "TRC-003-WITHDRAW",
+      "status": "FAILED",
+      "retries": 2,
+      "dependencies": ["auth", "user_details"],
+      "error": {
+        "error_code": "ERR_INSUFFICIENT_FUNDS",
+        "http_status": 400,
+        "message": "Account balance should be at least 100000000 .",
+        "required_balance": 105000000,
+        "available_balance": 0.0,
+        "attempted_withdrawal": 5000,
+        "gateway_response": {
+          "gateway_ref_id": "PGW-TXN-998721",
+          "gateway_latency_ms": 214,
+          "gateway_status": "DECLINED",
+          "gateway_reason": "Insufficient funds on merchant account"
+        },
+        "correlation_id": "C-99441-AXP",
+        "request_payload": {
+          "user_id": 10324,
+          "amount": 5000,
+          "currency": "BDT",
+          "method": "bkash"
+        }
+      }
+    }
+  ],
+  "system_analysis": {
+    "pre_check_balance": 0.0,
+    "required_balance_total": 105000000,
+    "deficit": 105000000,
+    "estimated_fail_point_call": 17,
+    "prediction_model_confidence": 0.97,
+    "failure_classification": "Predictable",
+    "auto_abort_triggered": true
+  },
+  "performance_metrics": {
+    "avg_response_time_ms": 124,
+    "peak_latency_ms": 214,
+    "total_runtime_ms": 2510,
+    "cpu_usage_percent": 42.6,
+    "memory_usage_mb": 183.5,
+    "network_out_kb": 528
+  },
+  "security_context": {
+    "auth_mode": "JWT",
+    "token_validity_sec": 3600,
+    "session_encrypted": true,
+    "signature_verified": true
+  },
+  "additional_data": {
+    "system_notes": [
+      "Withdrawal aborted before commit due to pre-fund insufficiency.",
+      "Payment gateway precheck completed — insufficient balance detected.",
+      "Dependent APIs (withdraw_confirm, ledger_sync) skipped for safety."
+    ],
+    "suggested_retry_policy": {
+      "retry_after_sec": 600,
+      "max_retry_attempts": 3,
+      "auto_resume_on_balance_update": true
+    }
+    
+  }
+}

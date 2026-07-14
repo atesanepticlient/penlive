@@ -100,7 +100,7 @@ export async function makePayinTransaction(businessPayload: any) {
     }
     const payload = decryptPayload(response.data.payload);
     return payload;
-  } catch (error)  {
+  } catch {
     throw new Error("Deposit Failed! Try again");
   }
 }

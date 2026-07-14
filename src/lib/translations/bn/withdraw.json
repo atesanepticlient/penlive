@@ -1,0 +1,37 @@
+{
+  "page": {
+    "title": "উত্তোলন"
+  },
+  "form": {
+    "amount": {
+      "label": "পরিমাণ",
+      "placeholder": "উত্তোলন পরিমাণ লিখুন"
+    },
+    "method": {
+      "label": "উত্তোলন পদ্ধতি",
+      "placeholder": "উত্তোলন পদ্ধতি নির্বাচন করুন"
+    },
+    "account": {
+      "label": "অ্যাকাউন্ট নম্বর",
+      "placeholder": "আপনার অ্যাকাউন্ট নম্বর লিখুন"
+    },
+    "password": {
+      "label": "উত্তোলন পাসওয়ার্ড",
+      "placeholder": "উত্তোলন পাসওয়ার্ড লিখুন"
+    },
+    "submit": "উত্তোলন জমা দিন"
+  },
+  "info": {
+    "availableBalance": "উপলব্ধ ব্যালেন্স",
+    "minWithdraw": "সর্বনিম্ন উত্তোলন",
+    "maxWithdraw": "সর্বোচ্চ উত্তোলন",
+    "processingTime": "প্রক্রিয়াকরণ সময়",
+    "fee": "লেনদেন ফি"
+  },
+  "status": {
+    "pending": "অপেক্ষমান",
+    "approved": "অনুমোদিত",
+    "rejected": "প্রত্যাখ্যাত",
+    "completed": "সম্পন্ন"
+  }
+}

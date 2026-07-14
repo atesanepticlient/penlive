@@ -2,6 +2,7 @@
 "use client";
 import Image from "next/image";
 import React from "react";
+import { FaCircleCheck } from "react-icons/fa6";
 
 interface PaymentMethodsPros {
   method: any;
@@ -16,13 +17,13 @@ const PaymentMethod = ({
 }: PaymentMethodsPros) => {
   return (
     <button
-      className={`flex-shrink-0 mx-1 cursor-pointer whitespace-nowrap`}
+      className={`flex-shrink-0  cursor-pointer whitespace-nowrap`}
       onClick={() => onClick()}
     >
       <div
-        className={`w-24 h-24 rounded-lg border-2 flex flex-col items-center justify-center p-3 transition-all ${
+        className={`w-24 h-24 relative rounded-lg border-2 flex flex-col items-center justify-center p-3 transition-all ${
           selectedPaymentMethod?.name === method.name
-            ? "border-blue-500 bg-blue-50"
+            ? "border-[#e11d48] bg-[#fda4ae0f]"
             : "border-gray-200 hover:border-gray-300"
         }`}
       >
@@ -37,12 +38,16 @@ const PaymentMethod = ({
         <span
           className={`mt-2 text-sm font-medium ${
             selectedPaymentMethod?.name === method.name
-              ? "text-blue-600"
+              ? "text-[#e11d48]"
               : "text-gray-700"
           }`}
         >
           {method.label}
         </span>
+
+        {selectedPaymentMethod?.name == method.name && (
+          <FaCircleCheck className="text-[#e11d48] absolute top-1 right-1" />
+        )}
       </div>
     </button>
   );

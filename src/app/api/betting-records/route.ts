@@ -10,25 +10,18 @@ export async function GET() {
   }
 
   try {
-    // Fetch the single betting record for the user
-    const record = await db.bettingRecord.findUnique({
-      where: { id: user.id },
+    const agg = await db.bettingRecord.aggregate({
+      where: { userId: user.id, status: "SETTLED" },
+      _sum: { betAmount: true, profit: true },
     });
 
-    if (!record) {
-      return NextResponse.json({
-        totalBet: 0,
-        totalWin: 0,
-        winningRate: 0,
-      });
-    }
-
-    const winningRate =
-      +record.totalBet > 0 ? (+record.totalWin / +record.totalBet) * 100 : 0;
+    const totalBet = agg._sum.betAmount ? +agg._sum.betAmount : 0;
+    const totalWin = agg._sum.profit ? +agg._sum.profit : 0;
+    const winningRate = totalBet > 0 ? (totalWin / totalBet) * 100 : 0;
 
     return NextResponse.json({
-      totalBet: record.totalBet,
-      totalWin: record.totalWin,
+      totalBet,
+      totalWin,
       winningRate,
     });
   } catch (error) {

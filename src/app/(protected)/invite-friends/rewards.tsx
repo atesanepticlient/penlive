@@ -17,12 +17,12 @@ const Rewards = ({ rewards }: RewardsProps) => {
 
   const handleClamReward = (reward: ExtendedWithUserRewards) => {
     if (reward.isClamed) {
-      toast.success("You already clamed this reward");
+      toast.error("You already clamed this reward");
       return;
     }
 
-    if (reward.targetReferral !== reward.completedReferral) {
-      toast.success("Please refer more users to get it");
+    if (reward.targetReferral > reward.completedReferral) {
+      toast.error("Please refer more users to get it");
       return;
     }
 
@@ -37,10 +37,17 @@ const Rewards = ({ rewards }: RewardsProps) => {
         }
       });
   };
+
+  const sortedRewards = [...rewards].sort(
+    (a, b) => a.targetReferral - b.targetReferral,
+  );
+
+  console.log({sortedRewards})
+
   return (
     <div>
       <div className="space-y-3">
-        {rewards.map((reward, i) => (
+        {sortedRewards.map((reward, i) => (
           <div
             key={i}
             className="bg-[linear-gradient(180deg,_rgba(243,247,251,0.4)_0%,_rgba(224,233,241,0.4))] rounded-md p-2 flex items-center gap-3 shadow-sm"
@@ -78,7 +85,7 @@ const Rewards = ({ rewards }: RewardsProps) => {
                   onClick={() => handleClamReward(reward)}
                   disabled={
                     reward.isClamed ||
-                    reward.targetReferral != reward.completedReferral ||
+                    reward.targetReferral > reward.completedReferral ||
                     isLoading
                   }
                   className={`bg-[linear-gradient(113deg,_#43cbff,_#9708cc)] text-white text-xs font-medium px-2 py-1 rounded-md cursor-pointer ${
@@ -86,18 +93,36 @@ const Rewards = ({ rewards }: RewardsProps) => {
                   } `}
                 >
                   {reward.isClamed
-                    ? "Clamed"
-                    : reward.targetReferral == reward.completedReferral
-                    ? "Clam"
-                    : "Available"}
+                    ? "Received"
+                    : reward.targetReferral <= reward.completedReferral
+                      ? "Receive"
+                      : "Available"}
                 </button>
               </div>
             </div>
           </div>
         ))}
       </div>
+      {isLoading && <ClaimingLoading />}
     </div>
   );
 };
 
 export default Rewards;
+import { ColorRing } from "react-loader-spinner";
+export const ClaimingLoading = () => {
+  return (
+    <div className="fixed top-0 left-0 right-0 w-full h-screen bg-[#00000090] z-[100] flex flex-col justify-center items-center">
+      <ColorRing
+        visible={true}
+        height="80"
+        width="80"
+        ariaLabel="color-ring-loading"
+        wrapperStyle={{}}
+        wrapperClass="color-ring-wrapper"
+        colors={["#e15b64", "#f47e60", "#f8b26a", "#abbd81", "#849b87"]}
+      />
+      <span className="text-white font-medium text-sm">Claiming...</span>
+    </div>
+  );
+};

@@ -49,7 +49,7 @@ const mapToGamesList = (items: NewProvGame[]) => {
   const out: Record<string, Array<{ id: string; name: string; img: string; device: string; title: string; categories: string; bm: string; demo: string; rewriterule: string; exitButton: string }>> = {};    
 
   for (const g of items) {     
-    const gpid = String(g.gameProviderId);  // Game provider ID as string
+    // const gpid = String(g.gameProviderId);  // Game provider ID as string
     const gid = String(g.gameID);  // Game ID as string
 
     // Find the English game information if available
@@ -89,7 +89,7 @@ export const GET = async () => {
     const base = process.env.NEWPROV_BASE_URL!;
     const companyKey = process.env.NEWPROV_COMPANY_KEY!;
     const serverId = process.env.NEWPROV_SERVER_ID || `srv-${Date.now().toString(36)}`;
-    const gpIdEnv = process.env.NEWPROV_GP_ID;
+    // const gpIdEnv = process.env.NEWPROV_GP_ID;
 
     const body ={ CompanyKey: companyKey, ServerId: serverId,"GpId": 1,
   "IsGetAll": true  };

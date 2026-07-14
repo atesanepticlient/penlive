@@ -12,22 +12,25 @@ import { useForm } from "react-hook-form";
 import { RiCloseCircleLine } from "react-icons/ri";
 import zod from "zod";
 import { registerSchema } from "@/schema";
-import Variant1 from "../icons/Variant2";
 
-import { FaEyeSlash } from "react-icons/fa6";
-import { FaEye } from "react-icons/fa6";
+import { FaEyeSlash, FaEye, FaUserAstronaut, FaPhone } from "react-icons/fa6";
 import { IoLockOpen } from "react-icons/io5";
-import { FaUserAstronaut } from "react-icons/fa6";
 import CheckInput from "./CheckInput";
 import { redirect, useSearchParams } from "next/navigation";
 import { register } from "@/action/register";
 import { toast } from "react-hot-toast";
 import SpinLoader from "../loader/SpinLoader";
+import {
+  createLocalStoreDataByKey,
+  getLocalStoreDataByKey,
+} from "@/lib/localstore";
+import { useText } from "@/hook/useText";
 
 const RegisterForm = () => {
+  const t = useText("/register");
   const referId = useSearchParams().get("r") || "";
+  const affiliateCode = useSearchParams().get("a") || "";
   const [pending, startTransiction] = useTransition();
-
   const form = useForm<zod.infer<typeof registerSchema>>({
     defaultValues: {
       phone: "",
@@ -36,18 +39,23 @@ const RegisterForm = () => {
       ageCheck: true,
       bonusCheck: false,
       referralId: referId,
+      affiliateCode: affiliateCode,
+      ipSign: getLocalStoreDataByKey("-entry-token") || "",
     },
     resolver: zodResolver(registerSchema),
   });
 
   const handleRegister = (data: zod.infer<typeof registerSchema>) => {
-    if (!data.ageCheck) {
-      return;
-    }
+    if (!data.ageCheck) return;
 
     startTransiction(() => {
       register(data).then((res) => {
         if (res.success) {
+          if (res.localStore) {
+            res.localStore.forEach(({ key, value }) => {
+              createLocalStoreDataByKey(key, value);
+            });
+          }
           redirect("/");
         } else if (res.error) {
           toast.error(res.error);
@@ -61,220 +69,215 @@ const RegisterForm = () => {
     confirmPassword: boolean;
   }>({ password: false, confirmPassword: false });
 
+  // Common Input Style for consistency
+  const inputBaseClass = `
+    w-full mb-3 outline-none text-sm px-10 py-3.5 
+    bg-[#0A0A0A] text-white rounded-xl overflow-hidden 
+    border border-white/10 focus:border-[#D4AF37]/50 
+    transition-all duration-300 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]
+    placeholder:text-white/30 font-medium
+  `;
+
+  const iconBaseClass = "w-4 h-4 text-[#F9E498] opacity-70";
+
   return (
-    <>
+    <div className="w-full max-w-md mx-auto">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleRegister)}>
+        <form
+          onSubmit={form.handleSubmit(handleRegister)}
+          className="space-y-1"
+        >
+          {/* Phone Field */}
           <FormField
             control={form.control}
             name="phone"
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <div className="relative">
+                  <div className="relative group">
                     <input
-                      placeholder="Enter Phone"
+                      placeholder={
+                        (t as any)?.register?.form?.phone?.placeholder ||
+                        "Enter Phone Number"
+                      }
                       disabled={pending}
                       {...field}
-                      className="text-white w-full mb-2 outline-none text-sm px-8 py-3 bg-wwwwwwck-44-4comdaintree rounded-[10.4px] overflow-hidden border border-solid border-[#006165] focus:border-[#2f9396] shadow-[0px_2.08px_0px_#002631] placeholder:font-www-wwwck444-com-semantic-input font-[number:var(--www-wwwck444-com-semantic-input-font-weight)] placeholder:text-wwwwwwck444combright-turquoise placeholder:text-[length:var(--www-wwwck444-com-semantic-input-font-size)] placeholder:tracking-[var(--www-wwwck444-com-semantic-input-letter-spacing)] placeholder:leading-[var(--www-wwwck444-com-semantic-input-line-height)] placeholder:[font-style:var(--www-wwwck444-com-semantic-input-font-style)]"
+                      className={inputBaseClass}
+                      autoComplete="off"
                     />
-
-                    <div className="flex w-[19px] h-[19px] items-center justify-center absolute top-[45%] -translate-y-1/2 left-2.5">
-                      <Variant1 className="!relative !flex-1 !grow !h-[18.72px]" />
+                    <div className="absolute left-3.5 top-1/2 -translate-y-[65%]">
+                      <FaPhone className={iconBaseClass} />
                     </div>
-
-                    {form.getValues("phone") && (
+                    {form.watch("phone") && (
                       <button
+                        type="button"
                         onClick={() => form.setValue("phone", "")}
-                        className="flex w-[19px] h-[19px] items-center justify-center absolute top-[45%] -translate-y-1/2 right-2.5"
+                        className="absolute right-3.5 top-1/2 -translate-y-[65%] hover:text-red-400 transition-colors"
                       >
-                        <RiCloseCircleLine className="!relative !flex-1 !grow !h-[18.72px] text-wwwwwwck444combright-turquoise " />
+                        <RiCloseCircleLine
+                          size={18}
+                          className="text-white/40"
+                        />
                       </button>
                     )}
                   </div>
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-red-500 text-[10px] ml-2" />
               </FormItem>
             )}
           />
 
+          {/* Password Field */}
           <FormField
             control={form.control}
             name="password"
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <div className="relative">
+                  <div className="relative group">
                     <input
                       type={passwordShow.password ? "text" : "password"}
-                      placeholder="Password"
+                      placeholder={
+                        (t as any)?.register?.form?.password?.placeholder ||
+                        "Create Password"
+                      }
                       disabled={pending}
                       {...field}
-                      className="text-white w-full mb-2 outline-none text-sm px-8 py-3 bg-wwwwwwck-44-4comdaintree rounded-[10.4px] overflow-hidden border border-solid border-[#006165] focus:border-[#2f9396] shadow-[0px_2.08px_0px_#002631] placeholder:font-www-wwwck444-com-semantic-input font-[number:var(--www-wwwck444-com-semantic-input-font-weight)] placeholder:text-wwwwwwck444combright-turquoise placeholder:text-[length:var(--www-wwwck444-com-semantic-input-font-size)] placeholder:tracking-[var(--www-wwwck444-com-semantic-input-letter-spacing)] placeholder:leading-[var(--www-wwwck444-com-semantic-input-line-height)] placeholder:[font-style:var(--www-wwwck444-com-semantic-input-font-style)]"
+                      className={inputBaseClass}
+                      autoComplete="off"
                     />
-
-                    <div className="flex w-[19px] h-[19px] items-center justify-center absolute top-[45%] -translate-y-1/2 left-2.5">
-                      <IoLockOpen className="!relative !flex-1 !grow !h-[18.72px] text-wwwwwwck444combright-turquoise" />
+                    <div className="absolute left-3.5 top-1/2 -translate-y-[65%]">
+                      <IoLockOpen className={iconBaseClass} />
                     </div>
-
                     <button
                       type="button"
                       onClick={() =>
-                        setPasswordShow((state) => ({
-                          ...state,
-                          password: !state.password,
+                        setPasswordShow((s) => ({
+                          ...s,
+                          password: !s.password,
                         }))
                       }
-                      className="flex w-[19px] h-[19px] items-center justify-center absolute top-[45%] -translate-y-1/2 right-2.5"
+                      className="absolute right-3.5 top-1/2 -translate-y-[65%] text-white/40 hover:text-[#F9E498]"
                     >
                       {passwordShow.password ? (
-                        <FaEye className="!relative !flex-1 !grow !h-[18.72px] text-wwwwwwck444combright-turquoise " />
+                        <FaEye size={16} />
                       ) : (
-                        <FaEyeSlash className="!relative !flex-1 !grow !h-[18.72px] text-wwwwwwck444combright-turquoise " />
+                        <FaEyeSlash size={16} />
                       )}
                     </button>
                   </div>
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-red-500 text-[10px] ml-2" />
               </FormItem>
             )}
           />
 
+          {/* Confirm Password Field */}
           <FormField
             control={form.control}
             name="confirmPassword"
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <div className="relative">
+                  <div className="relative group">
                     <input
-                      placeholder="Confirm Password"
-                      disabled={pending}
                       type={passwordShow.confirmPassword ? "text" : "password"}
+                      placeholder={
+                        (t as any)?.register?.form?.confirmPassword
+                          ?.placeholder || "Confirm Password"
+                      }
+                      disabled={pending}
                       {...field}
-                      className="text-white w-full mb-2 outline-none text-sm px-8 py-3 bg-wwwwwwck-44-4comdaintree rounded-[10.4px] overflow-hidden border border-solid border-[#006165] focus:border-[#2f9396] shadow-[0px_2.08px_0px_#002631] placeholder:font-www-wwwck444-com-semantic-input font-[number:var(--www-wwwck444-com-semantic-input-font-weight)] placeholder:text-wwwwwwck444combright-turquoise placeholder:text-[length:var(--www-wwwck444-com-semantic-input-font-size)] placeholder:tracking-[var(--www-wwwck444-com-semantic-input-letter-spacing)] placeholder:leading-[var(--www-wwwck444-com-semantic-input-line-height)] placeholder:[font-style:var(--www-wwwck444-com-semantic-input-font-style)]"
+                      className={inputBaseClass}
+                      autoComplete="off"
                     />
-
-                    <div className="flex w-[19px] h-[19px] items-center justify-center absolute top-[45%] -translate-y-1/2 left-2.5">
-                      <IoLockOpen className="!relative !flex-1 !grow !h-[18.72px] text-wwwwwwck444combright-turquoise" />
+                    <div className="absolute left-3.5 top-1/2 -translate-y-[65%]">
+                      <IoLockOpen className={iconBaseClass} />
                     </div>
-
                     <button
                       type="button"
                       onClick={() =>
-                        setPasswordShow((state) => ({
-                          ...state,
-                          confirmPassword: !state.confirmPassword,
+                        setPasswordShow((s) => ({
+                          ...s,
+                          confirmPassword: !s.confirmPassword,
                         }))
                       }
-                      className="flex w-[19px] h-[19px] items-center justify-center absolute top-[45%] -translate-y-1/2 right-2.5"
+                      className="absolute right-3.5 top-1/2 -translate-y-[65%] text-white/40 hover:text-[#F9E498]"
                     >
                       {passwordShow.confirmPassword ? (
-                        <FaEye className="!relative !flex-1 !grow !h-[18.72px] text-wwwwwwck444combright-turquoise " />
+                        <FaEye size={16} />
                       ) : (
-                        <FaEyeSlash className="!relative !flex-1 !grow !h-[18.72px] text-wwwwwwck444combright-turquoise " />
+                        <FaEyeSlash size={16} />
                       )}
                     </button>
                   </div>
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-red-500 text-[10px] ml-2" />
               </FormItem>
             )}
           />
 
+          {/* Referral Field */}
           <FormField
             control={form.control}
             name="referralId"
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <div className="relative">
+                  <div className="relative group">
                     <input
-                      placeholder="Referral Id (Optional)"
+                      placeholder="Referral ID (Optional)"
                       disabled={pending}
-                      type={"text"}
                       {...field}
-                      className="text-white w-full mb-2 outline-none text-sm px-8 py-3 bg-wwwwwwck-44-4comdaintree rounded-[10.4px] overflow-hidden border border-solid border-[#006165] focus:border-[#2f9396] shadow-[0px_2.08px_0px_#002631] placeholder:font-www-wwwck444-com-semantic-input font-[number:var(--www-wwwck444-com-semantic-input-font-weight)] placeholder:text-wwwwwwck444combright-turquoise placeholder:text-[length:var(--www-wwwck444-com-semantic-input-font-size)] placeholder:tracking-[var(--www-wwwck444-com-semantic-input-letter-spacing)] placeholder:leading-[var(--www-wwwck444-com-semantic-input-line-height)] placeholder:[font-style:var(--www-wwwck444-com-semantic-input-font-style)]"
+                      className={inputBaseClass}
                     />
-
-                    <div className="flex w-[19px] h-[19px] items-center justify-center absolute top-[45%] -translate-y-1/2 left-2.5">
-                      <FaUserAstronaut className="!relative !flex-1 !grow !h-[18.72px] text-wwwwwwck444combright-turquoise" />
+                    <div className="absolute left-3.5 top-1/2 -translate-y-[65%]">
+                      <FaUserAstronaut className={iconBaseClass} />
                     </div>
                   </div>
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-red-500 text-[10px] ml-2" />
               </FormItem>
             )}
           />
 
-          <div className="my-3 flex flex-col gap-2">
+          {/* Checkboxes */}
+          <div className="py-2 flex flex-col gap-3">
             <CheckInput
               defaultCheck
               onChecked={(checked) => form.setValue("ageCheck", checked)}
-              label="I am over 18 years of age and have read and accepted Terms & Conditions, Privacy Policy & Betting Rules as published on the site.
-"
+              label="I am 18+ and accept the Terms & Conditions and Privacy Policy."
             />
             <CheckInput
               onChecked={(checked) => form.setValue("bonusCheck", checked)}
-              label="I would like to receive details of special offers, free bets and other promotions.
-"
+              label="I want to receive special offers and bonus promotions."
             />
           </div>
 
+          {/* Submit Button */}
           <button
-            disabled={pending || form.getValues("ageCheck") == false}
-            className="mt-4 disabled:!bg-[#ffffff0e] disabled:!backdrop-blur-sm disable:!border-white/50 disabled:!text-white/15 "
-            style={{
-              width: "100%",
-              alignSelf: "stretch",
-              height: 33.27,
-              padding: 1,
-              background:
-                "linear-gradient(180deg, var(--color-yellow-50, #FFE600) 0%, var(--color-orange-50, #FFB800) 100%)",
-              boxShadow: "0px 1.0399999618530273px 0px #B64100",
-              overflow: "hidden",
-              borderRadius: 6.24,
-              outline:
-                "1px var(--color-yellow-83-50%, rgba(255, 242, 166, 0.50)) solid",
-              outlineOffset: "-1px",
-              justifyContent: "center",
-              alignItems: "center",
-              display: "inline-flex",
-            }}
+            type="submit"
+            disabled={pending || !form.watch("ageCheck")}
+            className={`
+              w-full h-[50px] mt-4 rounded-xl font-black uppercase tracking-widest text-sm
+              transition-all duration-300 active:scale-[0.98]
+              flex items-center justify-center relative overflow-hidden
+              ${
+                pending || !form.watch("ageCheck")
+                  ? "bg-white/5 text-white/20 border border-white/10 cursor-not-allowed"
+                  : "bg-gradient-to-b from-[#F9E498] via-[#D4AF37] to-[#8A6E2F] text-black shadow-[0_4px_20px_rgba(212,175,55,0.3)] border border-[#F9E498]/50 hover:brightness-110"
+              }
+            `}
           >
-            <div
-              style={{
-                flexDirection: "column",
-                justifyContent: "flex-start",
-                alignItems: "center",
-                display: "inline-flex",
-              }}
-            >
-              <div
-                style={{
-                  maxHeight: 17.94,
-                  textAlign: "center",
-                  justifyContent: "center",
-                  display: "flex",
-                  flexDirection: "column",
-                  color: "var(--color-orange-36, #B64100)",
-                  fontSize: 15.6,
-                  fontFamily: "Segoe UI",
-                  fontWeight: "700",
-                  lineHeight: 17.94,
-                  wordWrap: "break-word",
-                  textShadow: "0px 1px 0px rgba(159, 52, 0, 0.20)",
-                }}
-              >
-                Register
-              </div>
-            </div>
+            {pending ? "Processing..." : "Register Now"}
+            {/* Glossy Overlay effect for button */}
+            <div className="absolute inset-0 w-full h-full bg-gradient-to-t from-black/10 to-transparent pointer-events-none" />
           </button>
         </form>
       </Form>
 
       {pending && <SpinLoader />}
-    </>
+    </div>
   );
 };
 

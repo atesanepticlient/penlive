@@ -1,14 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// components/notifications/notification-list.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Pusher from "pusher-js";
-import Link from "next/link";
-import { formatDistanceToNow } from "date-fns";
-import { Button } from "@/components/ui/button";
-import { X, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
-import { deleteNotification, markAsRead } from "@/action/notifications";
+import { ChevronRight, Loader2, Mail, Trash2, Frown } from "lucide-react";
+import { deleteNotification } from "@/action/notifications";
+import { NotificationDetail } from "./notification-details";
 
 type Notification = {
   id: string;
@@ -20,30 +16,32 @@ type Notification = {
   link?: string;
 };
 
-const iconMap = {
-  MONEY: "💲",
-  BELL: "🔔",
-  TROPHY: "🏆",
-  WARNING: "⚠️",
-  INFO: "ℹ️",
-} as const;
-
 const ITEMS_PER_PAGE = 10;
+type Tab = "inbox" | "outbox";
 
 export function NotificationList({
   userId,
   initialNotifications = [],
   totalCount = 0,
+  highlightId,
 }: {
   userId: string;
   initialNotifications?: any[];
   totalCount?: number;
+  highlightId?: string;
 }) {
+  const highlightRef = useRef<HTMLLIElement>(null);
+  const [activeTab, setActiveTab] = useState<Tab>("inbox");
   const [notifications, setNotifications] =
     useState<Notification[]>(initialNotifications);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
-  const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [activeNotification, setActiveNotification] =
+    useState<Notification | null>(null);
+
+  const [isHighlighted, setIsHighlighted] = useState(!!highlightId);
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
@@ -51,191 +49,316 @@ export function NotificationList({
     const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
       cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
     });
-
     const channel = pusher.subscribe(`user-${userId}`);
-    channel.bind("new-notification", (newNotification: Notification) => {
-      setNotifications((prev) => [
-        newNotification,
-        ...prev.slice(0, ITEMS_PER_PAGE - 1),
-      ]);
+    channel.bind("new-notification", (n: Notification) => {
+      setNotifications((prev) => [n, ...prev.slice(0, ITEMS_PER_PAGE - 1)]);
     });
-
     return () => {
       channel.unbind_all();
       channel.unsubscribe();
     };
   }, [userId]);
 
-  const handleDelete = async (notificationId: string) => {
-    setIsDeleting(notificationId);
-    try {
-      await deleteNotification(notificationId);
-      setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
-    } finally {
-      setIsDeleting(null);
+  useEffect(() => {
+    if (highlightId && highlightRef.current) {
+      highlightRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
     }
-  };
+  }, [highlightId]);
 
-  const handleMarkAsRead = async (notificationId: string) => {
-    await markAsRead(notificationId);
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === notificationId ? { ...n, isRead: true } : n))
-    );
-  };
+  useEffect(() => {
+    if (!highlightId) return;
 
-  const handleMarkAllAsRead = async () => {
-    const unreadIds = notifications.filter((n) => !n.isRead).map((n) => n.id);
+    // scroll into view
+    highlightRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
 
-    await Promise.all(unreadIds.map((id) => markAsRead(id)));
-    setNotifications((prev) =>
-      prev.map((n) => (unreadIds.includes(n.id) ? { ...n, isRead: true } : n))
-    );
-  };
+    // fade out highlight after 2s
+    const timer = setTimeout(() => setIsHighlighted(false), 2000);
+    return () => clearTimeout(timer);
+  }, [highlightId]);
 
-  const fetchPage = async (page: number) => {
+  // ── Selection ──────────────────────────────────────────────────────────────
+
+  const allSelected =
+    notifications.length > 0 && selected.size === notifications.length;
+
+  function toggleSelectAll() {
+    if (allSelected) {
+      setSelected(new Set());
+    } else {
+      setSelected(new Set(notifications.map((n) => n.id)));
+    }
+  }
+
+  function toggleSelect(id: string) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }
+
+  // ── Delete selected ────────────────────────────────────────────────────────
+
+  async function handleDeleteSelected() {
+    if (selected.size === 0) return;
+    setIsDeleting(true);
+    try {
+      await Promise.all([...selected].map((id) => deleteNotification(id)));
+      setNotifications((prev) => prev.filter((n) => !selected.has(n.id)));
+      setSelected(new Set());
+    } finally {
+      setIsDeleting(false);
+    }
+  }
+
+  // ── Pagination ─────────────────────────────────────────────────────────────
+
+  async function fetchPage(page: number) {
     setIsLoading(true);
     try {
       const res = await fetch(
-        `/api/notifications?userId=${userId}&page=${page}&limit=${ITEMS_PER_PAGE}`
+        `/api/notifications?userId=${userId}&page=${page}&limit=${ITEMS_PER_PAGE}`,
       );
       const data = await res.json();
       setNotifications(data.notifications || []);
       setCurrentPage(page);
-    } catch (error) {
-      console.error("Error fetching notifications:", error);
+      setSelected(new Set());
+    } catch (e) {
+      console.error(e);
       setNotifications([]);
     } finally {
       setIsLoading(false);
     }
-  };
+  }
+
+  // ── Row click ─────────────────────────────────────────────────────────────
+
+  function handleRowClick(n: Notification) {
+    // In selection mode, clicking a row toggles selection instead
+    if (selected.size > 0) {
+      toggleSelect(n.id);
+      return;
+    }
+    setActiveNotification(n);
+  }
+
+  // ── Render ─────────────────────────────────────────────────────────────────
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-          Notifications
-        </h2>
-        {notifications.some((n) => !n.isRead) && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleMarkAllAsRead}
-            disabled={isLoading}
-          >
-            Mark all as read
-          </Button>
-        )}
-      </div>
-
-      <div className="space-y-3">
-        {isLoading ? (
-          <div className="flex justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin" />
-          </div>
-        ) : notifications.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500 dark:text-gray-400">
-              No notifications found
-            </p>
-          </div>
-        ) : (
-          notifications.map((notification) => (
-            <div
-              key={notification.id}
-              className={`
-                relative group
-                rounded-lg border
+    <>
+      <div className="w-full max-w-lg mx-auto bg-white min-h-screen">
+        {/* Tabs */}
+        <div className="flex border-b border-gray-200">
+          {(["inbox", "outbox"] as Tab[]).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => {
+                setActiveTab(tab);
+                setSelected(new Set());
+              }}
+              className={`flex-1 py-3 text-sm font-medium capitalize transition-colors
                 ${
-                  !notification.isRead
-                    ? "bg-blue-50 dark:bg-blue-900/20"
-                    : "bg-white dark:bg-gray-800"
-                }
-                border-gray-200 dark:border-gray-700
-                overflow-hidden
-                transition-all duration-200
-                hover:shadow-md
-              `}
+                  activeTab === tab
+                    ? "text-blue-500 border-b-2 border-blue-500"
+                    : "text-gray-800 border-b-2 border-transparent"
+                }`}
             >
-              <div className="p-4">
-                <div className="flex items-start gap-3">
-                  <span className="text-2xl flex-shrink-0">
-                    {iconMap[notification.icon as keyof typeof iconMap] ||
-                      iconMap.BELL}
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <Link
-                      href={notification.link || "#"}
-                      onClick={() => handleMarkAsRead(notification.id)}
-                      className="block"
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </button>
+          ))}
+        </div>
+
+        {activeTab === "inbox" && (
+          <>
+            {/* Toolbar */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+              <div
+                className="flex items-center gap-3 cursor-pointer select-none"
+                onClick={toggleSelectAll}
+              >
+                <span
+                  className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-colors
+                    ${allSelected ? "bg-blue-500 border-blue-500" : "border-gray-400 bg-white"}`}
+                >
+                  {allSelected && (
+                    <svg
+                      className="w-3.5 h-3.5 text-white"
+                      viewBox="0 0 12 10"
+                      fill="none"
                     >
-                      <h4
-                        className={`font-medium truncate ${
-                          !notification.isRead
-                            ? "text-gray-900 dark:text-white"
-                            : "text-gray-700 dark:text-gray-300"
-                        }`}
-                      >
-                        {notification.title}
-                      </h4>
-                      {notification.description && (
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">
-                          {notification.description}
-                        </p>
-                      )}
-                    </Link>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                      {formatDistanceToNow(new Date(notification.createdAt), {
-                        addSuffix: true,
-                      })}
-                    </p>
-                  </div>
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleDelete(notification.id);
-                    }}
-                    disabled={isDeleting === notification.id}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-500 p-1"
-                  >
-                    {isDeleting === notification.id ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <X className="h-4 w-4" />
-                    )}
-                  </button>
-                </div>
+                      <path
+                        d="M1 5l3.5 3.5L11 1"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  )}
+                </span>
+                <span className="text-sm font-medium text-gray-800">
+                  Select all
+                </span>
               </div>
-              {!notification.isRead && (
-                <div className="absolute top-0 left-0 w-1 h-full bg-blue-500" />
-              )}
+
+              <div className="flex items-center gap-3">
+                <Mail
+                  className={`w-5 h-5 ${selected.size > 0 ? "text-gray-600" : "text-gray-300"}`}
+                />
+                <button
+                  onClick={handleDeleteSelected}
+                  disabled={selected.size === 0 || isDeleting}
+                  className="disabled:opacity-30 transition-opacity"
+                >
+                  {isDeleting ? (
+                    <Loader2 className="w-5 h-5 animate-spin text-gray-500" />
+                  ) : (
+                    <Trash2
+                      className={`w-5 h-5 ${selected.size > 0 ? "text-gray-600" : "text-gray-300"}`}
+                    />
+                  )}
+                </button>
+              </div>
             </div>
-          ))
+
+            {/* List */}
+            {isLoading ? (
+              <div className="flex justify-center py-16">
+                <Loader2 className="h-7 w-7 animate-spin text-gray-400" />
+              </div>
+            ) : notifications.length === 0 ? (
+              <EmptyState />
+            ) : (
+              <ul>
+                {notifications.map((n) => {
+                  const isSelected = selected.has(n.id);
+                  return (
+                    <li
+                      key={n.id}
+                      ref={n.id === highlightId ? highlightRef : null}
+                      onClick={() => handleRowClick(n)}
+                      className={`flex items-start gap-3 px-4 py-3 border-b border-gray-100 transition-colors duration-700
+    ${isSelected ? "bg-gray-100" : ""}
+    ${
+      n.id === highlightId && isHighlighted
+        ? "bg-yellow-50 border-l-4 border-l-yellow-400"
+        : "bg-white active:bg-gray-50"
+    }"}`}
+                    >
+                      {/* Checkbox */}
+                      <span
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleSelect(n.id);
+                        }}
+                        className={`mt-0.5 flex-shrink-0 w-6 h-6 rounded border-2 flex items-center justify-center transition-colors
+                          ${isSelected ? "bg-blue-500 border-blue-500" : "border-gray-400 bg-white"}`}
+                      >
+                        {isSelected && (
+                          <svg
+                            className="w-3.5 h-3.5 text-white"
+                            viewBox="0 0 12 10"
+                            fill="none"
+                          >
+                            <path
+                              d="M1 5l3.5 3.5L11 1"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        )}
+                      </span>
+
+                      {/* Unread dot */}
+                      <span
+                        className={`mt-1.5 flex-shrink-0 w-2.5 h-2.5 rounded-full ${!n.isRead ? "bg-green-500" : "bg-transparent"}`}
+                      />
+
+                      {/* Content */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-sm text-gray-700 truncate">
+                            Sender:<span className="font-medium">Platform</span>
+                          </span>
+                          <span className="text-xs text-gray-400 flex-shrink-0">
+                            {formatDate(n.createdAt)}
+                          </span>
+                          <ChevronRight className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                        </div>
+                        <p className="text-sm text-gray-500 mt-0.5 truncate">
+                          Title:{n.title}
+                        </p>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex justify-between items-center px-4 py-4">
+                <button
+                  disabled={currentPage === 1 || isLoading}
+                  onClick={() => fetchPage(currentPage - 1)}
+                  className="text-sm text-blue-500 disabled:text-gray-300"
+                >
+                  Previous
+                </button>
+                <span className="text-xs text-gray-500">
+                  {currentPage} / {totalPages}
+                </span>
+                <button
+                  disabled={currentPage === totalPages || isLoading}
+                  onClick={() => fetchPage(currentPage + 1)}
+                  className="text-sm text-blue-500 disabled:text-gray-300"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </>
         )}
+
+        {activeTab === "outbox" && <EmptyState />}
       </div>
 
-      {totalPages > 1 && (
-        <div className="flex justify-between items-center mt-6">
-          <Button
-            variant="outline"
-            disabled={currentPage === 1 || isLoading}
-            onClick={() => fetchPage(currentPage - 1)}
-          >
-            <ChevronLeft className="h-4 w-4 mr-2" />
-            Previous
-          </Button>
-          <span className="text-sm text-gray-600 dark:text-gray-300">
-            Page {currentPage} of {totalPages}
-          </span>
-          <Button
-            variant="outline"
-            disabled={currentPage === totalPages || isLoading}
-            onClick={() => fetchPage(currentPage + 1)}
-          >
-            Next
-            <ChevronRight className="h-4 w-4 ml-2" />
-          </Button>
-        </div>
-      )}
+      {/* Detail bottom sheet */}
+      <NotificationDetail
+        notification={activeNotification}
+        onClose={() => setActiveNotification(null)}
+      />
+    </>
+  );
+}
+
+function EmptyState() {
+  return (
+    <div className="flex flex-col items-center justify-center py-24 gap-3">
+      <Frown className="w-16 h-16 text-gray-300" strokeWidth={1.2} />
+      <p className="text-sm text-gray-400">No messages</p>
     </div>
   );
+}
+
+function formatDate(iso: string) {
+  try {
+    const d = new Date(iso);
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  } catch {
+    return iso;
+  }
 }

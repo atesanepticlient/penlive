@@ -13,6 +13,7 @@ export const authRoutes = ["/register", "/login", "/forget-password"];
 export const publicRoutes = [
   "/",
   "/slots",
+  "/demo",
   "/card-x",
   "/pocker",
   "/roulette",
@@ -34,9 +35,15 @@ export const publicRoutes = [
   "/api/c3433e25424b9af0ad76cdaf667787ae59752b15/GetBetStatus",
   "/api/c3433e25424b9af0ad76cdaf667787ae59752b15/Rollback",
   "/api/c3433e25424b9af0ad76cdaf667787ae59752b15/Settle",
+  "/api/all-games",
+  "/api/all-games/all",
   "/live-casino",
   "/promotion",
+  "/promotions",
   "/hot",
+  "/fish",
+  "/live",
+  "/pocker",
   "/api/apay/deposit",
   "/api/apay/withdraw",
   "/api/getBalance",
@@ -46,7 +53,20 @@ export const publicRoutes = [
   "/api/Cancel",
   "/api/Bonus",
   "/api/GetBetStatus",
+  "/api/reward-hub",
   "/getBalance",
+  "/sounds",
+  "/airdrop",
+  "/airdrop/k9x2a8bz",
+  "/wheel",
+  "/api/promotions/reward-senter-short",
+  "/api/promotions/deposit-tickets", //will be remove in production
+  "/api/games/get",
+  "/api/gsc/v1/api/seamless/balance",
+  "/api/gsc/v1/api/seamless/withdraw",
+  "/api/gsc/v1/api/seamless/deposit",
+  "/api/gsc/v1/api/seamless/pushbetdata",
+  "/api/site/setting/headline"
 ];
 
 /**

@@ -441,7 +441,7 @@ export const POST = async (req: NextRequest) => {
     if ((result as any).early)
       return Response.json((result as any).early, { status: 200 });
     return Response.json((result as any).ok, { status: 200 });
-  } catch (err) {
+  } catch {
     return Response.json(
       { ErrorCode: 7, ErrorMessage: "Internal Error", Balance: 0 },
       { status: 200 }

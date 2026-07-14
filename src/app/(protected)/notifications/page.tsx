@@ -5,7 +5,21 @@ import { getUserNotifications } from "@/action/notifications";
 import SiteHeader from "@/components/SiteHeader";
 import { findCurrentUser } from "@/data/user";
 
-export default async function NotificationsPage() {
+type NotificationsSearchParams = {
+  id?: string | string[];
+};
+
+export default async function NotificationsPage({
+  searchParams,
+}: {
+  searchParams: Promise<NotificationsSearchParams>;
+}) {
+  const resolvedSearchParams = await searchParams;
+  const highlightId =
+    typeof resolvedSearchParams.id === "string"
+      ? resolvedSearchParams.id
+      : undefined;
+
   const user: any = await findCurrentUser();
   if (!user) return <div>Please sign in</div>;
 
@@ -21,6 +35,7 @@ export default async function NotificationsPage() {
           userId={user.id}
           initialNotifications={response?.notifications || []}
           totalCount={response?.totalCount || 0}
+          highlightId={highlightId}
         />
       </main>
     </div>

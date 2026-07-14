@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>RoyalBet BD - Casino</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Noto+Sans+Bengali:wght@400;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #FFD700;
+    --gold-light: #FFE97A;
+    --gold-dark: #B8860B;
+    --gold-glow: rgba(255,215,0,0.6);
+    --neon-red: #FF003C;
+    --neon-red-glow: rgba(255,0,60,0.7);
+    --neon-green: #00FF88;
+    --neon-blue: #00BFFF;
+    --bg-dark: #070510;
+    --bg-card: #0D0B1A;
+    --bg-card2: #130F22;
+    --purple-deep: #1A0D2E;
+    --border-gold: rgba(255,215,0,0.35);
+    --text-gold: #FFD700;
+    --text-white: #F0E6FF;
+    --font-bn: 'Noto Sans Bengali', sans-serif;
+    --font-en: 'Orbitron', sans-serif;
+    --font-title: 'Cinzel Decorative', serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg-dark);
+    font-family: var(--font-bn);
+    color: var(--text-white);
+    max-width: 430px;
+    margin: 0 auto;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    background-image:
+      radial-gradient(ellipse at 20% 10%, rgba(90,20,120,0.3) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(50,0,80,0.25) 0%, transparent 50%),
+      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.015'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* ===== SCROLLBAR ===== */
+  ::-webkit-scrollbar { width: 0; height: 0; }
+
+  /* ===== HEADER ===== */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(180deg, rgba(7,5,16,0.98) 0%, rgba(7,5,16,0.9) 100%);
+    border-bottom: 1px solid var(--border-gold);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 2px 30px rgba(255,215,0,0.08);
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .hamburger-btn {
+    width: 38px; height: 38px;
+    background: linear-gradient(145deg, #1e1535, #0e0b1c);
+    border: 1px solid var(--border-gold);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(255,215,0,0.1), inset 0 1px 0 rgba(255,255,255,0.05);
+    transition: all 0.2s;
+  }
+  .hamburger-btn:active { transform: scale(0.93); }
+  .hamburger-btn span {
+    display: block;
+    width: 18px; height: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    border-radius: 2px;
+    box-shadow: 0 0 6px var(--gold-glow);
+  }
+  .hamburger-btn span:nth-child(2) { width: 13px; }
+
+  .logo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1;
+  }
+  .logo-main {
+    font-family: var(--font-title);
+    font-size: 15px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #FFD700, #FFE97A, #B8860B, #FFD700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+    letter-spacing: 1px;
+    filter: drop-shadow(0 0 8px rgba(255,215,0,0.5));
+  }
+  .logo-sub {
+    font-family: var(--font-en);
+    font-size: 7px;
+    color: var(--neon-red);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-shadow: 0 0 8px var(--neon-red);
+    margin-top: 1px;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .balance-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #1a1030, #0e0b1c);
+    border: 1px solid var(--border-gold);
+    border-radius: 20px;
+    padding: 5px 10px 5px 7px;
+    box-shadow: 0 0 12px rgba(255,215,0,0.12), inset 0 1px 0 rgba(255,255,255,0.05);
+  }
+  .balance-icon {
+    width: 20px; height: 20px;
+    background: linear-gradient(135deg, #FFD700, #FF8C00);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    box-shadow: 0 0 10px rgba(255,150,0,0.6);
+    flex-shrink: 0;
+  }
+  .balance-info { display: flex; flex-direction: column; }
+  .balance-label {
+    font-family: var(--font-en);
+    font-size: 7px;
+    color: rgba(255,215,0,0.6);
+    letter-spacing: 1px;
+  }
+  .balance-amount {
+    font-family: var(--font-en);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--gold);
+    text-shadow: 0 0 10px var(--gold-glow);
+  }
+
+  .profile-avatar {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6A0DAD, #9B30FF);
+    border: 2px solid var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    box-shadow: 0 0 15px rgba(255,215,0,0.4), 0 0 30px rgba(106,13,173,0.5);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .profile-avatar::after {
+    content: '';
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 10px; height: 10px;
+    background: var(--neon-green);
+    border-radius: 50%;
+    border: 2px solid var(--bg-dark);
+    box-shadow: 0 0 6px var(--neon-green);
+  }
+
+  /* ===== TICKER ===== */
+  .ticker-wrap {
+    background: linear-gradient(90deg, #1a0d2e, #0d0b1a, #1a0d2e);
+    border-bottom: 1px solid rgba(255,215,0,0.15);
+    overflow: hidden;
+    height: 28px;
+    display: flex;
+    align-items: center;
+  }
+  .ticker-label {
+    background: linear-gradient(90deg, #FF003C, #FF6B00);
+    font-family: var(--font-en);
+    font-size: 9px;
+    font-weight: 700;
+    color: white;
+    padding: 3px 8px;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    box-shadow: 4px 0 12px rgba(255,0,60,0.4);
+    z-index: 1;
+  }
+  .ticker-text {
+    display: flex;
+    animation: ticker 22s linear infinite;
+    white-space: nowrap;
+    padding-left: 20px;
+  }
+  .ticker-text span {
+    font-size: 11px;
+    color: var(--gold);
+    padding-right: 40px;
+    font-family: var(--font-bn);
+  }
+  .ticker-text span em {
+    color: var(--neon-green);
+    font-style: normal;
+    text-shadow: 0 0 8px var(--neon-green);
+  }
+  @keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+  /* ===== SECTIONS ===== */
+  .section { padding: 0 0 20px; }
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 16px 10px;
+  }
+  .section-title {
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--font-bn);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--gold);
+    text-shadow: 0 0 15px var(--gold-glow);
+  }
+  .section-title .fire { font-size: 20px; animation: pulse 1.5s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
+  .see-all-btn {
+    font-family: var(--font-en);
+    font-size: 9px;
+    color: var(--gold);
+    background: linear-gradient(135deg, rgba(255,215,0,0.12), rgba(255,215,0,0.05));
+    border: 1px solid var(--border-gold);
+    border-radius: 12px;
+    padding: 4px 10px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    text-transform: uppercase;
+    box-shadow: 0 0 10px rgba(255,215,0,0.1);
+    transition: all 0.2s;
+  }
+  .see-all-btn:active { background: rgba(255,215,0,0.2); }
+
+  /* ===== CAROUSEL ===== */
+  .carousel-wrap {
+    padding: 14px 0 8px;
+    position: relative;
+  }
+  .carousel-track {
+    display: flex;
+    gap: 12px;
+    padding: 0 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .banner-card {
+    min-width: 310px;
+    height: 170px;
+    border-radius: 18px;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255,215,0,0.3);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 20px rgba(255,215,0,0.1);
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .banner-card:active { transform: scale(0.97); }
+
+  .banner-card-1 { background: linear-gradient(135deg, #0a0018, #1a003a, #300060); }
+  .banner-card-2 { background: linear-gradient(135deg, #001a0a, #003020, #004000); }
+  .banner-card-3 { background: linear-gradient(135deg, #1a0800, #3a1000, #600020); }
+  .banner-card-4 { background: linear-gradient(135deg, #00101a, #00203a, #003060); }
+
+  .banner-bg-deco {
+    position: absolute; inset: 0;
+    opacity: 0.5;
+  }
+
+  /* Model silhouettes */
+  .model-fig {
+    position: absolute;
+    right: 0; bottom: 0;
+    width: 130px; height: 160px;
+    display: flex; align-items: flex-end; justify-content: center;
+    overflow: hidden;
+  }
+
+  .banner-content {
+    position: absolute;
+    left: 14px; top: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 58%;
+    z-index: 2;
+  }
+  .banner-tag {
+    font-family: var(--font-en);
+    font-size: 8px;
+    letter-spacing: 2px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    display: inline-block;
+    width: fit-content;
+  }
+  .tag-red { background: var(--neon-red); color: white; box-shadow: 0 0 10px var(--neon-red-glow); }
+  .tag-green { background: var(--neon-green); color: #001a0a; box-shadow: 0 0 10px rgba(0,255,136,0.5); }
+  .tag-blue { background: var(--neon-blue); color: #001a30; box-shadow: 0 0 10px rgba(0,191,255,0.5); }
+  .tag-gold { background: var(--gold); color: #1a0d00; box-shadow: 0 0 10px var(--gold-glow); }
+
+  .banner-headline {
+    font-family: var(--font-bn);
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 6px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+  }
+  .banner-sub {
+    font-family: var(--font-bn);
+    font-size: 12px;
+    opacity: 0.85;
+    line-height: 1.4;
+    margin-bottom: 10px;
+  }
+  .banner-btn {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-family: var(--font-bn);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    width: fit-content;
+    transition: all 0.2s;
+  }
+  .btn-gold {
+    background: linear-gradient(135deg, #FFD700, #FF8C00);
+    color: #1a0800;
+    box-shadow: 0 4px 15px rgba(255,150,0,0.5), inset 0 1px 0 rgba(255,255,255,0.3);
+  }
+  .btn-purple {
+    background: linear-gradient(135deg, #9B30FF, #6A0DAD);
+    color: white;
+    box-shadow: 0 4px 15px rgba(155,48,255,0.5);
+  }
+  .btn-green-neon {
+    background: linear-gradient(135deg, #00FF88, #00CC6A);
+    color: #001a0a;
+    box-shadow: 0 4px 15px rgba(0,255,136,0.4);
+  }
+  .btn-blue-neon {
+    background: linear-gradient(135deg, #00BFFF, #0080FF);
+    color: white;
+    box-shadow: 0 4px 15px rgba(0,191,255,0.4);
+  }
+
+  /* Banner decorative SVG models */
+  .model-svg { width: 100%; height: 100%; }
+
+  /* Dots indicator */
+  .carousel-dots {
+    display: flex; gap: 6px; justify-content: center;
+    padding: 8px 0 0;
+  }
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 3px;
+    background: rgba(255,215,0,0.25);
+    transition: all 0.3s;
+  }
+  .dot.active {
+    width: 20px;
+    background: var(--gold);
+    box-shadow: 0 0 8px var(--gold-glow);
+  }
+
+  /* ===== CATEGORY MENU ===== */
+  .category-scroll {
+    display: flex;
+    gap: 10px;
+    padding: 4px 16px 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .cat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .cat-item:active { transform: scale(0.93); }
+
+  .cat-icon-wrap {
+    width: 64px; height: 64px;
+    border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cat-icon-wrap::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: inherit;
+    filter: blur(0);
+    z-index: 0;
+  }
+  .cat-icon-emoji {
+    font-size: 30px;
+    position: relative;
+    z-index: 1;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+
+  .cat-icon-wrap.slot { background: linear-gradient(145deg, #2d0060, #6A0DAD); border: 1px solid rgba(155,48,255,0.5); box-shadow: 0 4px 20px rgba(106,13,173,0.5), inset 0 1px 0 rgba(255,255,255,0.1); }
+  .cat-icon-wrap.poker { background: linear-gradient(145deg, #600010, #cc0033); border: 1px solid rgba(255,0,60,0.5); box-shadow: 0 4px 20px rgba(204,0,51,0.5), inset 0 1px 0 rgba(255,255,255,0.1); }
+  .cat-icon-wrap.fish { background: linear-gradient(145deg, #003060, #0066cc); border: 1px solid rgba(0,191,255,0.5); box-shadow: 0 4px 20px rgba(0,100,200,0.5), inset 0 1px 0 rgba(255,255,255,0.1); }
+  .cat-icon-wrap.live { background: linear-gradient(145deg, #006030, #00aa55); border: 1px solid rgba(0,255,136,0.4); box-shadow: 0 4px 20px rgba(0,170,85,0.5), inset 0 1px 0 rgba(255,255,255,0.1); }
+  .cat-icon-wrap.dice { background: linear-gradient(145deg, #604000, #cc8800); border: 1px solid rgba(255,215,0,0.5); box-shadow: 0 4px 20px rgba(200,130,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1); }
+  .cat-icon-wrap.sports { background: linear-gradient(145deg, #002040, #004080); border: 1px solid rgba(0,150,255,0.5); box-shadow: 0 4px 20px rgba(0,80,160,0.5), inset 0 1px 0 rgba(255,255,255,0.1); }
+  .cat-icon-wrap.baccarat { background: linear-gradient(145deg, #400040, #800080); border: 1px solid rgba(200,0,200,0.5); box-shadow: 0 4px 20px rgba(128,0,128,0.5), inset 0 1px 0 rgba(255,255,255,0.1); }
+  .cat-icon-wrap.crash { background: linear-gradient(145deg, #400a00, #991a00); border: 1px solid rgba(255,60,0,0.5); box-shadow: 0 4px 20px rgba(153,26,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1); }
+
+  .cat-name {
+    font-family: var(--font-bn);
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(240,230,255,0.9);
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  /* Selected state */
+  .cat-item.active .cat-name { color: var(--gold); text-shadow: 0 0 8px var(--gold-glow); }
+  .cat-item.active .cat-icon-wrap { box-shadow-outer: 0 0 25px var(--gold-glow); }
+
+  /* ===== HOT GAMES ===== */
+  .hot-games-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0 16px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .hot-games-row {
+    display: flex;
+    gap: 10px;
+    min-width: max-content;
+  }
+  .game-thumb {
+    width: 110px; height: 80px;
+    border-radius: 14px;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.07);
+    transition: transform 0.2s;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  }
+  .game-thumb:active { transform: scale(0.95); }
+  .game-thumb-inner {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .game-emoji { font-size: 32px; position: relative; z-index: 1; }
+  .game-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.85) 100%);
+    z-index: 2;
+    display: flex; align-items: flex-end; padding: 5px 7px;
+  }
+  .game-name {
+    font-family: var(--font-bn);
+    font-size: 9px;
+    font-weight: 600;
+    color: white;
+    line-height: 1.2;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+  }
+  .game-hot-badge {
+    position: absolute;
+    top: 6px; right: 6px;
+    z-index: 3;
+    font-size: 12px;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  .game-new-badge {
+    position: absolute;
+    top: 5px; left: 5px;
+    z-index: 3;
+    background: var(--neon-green);
+    color: #001a00;
+    font-family: var(--font-en);
+    font-size: 7px;
+    font-weight: 700;
+    padding: 2px 5px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    box-shadow: 0 0 8px rgba(0,255,136,0.6);
+  }
+
+  /* Game thumb backgrounds */
+  .g1 { background: linear-gradient(145deg, #1a003a, #4d00aa, #8800ff); }
+  .g2 { background: linear-gradient(145deg, #003300, #006600, #00cc44); }
+  .g3 { background: linear-gradient(145deg, #330000, #990000, #cc0033); }
+  .g4 { background: linear-gradient(145deg, #001a33, #004499, #0066cc); }
+  .g5 { background: linear-gradient(145deg, #331a00, #996600, #cc9900); }
+  .g6 { background: linear-gradient(145deg, #2d0060, #660099, #9900cc); }
+  .g7 { background: linear-gradient(145deg, #001433, #003399, #0055cc); }
+  .g8 { background: linear-gradient(145deg, #331400, #993d00, #cc5500); }
+  .g9 { background: linear-gradient(145deg, #1a1a00, #666600, #999900); }
+  .g10 { background: linear-gradient(145deg, #001a1a, #005566, #008899); }
+
+  /* ===== PROMOTIONS STRIP ===== */
+  .promo-strip {
+    margin: 0 16px 20px;
+    padding: 12px 14px;
+    background: linear-gradient(135deg, #1a0d2e, #0e0b1c);
+    border: 1px solid var(--border-gold);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3), 0 0 1px rgba(255,215,0,0.2);
+  }
+  .promo-info { display: flex; align-items: center; gap: 10px; }
+  .promo-icon { font-size: 28px; }
+  .promo-text h4 {
+    font-family: var(--font-bn);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gold);
+    text-shadow: 0 0 10px var(--gold-glow);
+    margin-bottom: 2px;
+  }
+  .promo-text p {
+    font-family: var(--font-bn);
+    font-size: 11px;
+    color: rgba(240,230,255,0.7);
+  }
+  .promo-arrow {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, #FFD700, #FF8C00);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    box-shadow: 0 0 15px rgba(255,150,0,0.5);
+    flex-shrink: 0;
+  }
+
+  /* ===== SPACER ===== */
+  .bottom-spacer { height: 80px; }
+
+  /* ===== TAB BAR ===== */
+  .tab-bar {
+    position: fixed;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 430px;
+    background: linear-gradient(180deg, rgba(10,8,20,0.97), rgba(7,5,16,0.99));
+    border-top: 1px solid rgba(255,215,0,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 8px 0 14px;
+    z-index: 200;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 -4px 30px rgba(0,0,0,0.6), 0 -1px 0 rgba(255,215,0,0.1);
+  }
+
+  .tab-item {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 4px;
+    cursor: pointer;
+    flex: 1;
+    transition: all 0.2s;
+    position: relative;
+    padding: 4px 0;
+  }
+  .tab-item:active { transform: scale(0.9); }
+
+  .tab-icon-wrap {
+    width: 36px; height: 36px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    transition: all 0.3s;
+  }
+
+  .tab-item.active .tab-icon-wrap {
+    background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,140,0,0.1));
+    box-shadow: 0 0 20px rgba(255,215,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+
+  .tab-icon {
+    width: 26px; height: 26px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* Tab SVG Icons */
+  .tab-svg { width: 22px; height: 22px; }
+
+  .tab-label {
+    font-family: var(--font-bn);
+    font-size: 9.5px;
+    font-weight: 600;
+    color: rgba(180,160,220,0.6);
+    transition: all 0.2s;
+    line-height: 1;
+  }
+  .tab-item.active .tab-label {
+    color: var(--gold);
+    text-shadow: 0 0 8px var(--gold-glow);
+  }
+
+  /* Active line indicator */
+  .tab-item.active::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 28px; height: 3px;
+    border-radius: 0 0 3px 3px;
+    background: linear-gradient(90deg, #FFD700, #FF8C00);
+    box-shadow: 0 0 10px var(--gold-glow);
+  }
+
+  /* Center tab (special) */
+  .tab-item.center-tab .tab-icon-wrap {
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FFD700, #FF8C00, #FF4500);
+    box-shadow: 0 0 25px rgba(255,150,0,0.7), 0 0 50px rgba(255,100,0,0.3), inset 0 2px 0 rgba(255,255,255,0.3);
+    margin-top: -14px;
+    border: 2px solid rgba(255,215,0,0.4);
+  }
+  .tab-item.center-tab:active .tab-icon-wrap { transform: scale(0.9); }
+  .tab-item.center-tab::before { display: none; }
+
+  /* Sidebar overlay */
+  .sidebar-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 300;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    backdrop-filter: blur(3px);
+  }
+  .sidebar-overlay.open { opacity: 1; pointer-events: all; }
+
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 280px; height: 100%;
+    background: linear-gradient(180deg, #0e0b1c, #070510);
+    border-right: 1px solid var(--border-gold);
+    z-index: 400;
+    transform: translateX(-100%);
+    transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    padding: 0 0 30px;
+    overflow-y: auto;
+    box-shadow: 4px 0 40px rgba(0,0,0,0.8), 2px 0 0 rgba(255,215,0,0.05);
+    max-width: 280px;
+  }
+  .sidebar.open { transform: translateX(0); }
+
+  .sidebar-header {
+    padding: 50px 20px 20px;
+    border-bottom: 1px solid var(--border-gold);
+    background: linear-gradient(180deg, rgba(106,13,173,0.15), transparent);
+  }
+  .sidebar-user {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 16px;
+  }
+  .sidebar-avatar {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6A0DAD, #9B30FF);
+    border: 2px solid var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 0 20px rgba(255,215,0,0.4);
+  }
+  .sidebar-user-info h3 {
+    font-family: var(--font-bn);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 3px;
+  }
+  .sidebar-user-info p {
+    font-family: var(--font-en);
+    font-size: 10px;
+    color: rgba(200,180,240,0.6);
+    letter-spacing: 1px;
+  }
+  .sidebar-balance-card {
+    background: linear-gradient(135deg, #1e1535, #130f22);
+    border: 1px solid var(--border-gold);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex; justify-content: space-between; align-items: center;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+  }
+  .sb-bal-label { font-family: var(--font-bn); font-size: 11px; color: rgba(200,180,240,0.6); margin-bottom: 3px; }
+  .sb-bal-amount { font-family: var(--font-en); font-size: 18px; font-weight: 700; color: var(--gold); text-shadow: 0 0 15px var(--gold-glow); }
+  .sb-deposit-btn {
+    background: linear-gradient(135deg, #FFD700, #FF8C00);
+    color: #1a0800;
+    font-family: var(--font-bn);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 8px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(255,150,0,0.4);
+  }
+
+  .sidebar-menu { padding: 10px 0; }
+  .sidebar-menu-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 13px 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-bottom: 1px solid rgba(255,215,0,0.05);
+  }
+  .sidebar-menu-item:hover, .sidebar-menu-item:active {
+    background: rgba(255,215,0,0.05);
+  }
+  .sb-icon { font-size: 20px; width: 28px; text-align: center; }
+  .sb-text { font-family: var(--font-bn); font-size: 14px; color: rgba(240,230,255,0.85); }
+  .sb-badge {
+    margin-left: auto;
+    background: var(--neon-red);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 8px var(--neon-red-glow);
+  }
+
+  /* Shimmer animation for some elements */
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  .shimmer-line {
+    background: linear-gradient(90deg, transparent, rgba(255,215,0,0.1), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  /* ===== VIP BANNER ===== */
+  .vip-banner {
+    margin: 0 16px 20px;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, #1a0900, #2d1500, #1a0900);
+    border: 1px solid rgba(255,215,0,0.4);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4), 0 0 30px rgba(255,140,0,0.08);
+    position: relative;
+    overflow: hidden;
+  }
+  .vip-banner::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,215,0,0.08), transparent);
+    animation: shimmer 2.5s linear infinite;
+    pointer-events: none;
+  }
+  .vip-crown { font-size: 36px; filter: drop-shadow(0 0 10px rgba(255,215,0,0.6)); }
+  .vip-info { flex: 1; }
+  .vip-info h4 {
+    font-family: var(--font-title);
+    font-size: 12px;
+    color: var(--gold);
+    text-shadow: 0 0 12px var(--gold-glow);
+    letter-spacing: 1px;
+    margin-bottom: 3px;
+  }
+  .vip-info p { font-family: var(--font-bn); font-size: 11px; color: rgba(240,220,180,0.8); }
+  .vip-progress-wrap { margin-top: 6px; }
+  .vip-progress-bg {
+    height: 5px;
+    background: rgba(255,215,0,0.15);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .vip-progress-fill {
+    height: 100%;
+    width: 65%;
+    background: linear-gradient(90deg, #FFD700, #FF8C00);
+    border-radius: 3px;
+    box-shadow: 0 0 8px rgba(255,150,0,0.6);
+  }
+  .vip-level-badge {
+    background: linear-gradient(135deg, #FFD700, #FF8C00);
+    color: #1a0800;
+    font-family: var(--font-en);
+    font-size: 9px;
+    font-weight: 700;
+    padding: 5px 10px;
+    border-radius: 20px;
+    box-shadow: 0 0 12px rgba(255,150,0,0.5);
+    flex-shrink: 0;
+    letter-spacing: 1px;
+  }
+
+</style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR OVERLAY ===== -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- ===== SIDEBAR ===== -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar">👑</div>
+      <div class="sidebar-user-info">
+        <h3>রাহুল আহমেদ</h3>
+        <p>VIP GOLD MEMBER</p>
+      </div>
+    </div>
+    <div class="sidebar-balance-card">
+      <div>
+        <div class="sb-bal-label">মোট ব্যালেন্স</div>
+        <div class="sb-bal-amount">৳12,450</div>
+      </div>
+      <div class="sb-deposit-btn">জমা দিন</div>
+    </div>
+  </div>
+  <div class="sidebar-menu">
+    <div class="sidebar-menu-item">
+      <span class="sb-icon">🏠</span><span class="sb-text">হোম</span>
+    </div>
+    <div class="sidebar-menu-item">
+      <span class="sb-icon">👤</span><span class="sb-text">প্রোফাইল</span>
+    </div>
+    <div class="sidebar-menu-item">
+      <span class="sb-icon">💳</span><span class="sb-text">ডিপোজিট</span>
+    </div>
+    <div class="sidebar-menu-item">
+      <span class="sb-icon">💸</span><span class="sb-text">উইথড্র</span>
+    </div>
+    <div class="sidebar-menu-item">
+      <span class="sb-icon">🔔</span><span class="sb-text">নোটিফিকেশন</span>
+      <span class="sb-badge">3</span>
+    </div>
+    <div class="sidebar-menu-item">
+      <span class="sb-icon">🎁</span><span class="sb-text">বোনাস ও অফার</span>
+    </div>
+    <div class="sidebar-menu-item">
+      <span class="sb-icon">🤝</span><span class="sb-text">রেফার করুন</span>
+    </div>
+    <div class="sidebar-menu-item">
+      <span class="sb-icon">📜</span><span class="sb-text">লেনদেনের ইতিহাস</span>
+    </div>
+    <div class="sidebar-menu-item">
+      <span class="sb-icon">⚙️</span><span class="sb-text">সেটিংস</span>
+    </div>
+    <div class="sidebar-menu-item">
+      <span class="sb-icon">🎧</span><span class="sb-text">সাপোর্ট</span>
+    </div>
+    <div class="sidebar-menu-item">
+      <span class="sb-icon">🚪</span><span class="sb-text">লগআউট</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+  <div class="header-left">
+    <div class="hamburger-btn" onclick="openSidebar()">
+      <span></span><span></span><span></span>
+    </div>
+    <div class="logo">
+      <div class="logo-main">RoyalBet</div>
+      <div class="logo-sub">CASINO BD</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="balance-chip">
+      <div class="balance-icon">৳</div>
+      <div class="balance-info">
+        <div class="balance-label">BALANCE</div>
+        <div class="balance-amount">৳12,450</div>
+      </div>
+    </div>
+    <div class="profile-avatar">👑</div>
+  </div>
+</header>
+
+<!-- ===== TICKER ===== -->
+<div class="ticker-wrap">
+  <div class="ticker-label">🔥 LIVE</div>
+  <div style="overflow:hidden;flex:1">
+    <div class="ticker-text">
+      <span>করিম জিতেছেন <em>৳৫০,০০০</em> স্লট গেমে &nbsp;•&nbsp;</span>
+      <span>রাহেলা জিতেছেন <em>৳১,২০,০০০</em> পোকারে &nbsp;•&nbsp;</span>
+      <span>আজকের জ্যাকপট <em>৳৫০,০০,০০০</em> &nbsp;•&nbsp;</span>
+      <span>নতুন সদস্যরা পাচ্ছেন <em>১০০% বোনাস</em> &nbsp;•&nbsp;</span>
+      <span>করিম জিতেছেন <em>৳৫০,০০০</em> স্লট গেমে &nbsp;•&nbsp;</span>
+      <span>রাহেলা জিতেছেন <em>৳১,২০,০০০</em> পোকারে &nbsp;•&nbsp;</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CAROUSEL ===== -->
+<section class="section">
+  <div class="carousel-wrap">
+    <div class="carousel-track" id="carouselTrack">
+
+      <!-- Banner 1 -->
+      <div class="banner-card banner-card-1">
+        <div class="banner-bg-deco">
+          <svg width="100%" height="100%" viewBox="0 0 310 170" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="280" cy="20" r="80" fill="rgba(155,48,255,0.15)"/>
+            <circle cx="260" cy="160" r="60" fill="rgba(106,13,173,0.2)"/>
+            <polygon points="50,170 120,80 200,170" fill="rgba(155,48,255,0.05)"/>
+          </svg>
+        </div>
+        <!-- Model figure -->
+        <div class="model-fig">
+          <svg viewBox="0 0 130 160" class="model-svg" xmlns="http://www.w3.org/2000/svg">
+            <!-- Stylized casino dealer silhouette -->
+            <ellipse cx="65" cy="28" rx="20" ry="22" fill="rgba(255,215,0,0.85)"/>
+            <!-- Body -->
+            <path d="M35 80 Q45 55 65 52 Q85 55 95 80 L105 155 Q85 165 65 163 Q45 165 25 155 Z" fill="rgba(155,48,255,0.7)"/>
+            <!-- Bow tie -->
+            <polygon points="55,67 65,73 75,67 65,60" fill="#FFD700"/>
+            <!-- Card in hand -->
+            <rect x="92" y="90" width="22" height="30" rx="3" fill="white" opacity="0.9"/>
+            <text x="103" y="110" text-anchor="middle" font-size="14" fill="#cc0033">♠</text>
+            <!-- Stars deco -->
+            <text x="20" y="50" font-size="12" fill="#FFD700" opacity="0.8">✦</text>
+            <text x="105" y="60" font-size="8" fill="#FFD700" opacity="0.6">✦</text>
+            <text x="30" y="100" font-size="6" fill="#FFD700" opacity="0.5">✦</text>
+          </svg>
+        </div>
+        <div class="banner-content">
+          <span class="banner-tag tag-red">🎰 JACKPOT</span>
+          <div class="banner-headline" style="color:#FFD700">মেগা জ্যাকপট<br>এখনই খেলুন!</div>
+          <div class="banner-sub" style="color:rgba(240,220,255,0.85)">প্রতিদিন ৫০ লক্ষ টাকা<br>জেতার সুযোগ</div>
+          <div class="banner-btn btn-gold">এখনই খেলুন →</div>
+        </div>
+      </div>
+
+      <!-- Banner 2 -->
+      <div class="banner-card banner-card-2">
+        <div class="banner-bg-deco">
+          <svg width="100%" height="100%" viewBox="0 0 310 170" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="290" cy="85" r="90" fill="rgba(0,200,80,0.1)"/>
+            <circle cx="200" cy="10" r="50" fill="rgba(0,255,136,0.08)"/>
+          </svg>
+        </div>
+        <div class="model-fig">
+          <svg viewBox="0 0 130 160" class="model-svg" xmlns="http://www.w3.org/2000/svg">
+            <!-- Lucky figure -->
+            <ellipse cx="65" cy="26" rx="18" ry="20" fill="rgba(200,240,200,0.9)"/>
+            <path d="M38 78 Q50 55 65 50 Q80 55 92 78 L100 155 Q80 162 65 160 Q50 162 30 155 Z" fill="rgba(0,150,60,0.7)"/>
+            <!-- Lucky clover -->
+            <text x="48" y="120" font-size="28" fill="rgba(0,255,100,0.9)">🍀</text>
+            <!-- Gold coins -->
+            <circle cx="105" cy="100" r="12" fill="#FFD700" opacity="0.9"/>
+            <circle cx="100" cy="115" r="10" fill="#FFD700" opacity="0.8"/>
+            <text x="20" y="55" font-size="10" fill="#00FF88" opacity="0.7">✦</text>
+            <text x="100" y="65" font-size="7" fill="#00FF88" opacity="0.5">✦</text>
+          </svg>
+        </div>
+        <div class="banner-content">
+          <span class="banner-tag tag-green">🍀 LUCKY</span>
+          <div class="banner-headline" style="color:#00FF88">স্বাগত বোনাস<br>১০০% পর্যন্ত!</div>
+          <div class="banner-sub" style="color:rgba(200,255,220,0.85)">প্রথম ডিপোজিটে<br>দ্বিগুণ পান</div>
+          <div class="banner-btn btn-green-neon">বোনাস নিন →</div>
+        </div>
+      </div>
+
+      <!-- Banner 3 -->
+      <div class="banner-card banner-card-3">
+        <div class="banner-bg-deco">
+          <svg width="100%" height="100%" viewBox="0 0 310 170" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="270" cy="90" r="85" fill="rgba(255,50,0,0.12)"/>
+            <polygon points="310,0 310,170 200,170" fill="rgba(255,0,60,0.08)"/>
+          </svg>
+        </div>
+        <div class="model-fig">
+          <svg viewBox="0 0 130 160" class="model-svg" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="65" cy="27" rx="19" ry="21" fill="rgba(255,220,200,0.9)"/>
+            <path d="M38 78 Q50 57 65 52 Q80 57 92 78 L102 155 Q80 163 65 161 Q50 163 28 155 Z" fill="rgba(180,0,30,0.75)"/>
+            <!-- Poker chips -->
+            <circle cx="100" cy="95" r="14" fill="rgba(255,215,0,0.9)" stroke="rgba(200,0,0,0.6)" stroke-width="2"/>
+            <circle cx="100" cy="95" r="10" fill="none" stroke="white" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <circle cx="90" cy="112" r="11" fill="rgba(255,215,0,0.8)" stroke="rgba(200,0,0,0.5)" stroke-width="2"/>
+            <text x="22" y="48" font-size="11" fill="#FF4444" opacity="0.8">♦</text>
+            <text x="100" y="65" font-size="8" fill="#FFD700" opacity="0.6">✦</text>
+          </svg>
+        </div>
+        <div class="banner-content">
+          <span class="banner-tag tag-red">🃏 POKER</span>
+          <div class="banner-headline" style="color:#FF6B6B">লাইভ পোকার<br>টুর্নামেন্ট</div>
+          <div class="banner-sub" style="color:rgba(255,220,220,0.85)">আজ রাত ৮টায়<br>পুরস্কার ১০ লক্ষ টাকা</div>
+          <div class="banner-btn btn-purple">যোগ দিন →</div>
+        </div>
+      </div>
+
+      <!-- Banner 4 -->
+      <div class="banner-card banner-card-4">
+        <div class="banner-bg-deco">
+          <svg width="100%" height="100%" viewBox="0 0 310 170" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="280" cy="60" r="70" fill="rgba(0,100,255,0.12)"/>
+            <circle cx="250" cy="150" r="50" fill="rgba(0,191,255,0.08)"/>
+          </svg>
+        </div>
+        <div class="model-fig">
+          <svg viewBox="0 0 130 160" class="model-svg" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="65" cy="27" rx="18" ry="21" fill="rgba(200,220,255,0.9)"/>
+            <path d="M40 78 Q52 56 65 51 Q78 56 90 78 L100 155 Q80 163 65 161 Q50 163 30 155 Z" fill="rgba(0,60,160,0.75)"/>
+            <!-- Fish/ocean elements -->
+            <text x="85" y="105" font-size="22" fill="rgba(0,200,255,0.9)">🐟</text>
+            <text x="88" y="130" font-size="16" fill="rgba(0,200,255,0.7)">🌊</text>
+            <text x="18" y="52" font-size="10" fill="#00BFFF" opacity="0.7">✦</text>
+          </svg>
+        </div>
+        <div class="banner-content">
+          <span class="banner-tag tag-blue">🐟 FISH</span>
+          <div class="banner-headline" style="color:#00BFFF">ফিশ গেম<br>মিশন শুরু!</div>
+          <div class="banner-sub" style="color:rgba(200,230,255,0.85)">বিশাল পুরস্কার<br>প্রতি ঘণ্টায় জিতুন</div>
+          <div class="banner-btn btn-blue-neon">খেলুন →</div>
+        </div>
+      </div>
+
+    </div>
+    <div class="carousel-dots">
+      <div class="dot active" id="dot0"></div>
+      <div class="dot" id="dot1"></div>
+      <div class="dot" id="dot2"></div>
+      <div class="dot" id="dot3"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CATEGORY MENU ===== -->
+<section class="section">
+  <div class="section-header">
+    <div class="section-title">🎮 গেম বিভাগ</div>
+  </div>
+  <div class="category-scroll">
+    <div class="cat-item active">
+      <div class="cat-icon-wrap slot"><div class="cat-icon-emoji">🎰</div></div>
+      <div class="cat-name">স্লট</div>
+    </div>
+    <div class="cat-item">
+      <div class="cat-icon-wrap poker"><div class="cat-icon-emoji">🃏</div></div>
+      <div class="cat-name">পোকার</div>
+    </div>
+    <div class="cat-item">
+      <div class="cat-icon-wrap fish"><div class="cat-icon-emoji">🐟</div></div>
+      <div class="cat-name">ফিশ</div>
+    </div>
+    <div class="cat-item">
+      <div class="cat-icon-wrap live"><div class="cat-icon-emoji">📹</div></div>
+      <div class="cat-name">লাইভ</div>
+    </div>
+    <div class="cat-item">
+      <div class="cat-icon-wrap baccarat"><div class="cat-icon-emoji">🎴</div></div>
+      <div class="cat-name">বাকারা</div>
+    </div>
+    <div class="cat-item">
+      <div class="cat-icon-wrap dice"><div class="cat-icon-emoji">🎲</div></div>
+      <div class="cat-name">ডাইস</div>
+    </div>
+    <div class="cat-item">
+      <div class="cat-icon-wrap crash"><div class="cat-icon-emoji">🚀</div></div>
+      <div class="cat-name">ক্র্যাশ</div>
+    </div>
+    <div class="cat-item">
+      <div class="cat-icon-wrap sports"><div class="cat-icon-emoji">⚽</div></div>
+      <div class="cat-name">স্পোর্টস</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== VIP BANNER ===== -->
+<div class="vip-banner">
+  <div class="vip-crown">👑</div>
+  <div class="vip-info">
+    <h4>VIP GOLD</h4>
+    <p>আরও ৳৩,৫৫০ খেলুন, পরবর্তী লেভেলে যান</p>
+    <div class="vip-progress-wrap">
+      <div class="vip-progress-bg"><div class="vip-progress-fill"></div></div>
+    </div>
+  </div>
+  <div class="vip-level-badge">LV.4</div>
+</div>
+
+<!-- ===== HOT GAMES ===== -->
+<section class="section">
+  <div class="section-header">
+    <div class="section-title">
+      <span class="fire">🔥</span> হট গেমস
+    </div>
+    <div class="see-all-btn">সব দেখুন</div>
+  </div>
+  <div class="hot-games-wrap">
+    <div class="hot-games-row">
+      <div class="game-thumb g1">
+        <div class="game-thumb-inner"><div class="game-emoji">🎰</div></div>
+        <div class="game-hot-badge">🔥</div>
+        <div class="game-overlay"><div class="game-name">রাজকীয় স্লট</div></div>
+      </div>
+      <div class="game-thumb g2">
+        <div class="game-thumb-inner"><div class="game-emoji">🍀</div></div>
+        <div class="game-new-badge">NEW</div>
+        <div class="game-overlay"><div class="game-name">লাকি ক্লোভার</div></div>
+      </div>
+      <div class="game-thumb g3">
+        <div class="game-thumb-inner"><div class="game-emoji">🃏</div></div>
+        <div class="game-hot-badge">🔥</div>
+        <div class="game-overlay"><div class="game-name">টেক্সাস হোল্ডেম</div></div>
+      </div>
+      <div class="game-thumb g4">
+        <div class="game-thumb-inner"><div class="game-emoji">🐠</div></div>
+        <div class="game-overlay"><div class="game-name">ড্রাগন ফিশিং</div></div>
+      </div>
+      <div class="game-thumb g5">
+        <div class="game-thumb-inner"><div class="game-emoji">💎</div></div>
+        <div class="game-hot-badge">💎</div>
+        <div class="game-overlay"><div class="game-name">ডায়মন্ড মাইনস</div></div>
+      </div>
+    </div>
+    <div class="hot-games-row">
+      <div class="game-thumb g6">
+        <div class="game-thumb-inner"><div class="game-emoji">🀄</div></div>
+        <div class="game-hot-badge">🔥</div>
+        <div class="game-overlay"><div class="game-name">লাইভ বাকারা</div></div>
+      </div>
+      <div class="game-thumb g7">
+        <div class="game-thumb-inner"><div class="game-emoji">🚀</div></div>
+        <div class="game-new-badge">HOT</div>
+        <div class="game-overlay"><div class="game-name">ক্র্যাশ রকেট</div></div>
+      </div>
+      <div class="game-thumb g8">
+        <div class="game-thumb-inner"><div class="game-emoji">🎲</div></div>
+        <div class="game-overlay"><div class="game-name">সিক্কা নিক্ষেপ</div></div>
+      </div>
+      <div class="game-thumb g9">
+        <div class="game-thumb-inner"><div class="game-emoji">⚽</div></div>
+        <div class="game-hot-badge">🔥</div>
+        <div class="game-overlay"><div class="game-name">ফুটবল বেট</div></div>
+      </div>
+      <div class="game-thumb g10">
+        <div class="game-thumb-inner"><div class="game-emoji">🐉</div></div>
+        <div class="game-new-badge">NEW</div>
+        <div class="game-overlay"><div class="game-name">ড্রাগন টাইগার</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PROMO STRIP ===== -->
+<div class="promo-strip">
+  <div class="promo-info">
+    <div class="promo-icon">🎁</div>
+    <div class="promo-text">
+      <h4>রেফার করুন, টাকা জিতুন!</h4>
+      <p>প্রতি রেফারে পান ৳৫০০ বোনাস</p>
+    </div>
+  </div>
+  <div class="promo-arrow">→</div>
+</div>
+
+<div class="bottom-spacer"></div>
+
+<!-- ===== TAB BAR ===== -->
+<nav class="tab-bar">
+
+  <!-- Home -->
+  <div class="tab-item active" onclick="setTab(this)">
+    <div class="tab-icon-wrap">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 9.5L12 3L21 9.5V20C21 20.55 20.55 21 20 21H15V15H9V21H4C3.45 21 3 20.55 3 20V9.5Z" fill="url(#homeGrad)" stroke="rgba(255,215,0,0.4)" stroke-width="0.5"/>
+        <defs><linearGradient id="homeGrad" x1="3" y1="3" x2="21" y2="21"><stop offset="0%" stop-color="#FFD700"/><stop offset="100%" stop-color="#FF8C00"/></linearGradient></defs>
+      </svg>
+    </div>
+    <div class="tab-label">হোম</div>
+  </div>
+
+  <!-- Promotions -->
+  <div class="tab-item" onclick="setTab(this)">
+    <div class="tab-icon-wrap">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3" y="6" width="18" height="13" rx="2" fill="url(#promoGrad)" opacity="0.9"/>
+        <path d="M3 10H21" stroke="rgba(255,215,0,0.5)" stroke-width="1"/>
+        <circle cx="8" cy="14" r="2" fill="white" opacity="0.8"/>
+        <path d="M14 13H18M14 15.5H17" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity="0.8"/>
+        <path d="M7 6V4M12 6V3M17 6V4" stroke="rgba(255,100,0,0.8)" stroke-width="1.5" stroke-linecap="round"/>
+        <defs><linearGradient id="promoGrad" x1="3" y1="6" x2="21" y2="19"><stop offset="0%" stop-color="#FF003C"/><stop offset="100%" stop-color="#FF6B00"/></linearGradient></defs>
+      </svg>
+    </div>
+    <div class="tab-label">প্রমোশন</div>
+  </div>
+
+  <!-- Invite (center) -->
+  <div class="tab-item center-tab" onclick="setTab(this)">
+    <div class="tab-icon-wrap">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="9" cy="7" r="3" fill="white" opacity="0.9"/>
+        <path d="M3 19C3 16.24 5.69 14 9 14" stroke="white" stroke-width="1.8" stroke-linecap="round" opacity="0.9"/>
+        <circle cx="17" cy="12" r="2" fill="white" opacity="0.7"/>
+        <path d="M14 19C14 17.34 15.34 16 17 16C18.66 16 20 17.34 20 19" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+        <path d="M15 7L21 7M18 4L21 7L18 10" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
+      </svg>
+    </div>
+    <div class="tab-label" style="color:var(--gold);text-shadow:0 0 8px var(--gold-glow);">আমন্ত্রণ</div>
+  </div>
+
+  <!-- Reward -->
+  <div class="tab-item" onclick="setTab(this)">
+    <div class="tab-icon-wrap">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="url(#rewardGrad)" stroke="rgba(255,215,0,0.3)" stroke-width="0.5"/>
+        <defs><linearGradient id="rewardGrad" x1="2" y1="2" x2="22" y2="22"><stop offset="0%" stop-color="#FFE97A"/><stop offset="50%" stop-color="#FFD700"/><stop offset="100%" stop-color="#B8860B"/></linearGradient></defs>
+      </svg>
+    </div>
+    <div class="tab-label">পুরস্কার</div>
+  </div>
+
+  <!-- Member -->
+  <div class="tab-item" onclick="setTab(this)">
+    <div class="tab-icon-wrap">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="8" r="4" fill="url(#memberGrad)" opacity="0.9"/>
+        <path d="M5 20C5 16.69 8.13 14 12 14C15.87 14 19 16.69 19 20" stroke="url(#memberGrad2)" stroke-width="2" stroke-linecap="round"/>
+        <!-- Crown on head -->
+        <path d="M8 5.5L9.5 3L12 5L14.5 3L16 5.5" stroke="#FFD700" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.7"/>
+        <defs>
+          <linearGradient id="memberGrad" x1="8" y1="4" x2="16" y2="12"><stop offset="0%" stop-color="#C0A0FF"/><stop offset="100%" stop-color="#8040FF"/></linearGradient>
+          <linearGradient id="memberGrad2" x1="5" y1="14" x2="19" y2="20"><stop offset="0%" stop-color="#C0A0FF"/><stop offset="100%" stop-color="#8040FF"/></linearGradient>
+        </defs>
+      </svg>
+    </div>
+    <div class="tab-label">সদস্য</div>
+  </div>
+
+</nav>
+
+<script>
+  // Sidebar
+  function openSidebar() {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('sidebarOverlay').classList.add('open');
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('open');
+  }
+
+  // Tab switching
+  function setTab(el) {
+    document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // Category selection
+  document.querySelectorAll('.cat-item').forEach(item => {
+    item.addEventListener('click', function() {
+      document.querySelectorAll('.cat-item').forEach(c => c.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+
+  // Carousel dot tracking
+  const track = document.getElementById('carouselTrack');
+  track.addEventListener('scroll', () => {
+    const scrollLeft = track.scrollLeft;
+    const cardWidth = 310 + 12;
+    const idx = Math.round(scrollLeft / cardWidth);
+    document.querySelectorAll('.dot').forEach((d, i) => {
+      d.classList.toggle('active', i === idx);
+    });
+  });
+
+  // Auto carousel
+  let autoIdx = 0;
+  setInterval(() => {
+    autoIdx = (autoIdx + 1) % 4;
+    track.scrollTo({ left: autoIdx * 322, behavior: 'smooth' });
+  }, 3500);
+</script>
+
+</body>
+</html>

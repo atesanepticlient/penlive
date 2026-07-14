@@ -1,0 +1,25 @@
+{
+  "page": {
+    "title": "বাজি রেকর্ড"
+  },
+  "filters": {
+    "date": "তারিখ",
+    "game": "খেলা",
+    "type": "প্রকার",
+    "status": "অবস্থা"
+  },
+  "table": {
+    "date": "তারিখ",
+    "game": "খেলা",
+    "betAmount": "বাজি পরিমাণ",
+    "payout": "পরিশোধ",
+    "profit": "লাভ/ক্ষতি",
+    "status": "অবস্থা"
+  },
+  "summary": {
+    "totalBets": "মোট বাজি",
+    "totalWagered": "মোট বাজি ধরা",
+    "totalPayout": "মোট পরিশোধ",
+    "netProfit": "নিট লাভ"
+  }
+}

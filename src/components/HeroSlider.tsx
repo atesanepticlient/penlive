@@ -34,9 +34,8 @@ const HeroSlider = () => {
         spaceBetween={10}
         pagination={{ clickable: true }}
         autoplay={{
-          delay: 3000, // 3 seconds
-          disableOnInteraction: false, // continues after user interaction
-          pauseOnMouseEnter: true,
+          delay: 3000, 
+          disableOnInteraction: false, 
         }}
         modules={[Pagination, Autoplay]}
         className="mySwiper"

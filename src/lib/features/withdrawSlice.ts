@@ -2,6 +2,14 @@
 
 import { apiSlice } from "./apiSlice";
 import { WithdrawPageData } from "@/types/api/withdraw";
+export interface WithdrawStatus {
+  balance: number;
+  dailyWithdrawLimit: number;
+  todayWithdrawCount: number;
+  remainingWithdraws: number;
+  remainingTurnover: number;
+  turnoverRows: { gameType: string; remaining: number }[];
+}
 
 const depositApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -26,6 +34,10 @@ const depositApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    getWithdrawStatus: builder.query<WithdrawStatus, void>({
+      query: () => "api/withdraw/status",
+      providesTags: ["WithdrawStatus"],
+    }),
   }),
 });
 
@@ -33,4 +45,5 @@ export const {
   useMakeWithdrawMutation,
   useFetchWithdrawPageDataQuery,
   useFetchWithdrawWalletQuery,
+  useGetWithdrawStatusQuery
 } = depositApiSlice;

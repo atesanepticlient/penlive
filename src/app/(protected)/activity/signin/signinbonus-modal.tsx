@@ -5,12 +5,21 @@ import { IoIosCloseCircle } from "react-icons/io";
 
 import gift from "@/../public/icons/rewards/signin-modal-bg-gift.png";
 import money from "@/../public/icons/rewards/money.png";
+import begIcon from "@/../public/icons/rewards/bag.png";
+import eggHuntIcon from "@/../public/icons/rewards/egg-hunt.png";
 
 interface SigninBonusModalProps {
   children: React.ReactNode;
-  prize: number;
+  cash: number;
+  eggHunt?: boolean;
+  beg?: boolean;
 }
-const SigninBonusModal = ({ children, prize }: SigninBonusModalProps) => {
+const SigninBonusModal = ({
+  children,
+  cash,
+  eggHunt = false,
+  beg = false,
+}: SigninBonusModalProps) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -50,8 +59,38 @@ const SigninBonusModal = ({ children, prize }: SigninBonusModalProps) => {
                         Bonus
                       </span>
                     </div>
-                    <span>৳ {prize}</span>
+                    <span className="font-semibold">৳ {cash}</span>
                   </li>
+
+                  {eggHunt && (
+                    <li className="flex items-center gap-3 justify-between border-b border-b-gray-200 pb-2">
+                      <div className="flex items-center gap-2">
+                        <Image
+                          src={eggHuntIcon}
+                          alt="Egg"
+                          className="w-[30px] h-auto"
+                        />
+                        <span className="text-sm font-semibold font-mono text-gray-700">
+                          Egg Hunt
+                        </span>
+                      </div>
+                    </li>
+                  )}
+
+                  {beg && (
+                    <li className="flex items-center gap-3 justify-between border-b border-b-gray-200 pb-2">
+                      <div className="flex items-center gap-2">
+                        <Image
+                          src={begIcon}
+                          alt="Envelope"
+                          className="w-[30px] h-auto"
+                        />
+                        <span className="text-sm font-semibold font-mono text-gray-700">
+                          Envelope
+                        </span>
+                      </div>
+                    </li>
+                  )}
                 </ul>
               </div>
             </div>

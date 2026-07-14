@@ -1,0 +1,39 @@
+{
+  "page": {
+    "title": "ডিপোজিট"
+  },
+  "sections": {
+    "depositMethod": "ডিপোজিট পদ্ধতি",
+    "depositAmount": "ডিপোজিট পরিমাণ",
+    "selectBonus": "বোনাস নির্বাচন করুন"
+  },
+  "placeholders": {
+    "enterAmount": "পরিমাণ লিখুন"
+  },
+  "labels": {
+    "note": "নোট",
+    "noteText": "দ্রুত আপনার অ্যাকাউন্টে টাকা পেতে, দয়া করে ডিপোজিট করার পরে Trx-Id প্রদান করুন।",
+    "min": "সর্বনিম্ন",
+    "max": "সর্বোচ্চ",
+    "deposit": "ডিপোজিট",
+    "bonus": "বোনাস"
+  },
+  "bonusOptions": {
+    "firstDepositBonus": "প্রথম ডিপোজিট বোনাস",
+    "firstDepositDesc": "আপনার প্রথম ডিপোজিটে {value}% অতিরিক্ত",
+    "referBonus": "রেফার বোনাস",
+    "referBonusDesc": "রেফারাল থেকে {value}% বোনাস",
+    "noBonus": "কোনো বোনাস নেই",
+    "noBonusDesc": "কোনো বোনাস ছাড়া এগিয়ে যান"
+  },
+  "errors": {
+    "enterAmount": "অনুগ্রহ করে একটি পরিমাণ লিখুন",
+    "minDeposit": "সর্বনিম্ন ডিপোজিট ৳100",
+    "maxDeposit": "সর্বোচ্চ ডিপোজিট ৳10,000",
+    "enterWalletNumber": "অনুগ্রহ করে ওয়ালেট নম্বর লিখুন"
+  },
+  "buttons": {
+    "processDeposit": "ডিপোজিট প্রক্রিয়া করুন",
+    "processing": "প্রক্রিয়া চলছে..."
+  }
+}

@@ -17,21 +17,25 @@ export const GET = async () => {
     const rewards = await db.invitationRewareds.findMany({ where: {} });
 
     const userRewards = rewards.map((reward) => {
-      const newReward = { ...reward, completedReferral: 0, isClamed: false };
+      const newReward = {
+        ...reward,
+        completedReferral: userInvitationBonus.totalValidreferral,
+        isClamed: false,
+      };
 
-      newReward.completedReferral =
-        userInvitationBonus!.totalValidreferral >= reward.targetReferral
-          ? reward.targetReferral
-          : userInvitationBonus!.totalValidreferral;
+      // newReward.completedReferral =
+      //   userInvitationBonus!.totalValidreferral >= reward.targetReferral
+      //     ? reward.targetReferral
+      //     : userInvitationBonus!.totalValidreferral;
 
       newReward.isClamed = !!userInvitationBonus!.claimedRewards.find(
-        (clamedReward) => reward.id === clamedReward.rewardId
+        (clamedReward) => reward.id === clamedReward.rewardId,
       );
 
       return newReward;
     });
 
-    const invitationBonus = await db.invitationBonus.findUnique({
+   await db.invitationBonus.findUnique({
       where: {
         userId: user.id,
       },
@@ -44,33 +48,95 @@ export const GET = async () => {
       },
     });
 
-    const totalIncome = invitationBonus?.claimedRewards.reduce(
-      (acc, claimedReward) => {
-        return acc + +claimedReward.reward.prize;
-      },
-      0
+    const [invitationRewards, achievementRewards, rebateHistory] =
+      await Promise.all([
+        db.inviataionRewardRecord.findMany({
+          where: {
+            userId: user.id,
+          },
+          select: {
+            bonus: true,
+            createdAt: true,
+          },
+        }),
+
+        db.achivementRecords.findMany({
+          where: {
+            userId: user.id,
+          },
+          include: {
+            reward: {
+              select: {
+                prize: true,
+              },
+            },
+          },
+        }),
+
+        db.rebateDispatchItem.findMany({
+          where: {
+            refererId: user.id,
+          },
+          select: {
+            rebateAmount: true,
+            createdAt: true,
+          },
+        }),
+
+        db.invitation.findUnique({
+          where: {
+            userId: user.id,
+          },
+          include: {
+            referredUsers: {
+              select: {
+                id: true,
+                createdAt: true,
+              },
+            },
+          },
+        }),
+      ]);
+
+    // ---------------- Invitation Reward ----------------
+
+    const totalInvitationReward = invitationRewards.reduce(
+      (sum, item) => sum + Number(item.bonus),
+      0,
     );
 
-    const totalIncomeToday = invitationBonus?.claimedRewards.reduce(
-      (acc, claimedReward) => {
-        const createdAt = new Date(claimedReward.createdAt);
-        const now = new Date();
-
-        const isWithin24Hours =
-          now.getTime() - createdAt.getTime() <= 24 * 60 * 60 * 1000;
-
-        if (isWithin24Hours) {
-          return acc + +claimedReward.reward.prize;
-        }
-
-        return acc;
-      },
-      0
+    const totalAchievementReward = achievementRewards.reduce(
+      (sum, item) => sum + Number(item.reward.prize),
+      0,
     );
+
+    const totalRebate = rebateHistory.reduce(
+      (sum, item) => sum + Number(item.rebateAmount),
+      0,
+    );
+
+    const totalIncome =
+      totalInvitationReward + totalAchievementReward + totalRebate;
+
+    const last24Hours = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    const invitationReward24h = invitationRewards
+      .filter((item) => item.createdAt >= last24Hours)
+      .reduce((sum, item) => sum + Number(item.bonus), 0);
+
+    const achievementReward24h = achievementRewards
+      .filter((item) => item.createdAt >= last24Hours)
+      .reduce((sum, item) => sum + Number(item.reward.prize), 0);
+
+    const rebate24h = rebateHistory
+      .filter((item) => item.createdAt >= last24Hours)
+      .reduce((sum, item) => sum + Number(item.rebateAmount), 0);
+
+    const todayIncome = invitationReward24h + achievementReward24h + rebate24h;
 
     const statictic = {
       registersCount: userInvitationBonus!.totalRegisters,
-      todayIncome: totalIncomeToday,
+      todayIncome: todayIncome,
       validReferral: userInvitationBonus!.totalValidreferral,
       totalIncome,
     };

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import crypto from "crypto";
+import crypto, { createHash } from "crypto";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -46,7 +46,7 @@ export function generateTrxId(): string {
 export function generateSignature(
   accessKey: string,
   privateKey: string,
-  transactions: any
+  transactions: any,
 ): string {
   // Create JSON string with unescaped slashes and unicode
   const json = JSON.stringify(transactions);
@@ -66,17 +66,47 @@ export function generateSignature(
   return sha1Signature;
 }
 
-
-
 export function getCurrentTimestamp(): string {
   const now = new Date();
 
   const yyyy = now.getFullYear();
-  const MM = String(now.getMonth() + 1).padStart(2, '0');
-  const dd = String(now.getDate()).padStart(2, '0');
-  const HH = String(now.getHours()).padStart(2, '0');
-  const mm = String(now.getMinutes()).padStart(2, '0');
-  const ss = String(now.getSeconds()).padStart(2, '0');
+  const MM = String(now.getMonth() + 1).padStart(2, "0");
+  const dd = String(now.getDate()).padStart(2, "0");
+  const HH = String(now.getHours()).padStart(2, "0");
+  const mm = String(now.getMinutes()).padStart(2, "0");
+  const ss = String(now.getSeconds()).padStart(2, "0");
 
   return `${yyyy}${MM}${dd}${HH}${mm}${ss}`;
+}
+
+export function getRemainingTime(endDate: Date): Date | null {
+  const now = new Date();
+
+  const diff = endDate.getTime() - now.getTime();
+
+  if (diff <= 0) {
+    return null;
+  }
+
+  return new Date(diff);
+}
+
+export function formatNumber(num) {
+  return new Intl.NumberFormat("en-US").format(num);
+}
+
+export function generateGSCPlatformSignature(
+  requestTime: string,
+  secretKey: string,
+  operatorCode: string,
+  key: string,
+): string {
+  const signatureString = `${operatorCode}${requestTime}${key}${secretKey}`;
+  return createHash("md5").update(signatureString).digest("hex");
+}
+
+export function generateOtp(length = 5) {
+  const max = Math.pow(10, length);
+  const min = Math.pow(10, length - 1);
+  return crypto.randomInt(min, max).toString();
 }
