@@ -83,6 +83,8 @@ export const POST = async (req: NextRequest) => {
       );
     }
 
+
+
     const MEMBER_OP_CODE = process.env.GSC_OPERATOR_CODE!;
     const SECRET_KEY = process.env.GSC_SECRET_KEY!;
 

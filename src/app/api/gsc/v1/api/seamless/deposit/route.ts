@@ -16,6 +16,7 @@ import {
 import { generateGSCPlatformSignature } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 import pMap from "p-map";
+import { accpectedCurrency } from "../balance/route";
 
 export const POST = async (req: NextRequest) => {
   try {
@@ -111,6 +112,26 @@ export const POST = async (req: NextRequest) => {
             {
               code: 999,
               message: "Invalid Parameters",
+              member_account: "",
+              product_code: null,
+              before_balance: 0,
+              balance: 0,
+            },
+          ],
+        },
+        {
+          status: 200,
+        },
+      );
+    }
+
+    if (!accpectedCurrency.includes[currency]) {
+      return NextResponse.json(
+        {
+          data: [
+            {
+              code: 999,
+              message: "Expect currency error",
               member_account: "",
               product_code: null,
               before_balance: 0,

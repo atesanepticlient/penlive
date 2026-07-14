@@ -16,6 +16,31 @@ type BalanceResponse = {
   product_code: number;
 };
 
+/**
+ * Per GSC+ API appendix "Currency Code":
+ * Suffix "2" currencies (e.g. BDT2, IDR2, USD2, THB2, MMK2...) are 1:1000
+ * Suffix "3" currencies (e.g. IDR3, MMK3, MYR3, VND3) are 1:100
+ * Everything else is 1:1
+ *
+ * "When the currency ratio is 1:1000 (or 1:100), operators are required to
+ * perform the conversion themselves before responding with the balances."
+ *
+ * Our wallet.balance is always stored in the BASE unit (ratio 1:1), so to
+ * respond in the requested scaled currency we must DIVIDE by the ratio.
+ */
+function getCurrencyRatio(currency: string): number {
+  if (/2$/.test(currency)) return 1000;
+  if (/3$/.test(currency)) return 100;
+  return 1;
+}
+
+function toScaledBalance(rawBalance: number, currency: string): number {
+  const ratio = getCurrencyRatio(currency);
+  return Number((rawBalance / ratio).toFixed(4));
+}
+
+export const accpectedCurrency = ["BDT", "INR", "IND2"];
+
 export async function POST(req: NextRequest) {
   try {
     let body: {
@@ -73,6 +98,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (!accpectedCurrency.includes[currency]) {
+      return NextResponse.json(
+        {
+          code: 999,
+          message: "Expect currency error",
+        },
+        { status: 200 },
+      );
+    }
+
     let responseData: BalanceResponse[] = batch_requests.map((item) => ({
       member_account: item.member_account,
       product_code: item.product_code,
@@ -87,13 +122,14 @@ export async function POST(req: NextRequest) {
     if (operator_code !== MEMBER_OP_CODE) {
       responseData = responseData.map((entry) => ({
         ...entry,
-        code: 999,
+        code: 1002, // API proxy key error (per PDF Seamless wallet code table)
         message: "Invalid Operator code",
       }));
 
       return NextResponse.json({ data: responseData }, { status: 200 });
     }
 
+    // Per PDF 2.1 Balance: sign = md5(operator_code + request_time + "getbalance" + secret_key)
     const platformSign = generateGSCPlatformSignature(
       request_time,
       SECRET_KEY,
@@ -110,17 +146,6 @@ export async function POST(req: NextRequest) {
 
       return NextResponse.json({ data: responseData }, { status: 200 });
     }
-
-    // Uncomment if you only support BDT
-    // if (currency !== "BDT") {
-    //   responseData = responseData.map((entry) => ({
-    //     ...entry,
-    //     code: 999,
-    //     message: "Currency is not supported",
-    //   }));
-    //
-    //   return NextResponse.json({ data: responseData }, { status: 200 });
-    // }
 
     responseData = await pMap(responseData, async (entry) => {
       const user = await db.user.findFirst({
@@ -144,12 +169,15 @@ export async function POST(req: NextRequest) {
         };
       }
 
+      const rawBalance = Number(user.wallet.balance);
+
       return {
         ...entry,
         code: 0,
         message: "",
-        // IMPORTANT: return a NUMBER, not a string
-        balance: Number(Number(user.wallet.balance).toFixed(4)),
+        // Convert to the requested currency's ratio (e.g. BDT2 -> /1000) and
+        // return a NUMBER (not a string), per PDF 2.1 Data.balance spec.
+        balance: toScaledBalance(rawBalance, currency),
       };
     });
 
