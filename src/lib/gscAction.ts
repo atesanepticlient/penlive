@@ -212,12 +212,15 @@ export const cancelBet = async ({
     where: {
       // orderNo: id,
       roundId,
-      status: "RUNNING",
     },
   });
 
   if (!existingBet) {
     return errorResult(1006, "API bet does not exist");
+  }
+
+  if (existingBet.status == "CANCELED") {
+    return errorResult(1003, "Duplicate API transactions");
   }
 
   const absAmount = Math.abs(amount);
