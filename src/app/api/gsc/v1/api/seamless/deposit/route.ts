@@ -337,6 +337,7 @@ export const POST = async (req: NextRequest) => {
                 userId: user.id,
                 amount: tx.amount,
                 id: tx.id,
+                roundId : tx.round_id
               });
               return result;
             }

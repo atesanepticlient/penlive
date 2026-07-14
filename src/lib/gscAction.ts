@@ -30,6 +30,7 @@ export const rollback = async ({
   userId,
   amount,
   betAmount,
+  roundId,
 }: {
   id: string;
   wagerCode?: string;
@@ -40,7 +41,8 @@ export const rollback = async ({
 }): Promise<ActionResult> => {
   const existingBet = await db.bettingRecord.findFirst({
     where: {
-      orderNo: id,
+      // orderNo: id,
+      roundId,
       status: "SETTLED",
     },
   });
@@ -113,7 +115,7 @@ export const placeBet = async ({
 }): Promise<ActionResult> => {
   const existingTrx = await db.bettingRecord.findFirst({
     where: {
-      orderNo: id,
+      roundId,
     },
   });
 
@@ -199,14 +201,17 @@ export const cancelBet = async ({
   id,
   amount,
   userId,
+  roundId,
 }: {
   id: string;
   amount: number;
   userId: string;
+  roundId: string;
 }): Promise<ActionResult> => {
   const existingBet = await db.bettingRecord.findFirst({
     where: {
-      orderNo: id,
+      // orderNo: id,
+      roundId,
       status: "RUNNING",
     },
   });
@@ -474,7 +479,7 @@ export const settled = async ({
 }): Promise<ActionResult> => {
   const existingBet = await db.bettingRecord.findFirst({
     where: {
-      orderNo: id,
+      // orderNo: id,
       roundId,
       status: "RUNNING",
     },
