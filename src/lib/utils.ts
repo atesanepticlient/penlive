@@ -111,4 +111,4 @@ export function generateOtp(length = 5) {
   return crypto.randomInt(min, max).toString();
 }
 
-export const accpectedCurrency = ["BDT", "INR", "IND2"];
+export const accpectedCurrency = ["BDT", "IDR", "IDR2"];
