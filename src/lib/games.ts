@@ -19,7 +19,7 @@ export const getSlotsGamesList = ({
 
   let i = 0;
   const gamesData = allgames as any;
-  const list = gamesData as any;
+  const list = gamesData.list;
   const nameRegex = new RegExp("^" + nameSearch, "i");
   const productCodeRegex = product_code
     ? new RegExp("^" + product_code + "$", "i")

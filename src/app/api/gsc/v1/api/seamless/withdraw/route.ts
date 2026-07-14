@@ -12,6 +12,33 @@ import { accpectedCurrency, generateGSCPlatformSignature } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 import pMap from "p-map";
 
+/**
+ * Per GSC+ API appendix "Currency Code":
+ * Suffix "2" currencies (e.g. BDT2, IDR2, USD2, THB2...) are 1:1000
+ * Suffix "3" currencies (e.g. IDR3, MMK3, MYR3, VND3) are 1:100
+ * Everything else is 1:1
+ *
+ * "When the currency ratio is 1:1000 (or 1:100), operators are required to
+ * perform the conversion themselves." Our wallet stores balances/amounts in
+ * the BASE unit (ratio 1:1). GSC+ sends/expects amounts in the requested
+ * `currency`'s scale, so:
+ *   - incoming amounts (bet/tip/rollback/etc.)  -> multiply by ratio to get base units
+ *   - outgoing balances (before_balance/balance) -> divide by ratio to get currency units
+ */
+function getCurrencyRatio(currency: string): number {
+  if (/2$/.test(currency)) return 1000;
+  if (/3$/.test(currency)) return 100;
+  return 1;
+}
+
+function toBaseAmount(amount: number, ratio: number): number {
+  return amount * ratio;
+}
+
+function toScaledBalance(rawBalance: number, ratio: number): number {
+  return Number((rawBalance / ratio).toFixed(4));
+}
+
 export const POST = async (req: NextRequest) => {
   try {
     // ── 1. Parse body ──────────────────────────────────────────────────────────
@@ -75,12 +102,14 @@ export const POST = async (req: NextRequest) => {
     // GSC+ example uses "Product_code" (capital P) in the request body,
     // so we accept both casings.
     const isValidRequests = batch_requests.every((item: any) => {
-      const productCode = item.product_code ?? item.Product_code;
+      const productCode = Number(item.product_code ?? item.Product_code);
 
       if (
         typeof item.member_account !== "string" ||
-        typeof productCode !== "number" ||
+        item.member_account.trim() === "" ||
+        !Number.isFinite(productCode) ||
         typeof item.game_type !== "string" ||
+        item.game_type.trim() === "" ||
         !Array.isArray(item.transactions) ||
         item.transactions.length === 0
       ) {
@@ -88,13 +117,14 @@ export const POST = async (req: NextRequest) => {
       }
 
       return item.transactions.every((tx: any) => {
+        const amount = Number(tx.amount);
+
         return (
           typeof tx.id === "string" &&
           tx.id.trim() !== "" &&
           typeof tx.action === "string" &&
           tx.action.trim() !== "" &&
-          typeof tx.amount === "number" &&
-          Number.isFinite(tx.amount)
+          Number.isFinite(amount)
         );
       });
     });
@@ -139,6 +169,10 @@ export const POST = async (req: NextRequest) => {
       );
     }
 
+    // Ratio for this request's currency — applied to every entry in the batch
+    // since `currency` is a single root-level field, not per-item.
+    const ratio = getCurrencyRatio(currency);
+
     // ── 4. Env vars ────────────────────────────────────────────────────────────
     const MEMBER_OP_CODE = process.env.GSC_OPERATOR_CODE!;
     const SECRET_KEY = process.env.GSC_SECRET_KEY!;
@@ -177,7 +211,7 @@ export const POST = async (req: NextRequest) => {
       MEMBER_OP_CODE,
       "withdraw",
     );
-
+    console.log({ platformSign, sign, request_time });
     if (platformSign !== sign) {
       return NextResponse.json(
         {
@@ -231,14 +265,19 @@ export const POST = async (req: NextRequest) => {
         }
 
         // 8-e. Process records per action type
+        // NOTE: amounts coming from GSC+ are expressed in the requested
+        // `currency`'s scale (e.g. BDT2). Convert to base units (x ratio)
+        // before applying to the wallet, which stores base-unit balances.
         const txExecutions = (
           await pMap(transactions, async (tx: any) => {
             const action = tx.action?.toUpperCase();
+            const baseAmount = toBaseAmount(Number(tx.amount), ratio);
+
             if (action === "BET") {
               const result = await placeBet({
                 wagerCode: tx.wager_code,
                 id: tx.id,
-                amount: tx.amount,
+                amount: baseAmount,
                 roundId: tx.round_id,
                 name: tx.game_code,
                 category: itemGameType,
@@ -247,40 +286,40 @@ export const POST = async (req: NextRequest) => {
               return result;
             } else if (action === "TIP") {
               const result = await getTip({
-                amount: tx.amount,
+                amount: baseAmount,
                 userId: user.id,
               });
               return result;
             } else if (action === "ROLLBACK") {
               const result = await rollback({
                 id: tx.id,
-                amount: tx.amount,
+                amount: baseAmount,
                 userId: user.id,
-                betAmount: tx.bet_amount,
+                betAmount: toBaseAmount(Number(tx.bet_amount), ratio),
               });
               return result;
             } else if (action === "ADJUSTMENT") {
               const result = await adjustment({
                 userId: user.id,
-                amount: tx.amount,
+                amount: baseAmount,
               });
               return result;
             } else if (action == "BET_PRESERVE") {
               const result = await betPreserve({
                 userId: user.id,
-                amount: tx.amount,
+                amount: baseAmount,
               });
               return result;
             } else if (action == "PRESERVE_REFUND") {
               const result = await betPreserveRefund({
                 userId: user.id,
-                amount: tx.amount,
+                amount: baseAmount,
               });
               return result;
             } else if (action == "CANCEL") {
               const result = await cancelBet({
                 userId: user.id,
-                amount: tx.amount,
+                amount: baseAmount,
                 id: tx.id,
               });
               return result;
@@ -328,13 +367,25 @@ export const POST = async (req: NextRequest) => {
           select: { balance: true },
         });
 
+        // Convert base-unit balances back to the requested currency's scale
+        // (e.g. /1000 for BDT2) and report to the 4-decimal precision the
+        // spec allows, instead of the previous toFixed(2).
+        const beforeBalanceScaled = toScaledBalance(
+          Number(user.wallet.balance),
+          ratio,
+        );
+        const balanceScaled = toScaledBalance(
+          Number(updatedWallet.balance),
+          ratio,
+        );
+
         if (failedTx.length > 0) {
           return {
             ...entry,
             code: failedTx[0].code,
             message: failedTx[0].message,
-            before_balance: Number(user.wallet.balance.toFixed(2)),
-            balance: Number(updatedWallet.balance.toFixed(2)),
+            before_balance: beforeBalanceScaled,
+            balance: balanceScaled,
           };
         }
 
@@ -342,8 +393,8 @@ export const POST = async (req: NextRequest) => {
           ...entry,
           code: 0,
           message: "",
-          before_balance: Number(user.wallet.balance.toFixed(2)),
-          balance: Number(updatedWallet.balance.toFixed(2)),
+          before_balance: beforeBalanceScaled,
+          balance: balanceScaled,
         };
       },
       { concurrency: 5 },
