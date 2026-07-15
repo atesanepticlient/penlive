@@ -6,10 +6,12 @@ const useOpenGame = ({
   game_code,
   product_code,
   game_type,
+  currency,
 }: {
   product_code: number;
   game_code: string;
   game_type: string;
+  currency?: string
 }) => {
   const [gameOpen, setGameOpen] = useState(false);
 

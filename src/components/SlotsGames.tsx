@@ -1,7 +1,6 @@
 "use client";
 import React, { useRef } from "react";
 
-
 import GameSelectionHeader from "./GameSelectionHeader";
 
 import HomeGameCard from "./games/home-game-card";
@@ -37,9 +36,9 @@ const SlotGames = () => {
           ref={gamesContainer}
         >
           <div className="hot-games-list px-3">
-            {hotGames.map((game,i) => (
+            {hotGames.map((game, i) => (
               <HomeGameCard
-              key={i}
+                key={i}
                 label={game.game_name}
                 image={game.image_url}
                 badge="hot"
