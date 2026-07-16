@@ -14,7 +14,7 @@ export interface CreateNewCardInput {
 }
 
 // 1. Include paymentWallet (or whichever relation actually exists on Card)
-export type ExtendedCard = Prisma.CardGetPayload<{}>;
+export type ExtendedCard = Prisma.CardGetPayload<any>;
 
 // 2. Output structure containing array of cards
 export interface CardOutput {

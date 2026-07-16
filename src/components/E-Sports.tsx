@@ -1,7 +1,6 @@
 "use client";
 import React, { useRef } from "react";
 
-import { GameCardWithProvider } from "./games/GameCards";
 
 import GameSelectionHeader from "./GameSelectionHeader";
 // import { useGames } from "@/lib/store.zustond";

@@ -2,11 +2,9 @@
 import AppHeader from "@/components/AppHeader";
 import React, { useState } from "react";
 
-import { GameCardWithProvider } from "@/components/games/GameCards";
 import { useGames } from "@/lib/store.zustond";
 import { Categories } from "@/types/game";
 import PrimaryInput from "@/components/form/input";
-import GameLoader from "@/components/loader/GameLoader";
 import SideNavLayout from "@/components/SideNavLayout";
 
 const Lottery = () => {

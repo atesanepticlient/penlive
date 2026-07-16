@@ -23,5 +23,5 @@ export async function POST(req) {
 }
 
 function extractUserId(text: any) {
-  throw new Error("Function not implemented.");
+  throw new Error(`Function not implemented. ${text}`);
 }

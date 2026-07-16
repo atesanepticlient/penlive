@@ -1,12 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { GameCardWithProvider } from "./games/GameCards";
 import GameSelectionHeader from "./GameSelectionHeader";
 import { useGames } from "@/lib/store.zustond";
-import GameLoader from "./loader/GameLoader";
 
 const HotGames = () => {
-  const [gamesList, setGamesList] = useState<any[]>([]); // State to store hot games
+  const [, setGamesList] = useState<any[]>([]); // State to store hot games
   const { getCustomeCategoriesGames } = useGames((state) => state);
 
   // Fetch hot games using the getCustomeCategoriesGames function

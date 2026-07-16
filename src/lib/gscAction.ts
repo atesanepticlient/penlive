@@ -26,7 +26,6 @@ export const successResult = (
 });
 
 export const rollback = async ({
-  id,
   userId,
   amount,
   betAmount,
@@ -198,7 +197,6 @@ export const getTip = async ({
 };
 
 export const cancelBet = async ({
-  id,
   amount,
   userId,
   roundId,
@@ -468,7 +466,6 @@ export const leaderboardReward = async ({
 };
 
 export const settled = async ({
-  id,
   roundId,
   amount,
   userId,

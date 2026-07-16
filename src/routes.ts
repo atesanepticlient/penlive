@@ -66,7 +66,9 @@ export const publicRoutes = [
   "/api/gsc/v1/api/seamless/withdraw",
   "/api/gsc/v1/api/seamless/deposit",
   "/api/gsc/v1/api/seamless/pushbetdata",
-  "/api/site/setting/headline"
+  "/api/site/setting/headline",
+  "/api/daypay/callback/collection",
+  "/api/daypay/callback/payment",
 ];
 
 /**

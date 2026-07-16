@@ -22,32 +22,30 @@ import {
   useGetCardsQuery,
   useCreateCardMutation,
 } from "@/lib/features/cardSlice";
-import { toast } from "sonner";
-import { INTERNAL_SERVER_ERROR } from "@/error";
 import Spiner from "./loader/Spiner";
 import EmpryCard from "./EmpryCard";
 
 import MyCardsSkleton from "./skelton/MyCardsSkleton";
 
-interface CardData {
-  id: string;
-  isActive: boolean;
-  createdAt: Date;
-  walletNumber: string;
-  cardNumber: string;
-  paymentWallet: {
-    walletName: string;
-  };
-  container: {
-    ownerName: string;
-  };
-}
+// interface CardData {
+//   id: string;
+//   isActive: boolean;
+//   createdAt: Date;
+//   walletNumber: string;
+//   cardNumber: string;
+//   paymentWallet: {
+//     walletName: string;
+//   };
+//   container: {
+//     ownerName: string;
+//   };
+// }
 
-interface ApiError {
-  data?: {
-    error?: string;
-  };
-}
+// interface ApiError {
+//   data?: {
+//     error?: string;
+//   };
+// }
 
 const MyCards = () => {
   const { data, isLoading } = useGetCardsQuery();
@@ -109,22 +107,22 @@ interface CardProps {
 }
 
 export const Card = (props: CardProps) => {
-  const { walletNumber, isActive, issueDate, children, cardId } = props;
+  const { walletNumber, isActive, issueDate, children} = props;
 
-  const [updateCardApi, { isLoading }] = useCreateCardMutation();
+  const [, { isLoading }] = useCreateCardMutation();
 
-  const handleUpdateCard = (isActiveStatus: boolean, targetCardId: string) => {
-    // updateCardApi({ id: targetCardId, isActive: isActiveStatus })
-    //   .unwrap()
-    //   .then(() => {})
-    //   .catch((error: ApiError) => {
-    //     if (error.data?.error) {
-    //       toast.error(error.data.error);
-    //     } else {
-    //       toast.error(INTERNAL_SERVER_ERROR);
-    //     }
-    //   });
-  };
+  // const handleUpdateCard = (isActiveStatus: boolean, targetCardId: string) => {
+  //   // updateCardApi({ id: targetCardId, isActive: isActiveStatus })
+  //   //   .unwrap()
+  //   //   .then(() => {})
+  //   //   .catch((error: ApiError) => {
+  //   //     if (error.data?.error) {
+  //   //       toast.error(error.data.error);
+  //   //     } else {
+  //   //       toast.error(INTERNAL_SERVER_ERROR);
+  //   //     }
+  //   //   });
+  // };
 
   return (
     <div className="p-2">
@@ -164,7 +162,7 @@ export const Card = (props: CardProps) => {
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem
-              onClick={() => handleUpdateCard(!isActive, cardId)}
+              // onClick={() => handleUpdateCard(!isActive, cardId)}
               className="hover:border-none px-2 cursor-pointer"
             >
               {isActive ? "Inactive" : "Active"}
